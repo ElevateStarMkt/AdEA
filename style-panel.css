@@ -40,7 +40,9 @@
     font-weight: 500;
 }
 
-.form-group input {
+.form-group input,
+.form-group select,
+.form-group textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid var(--border);
@@ -56,6 +58,22 @@
     border-color: var(--accent);
 }
 
+.form-group textarea {
+    resize: vertical;
+}
+
+.radio-group {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
 .login-error {
     color: #ff6b6b;
     margin-top: 1rem;
@@ -67,17 +85,6 @@
 
 .login-error.hidden {
     display: none;
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-    .login-card {
-        padding: 1.8rem;
-    }
-
-    .login-card h2 {
-        font-size: 1.6rem;
-    }
 }
 
 /* === PANEL === */
@@ -98,11 +105,69 @@
     opacity: 0.9;
 }
 
-/* Estadísticas */
+.anonymous-id {
+    text-align: center;
+    font-size: 1.1rem;
+    opacity: 0.85;
+    margin-bottom: 2rem;
+}
+
+.anonymous-id strong {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* Recordatorio */
+.survey-reminder {
+    background: rgba(184, 92, 56, 0.1);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.survey-reminder p {
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+/* Informe */
 .stats-section h3 {
     text-align: center;
     margin-bottom: 2rem;
     color: var(--accent);
+}
+
+.report-selector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.report-select {
+    width: 100%;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23B85C38' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.report-select:focus {
+    outline: none;
+    border-color: var(--accent);
 }
 
 .stats-grid {
@@ -127,8 +192,112 @@
     margin: 0.5rem 0;
 }
 
-/* Acciones */
-/* Secciones del panel */
+/* Obras */
+.works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.work-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+}
+
+.work-genre {
+    font-size: 0.95rem;
+    opacity: 0.85;
+    margin: 0.5rem 0;
+}
+
+.work-status {
+    display: inline-block;
+    background: rgba(184, 92, 56, 0.2);
+    color: var(--accent);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.no-works {
+    text-align: center;
+    opacity: 0.8;
+    grid-column: 1 / -1;
+}
+
+.work-link {
+    display: inline-block;
+    margin-top: 0.8rem;
+    color: var(--accent);
+    text-decoration: underline;
+    font-size: 0.95rem;
+}
+
+/* Planes */
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.plan-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    text-align: center;
+    position: relative;
+}
+
+.plan-item h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.plan-item.inactive {
+    opacity: 0.6;
+}
+
+.plan-item.current {
+    border-color: var(--accent);
+    background: rgba(184, 92, 56, 0.05);
+}
+
+.current-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+.upgrade-suggestion {
+    background: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.upgrade-suggestion p {
+    margin-bottom: 1rem;
+}
+
+/* Soporte */
+.support-card {
+    border-left: 3px solid var(--accent);
+}
+
+/* Acciones genéricas */
 .panel-section {
     margin: 3rem 0;
 }
@@ -146,30 +315,65 @@
     padding: 2rem;
 }
 
-.action-card h4 {
-    margin-bottom: 1.2rem;
-    font-size: 1.3rem;
-}
-
 .note {
     font-size: 0.9rem;
     opacity: 0.7;
     margin-top: 1rem;
 }
 
-/* Responsive */
-@media (min-width: 768px) {
-    .action-card {
-        padding: 2.5rem;
-    }
-}
-
-/* Enlace de vuelta al panel */
-.back-to-panel {
+/* Cierre de sesión */
+.logout-section {
     text-align: center;
     margin-top: 2rem;
 }
 
-.back-to-panel .btn-text {
+/* Responsive */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 1.8rem;
+    }
+
+    .login-card h2 {
+        font-size: 1.6rem;
+    }
+
+    .works-grid,
+    .plans-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Filtros de informe */
+.report-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.filter-select {
+    flex: 1;
+    min-width: 140px;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
     font-size: 1rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23B85C38' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--accent);
 }

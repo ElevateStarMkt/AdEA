@@ -23,36 +23,43 @@ const plans = [
 // Renderizar planes
 function renderPlans(cycle = 'monthly') {
     const grid = document.getElementById('pricing-grid');
+    if (!grid) return;
     grid.innerHTML = '';
 
+    // Mapeo de planes con sus IDs de SubLaunch
+    const plans = [
+        { id: 1, name: "Básico", monthlyId: 1, annualId: 5 },
+        { id: 2, name: "Prime", monthlyId: 2, annualId: 6 },
+        { id: 3, name: "Supremo", monthlyId: 3, annualId: 7 },
+        { id: 4, name: "Legado", monthlyId: 4, annualId: 8 }
+    ];
+
     plans.forEach(plan => {
-        const annual = plan.monthly * 11; // 11 meses = 12 con 1 gratis
+        const monthlyPrice = [40, 90, 150, 250][plan.id - 1];
+        const annualPrice = monthlyPrice * 11; // 11 meses = 12 con 1 gratis
 
-        // Precio mostrado
-        const price = cycle === 'monthly'
-            ? plan.monthly
-            : annual;
-
-        // Inversión en campañas: 75% del monto real
+        const price = cycle === 'monthly' ? monthlyPrice : annualPrice;
         const investment = cycle === 'monthly'
-            ? (plan.monthly * 0.75)
-            : (annual / 12 * 0.75); // promedio mensual
+            ? (monthlyPrice * 0.75)
+            : (annualPrice / 12 * 0.75);
 
-        // Enlaces de Telegram
-        const telegramLink = `https://t.me/adea_oficial?start=${plan.name.toLowerCase()}_${cycle}`;
+        // URLs de SubLaunch
+        const monthlyUrl = `https://sublaunch.com/adeaoficial/checkout?price=${plan.monthlyId}`;
+        const annualUrl = `https://sublaunch.com/adeaoficial/checkout?price=${plan.annualId}`;
+        const checkoutUrl = cycle === 'monthly' ? monthlyUrl : annualUrl;
 
         const card = document.createElement('div');
         card.className = 'plan-card';
         card.innerHTML = `
             <h3 class="plan-name">${plan.name}</h3>
             <div class="plan-price">${price.toFixed(2)} €</div>
-            <span class="plan-equivalent">Equivale a: ${(annual / 12).toFixed(2)} €/mes</span>
+            ${cycle === 'annual' ? `<span class="plan-equivalent">Equivale a: ${(annualPrice / 12).toFixed(2)} €/mes</span>` : ''}
             <div class="plan-investment">
                 Inversión en campañas:<br>
                 <strong>${investment.toFixed(2)} €/${cycle === 'monthly' ? 'mes' : 'mes<br> (promedio)'}</strong>
             </div>
             <div class="plan-buttons">
-                <a href="${telegramLink}" class="btn btn-primary">
+                <a href="${checkoutUrl}" target="_blank" rel="noopener" class="btn btn-primary">
                     ${cycle === 'monthly' ? 'Suscripción mensual' : 'Suscripción anual'}
                 </a>
             </div>
