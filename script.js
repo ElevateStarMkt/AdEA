@@ -141,7 +141,7 @@ const themeToggle = document.getElementById('theme-toggle');
 const htmlEl = document.documentElement;
 
 // Cargar tema guardado
-const savedTheme = localStorage.getItem('theme') || 'dark';
+const savedTheme = localStorage.getItem('theme') || 'paper';
 if (savedTheme === 'paper') {
     htmlEl.setAttribute('data-theme', 'paper');
     updateThemeIcon('paper');
