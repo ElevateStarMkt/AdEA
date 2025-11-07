@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ajustes de perfil - AdEA</title>
-    <meta name="description" content="Gestiona tu contraseña y preferencias en el panel privado de AdEA.">
+    <meta name="description"
+        content="Gestiona tu contraseña, correo, datos personales y cuenta en el panel privado de AdEA.">
     <link rel="icon" href="./favicon.ico">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com  ">
+    <link rel="preconnect" href="https://fonts.gstatic.com  " crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./style-panel.css">
     <!-- GTM + Meta Pixel -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WJJXN3SD');</script>
-    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','870092382345285');fbq('track','PageView');</script>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=870092382345285&ev=PageView&noscript=1"/></noscript>
+    <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src = '  https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', 'GTM-WJJXN3SD');</script>
+    <script>!function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments) }; if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s) }(window, document, 'script', '  https://connect.facebook.net/en_US/fbevents.js  '); fbq('init', '870092382345285'); fbq('track', 'PageView');</script>
+    <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=870092382345285&ev=PageView&noscript=1" /></noscript>
 </head>
+
 <body>
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WJJXN3SD" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript><iframe src="  https://www.googletagmanager.com/ns.html?id=GTM-WJJXN3SD" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
     <header class="header">
         <div class="container">
             <a href="./" class="logo-link" aria-label="Ir a la página principal de AdEA">
@@ -26,7 +33,8 @@
             <p class="tagline">La voz del futuro no tiene rostro.</p>
         </div>
         <button id="theme-toggle" class="theme-toggle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             </svg>
         </button>
@@ -35,8 +43,30 @@
         <div class="container">
             <section class="panel-header">
                 <h2>Ajustes de perfil</h2>
-                <p>Protege tu cuenta con una contraseña segura.</p>
+                <p>Gestiona tu cuenta, correo y datos personales.</p>
             </section>
+
+
+
+            <!-- Sección: Cambio de correo -->
+            <section class="panel-section">
+                <div class="action-card">
+                    <form id="change-email-form">
+                        <h3>Cambiar correo electrónico</h3>
+                        <div class="form-group">
+                            <label for="current-password-email">Contraseña actual</label>
+                            <input type="password" id="current-password-email" required autocomplete="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-email">Nuevo correo electrónico</label>
+                            <input type="email" id="new-email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Actualizar correo</button>
+                    </form>
+                    <div id="email-message" class="login-error hidden"></div>
+                </div>
+            </section>
+
             <section class="panel-section">
                 <div class="action-card">
                     <form id="change-password-form">
@@ -51,13 +81,92 @@
                         </div>
                         <div class="form-group">
                             <label for="confirm-password">Confirmar nueva contraseña</label>
-                            <input type="password" id="confirm-password" required minlength="6">
+                            <input type="password" id="confirm-password" required minlength="6"
+                                autocomplete="new-password">
                         </div>
                         <button type="submit" class="btn btn-primary">Actualizar contraseña</button>
                     </form>
                     <div id="password-message" class="login-error hidden"></div>
                 </div>
             </section>
+
+            <!-- Sección: Visualización y edición de datos -->
+            <section class="panel-section">
+                <div class="action-card">
+                    <h3>Tus datos personales</h3>
+                    <div id="user-info-display">
+                        <p>Cargando...</p>
+                    </div>
+                    <div id="edit-user-info-form" style="display: none;">
+                        <h4>Editar información</h4>
+                        <div class="form-group">
+                            <label for="edit-username">Nombre de usuario</label>
+                            <input type="text" id="edit-username" disabled>
+                            <!-- Parse no permite cambiar username fácilmente -->
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-nombre-artistico">Nombre artístico</label>
+                            <input type="text" id="edit-nombre-artistico">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-pais">País</label>
+                            <input type="text" id="edit-pais">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-autorinflu">Tipo de usuario</label>
+                            <input type="text" id="edit-autorinflu" disabled> <!-- Solo lectura -->
+                        </div>
+                        <button id="save-user-info-btn" class="btn btn-primary">Guardar cambios</button>
+                        <button id="cancel-edit-btn" class="btn btn-text">Cancelar</button>
+                    </div>
+                    <button id="edit-user-info-btn" class="btn btn-secondary">Editar información</button>
+                </div>
+            </section>
+
+            <!-- Sección: Eliminar cuenta -->
+            <section class="panel-section">
+                <div class="action-card">
+                    <h3>Eliminar cuenta</h3>
+                    <p>Esta acción es irreversible y borrará todos tus datos.</p>
+                    <button id="delete-account-btn" class="btn btn-danger">Eliminar cuenta</button>
+                </div>
+            </section>
+            <div id="toast-container"></div>
+
+            <!-- Formulario de confirmación para eliminar cuenta (influye) -->
+            <div id="delete-confirmation-modal" class="modal hidden">
+                <div class="modal-content">
+                    <h3>Confirmar eliminación</h3>
+                    <p>Para proceder, introduce tu nombre de usuario y contraseña actual.</p>
+                    <!-- Añadimos el <form> aquí -->
+                    <form id="delete-account-confirmation-form">
+                        <div class="form-group">
+                            <label for="confirm-username">Nombre de usuario</label>
+                            <input type="text" id="confirm-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Contraseña actual</label>
+                            <!-- Añadimos el atributo autocomplete -->
+                            <input type="password" id="confirm-password" required autocomplete="current-password">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" id="confirm-delete-btn" class="btn btn-danger">Sí, eliminar mi
+                                cuenta</button>
+                            <button type="button" id="cancel-delete-btn" class="btn btn-text">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sección: Descargar mis datos -->
+            <section class="panel-section">
+                <div class="action-card">
+                    <h3>Descargar mis datos</h3>
+                    <p>Obtén una copia de toda la información que tenemos sobre ti.</p>
+                    <button id="download-data-btn" class="btn btn-secondary">Descargar datos</button>
+                </div>
+            </section>
+
             <div class="back-to-panel">
                 <a href="./panel.html" class="btn btn-text">← Volver al panel</a>
             </div>
@@ -76,12 +185,14 @@
             <a href="./aviso-legal.html" class="btn btn-text">Más información</a>
         </div>
     </div>
-    <a href="https://t.me/adea_oficial" id="floating-telegram" aria-label="Contactar por Telegram">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <a href="  https://t.me/adea_oficial  " id="floating-telegram" aria-label="Contactar por Telegram">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
     </a>
-    <script src="https://npmcdn.com/parse@3.4.0/dist/parse.min.js"></script>
+    <script src="https://npmcdn.com/parse@3.4.0/dist/parse.min.js  "></script>
     <script src="./script-panel.js"></script>
 </body>
+
 </html>

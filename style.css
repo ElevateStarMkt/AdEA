@@ -26,10 +26,25 @@
 /* === BASE === */
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg);
+  /* Eliminamos el background-color sólido */
+  /* background-color: var(--bg); */
   color: var(--text);
   line-height: 1.65;
   overflow-x: hidden;
+
+  /* Añadimos el degradado como fondo del body */
+  background: linear-gradient(to bottom,
+      var(--bg),
+      /* Color oscuro en la parte superior */
+      var(--bg-light),
+      /* Color más claro en la parte inferior */
+      #f8f3e9
+      /* Color beige muy claro en el pie (opcional, para suavizar) */
+    );
+  /* Aseguramos que el degradado cubra toda la altura de la ventana */
+  min-height: 100vh;
+  /* Para que el degradado sea suave y no tenga bandas */
+  background-size: 100% 200%;
 }
 
 h1,
@@ -57,7 +72,6 @@ img {
   padding-inline: 1rem;
 }
 
-/* === HEADER === */
 /* === HEADER === */
 .header {
   padding-block: 2rem;
@@ -188,6 +202,9 @@ img {
 /* === SECCIONES GENERALES === */
 section {
   padding-block: 1rem;
+  /* Eliminamos el fondo de las secciones individuales */
+  /* background: var(--bg); */
+  /* background: var(--bg-light); */
 }
 
 section h2 {
@@ -209,7 +226,8 @@ section h2 {
 .hero {
   padding-block: 5rem;
   text-align: center;
-  background: linear-gradient(to bottom, var(--bg), var(--bg-light));
+  /* Eliminamos el fondo del hero */
+  /* background: linear-gradient(to bottom, var(--bg), var(--bg-light)); */
 }
 
 .hero h1 {
@@ -234,6 +252,7 @@ section h2 {
 }
 
 .service-card {
+  /* Mantenemos el fondo de las tarjetas para que destaquen */
   background: var(--bg-light);
   padding: 2rem;
   border-radius: var(--radius);
@@ -273,6 +292,7 @@ section h2 {
 .toggle-btn {
   flex: 1;
   padding: 12px;
+  /* Mantenemos el fondo de los botones de toggle */
   background: var(--bg-light);
   border: 1px solid var(--border);
   color: var(--text);
@@ -297,6 +317,7 @@ section h2 {
 }
 
 .plan-card {
+  /* Mantenemos el fondo de las tarjetas de plan */
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -352,6 +373,7 @@ section h2 {
   text-align: center;
   margin-top: 3rem;
   padding: 2rem;
+  /* Mantenemos el fondo del plan personalizado */
   background: var(--bg-light);
   border-radius: 16px;
   border: 1px solid var(--border);
@@ -366,6 +388,7 @@ section h2 {
 .transparency-chart {
   margin-top: 2rem;
   padding: 1.5rem;
+  /* Mantenemos el fondo del gráfico de transparencia */
   background: var(--bg-light);
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -414,7 +437,8 @@ section h2 {
 .next-steps {
   margin-top: 3rem;
   padding-top: 2rem;
-  border-top: 1px solid var(--border);
+  /* Eliminamos el borde superior, ya que el degradado lo hace innecesario */
+  /* border-top: 1px solid var(--border); */
 }
 
 .next-steps h3 {
@@ -463,7 +487,8 @@ section h2 {
 /* === SELLOS DE CONFIANZA === */
 .trust-badges {
   padding-block: 2rem;
-  background: var(--bg-light);
+  /* Eliminamos el fondo sólido */
+  /* background: var(--bg-light); */
 }
 
 .badges-grid {
@@ -477,6 +502,7 @@ section h2 {
 }
 
 .badge {
+  /* Mantenemos el fondo de los sellos */
   background: var(--bg);
   border: 1px solid var(--border);
   padding: 0.6rem 1.2rem;
@@ -494,6 +520,7 @@ section h2 {
 .faq-item {
   margin-bottom: 2rem;
   padding-bottom: 1.8rem;
+  /* Mantenemos el borde inferior para separar preguntas */
   border-bottom: 1px solid var(--border);
 }
 
@@ -511,7 +538,8 @@ section h2 {
 
 /* === CTA === */
 .cta {
-  background: linear-gradient(to bottom, var(--bg-light), var(--bg));
+  /* Eliminamos el fondo del CTA */
+  /* background: linear-gradient(to bottom, var(--bg-light), var(--bg)); */
   text-align: center;
   padding-block: 5rem;
 }
@@ -530,6 +558,8 @@ section h2 {
 
 /* === FOOTER === */
 .footer {
+  /* Mantenemos el fondo sólido del footer para claridad */
+  background: var(--bg);
   padding-block: 2.5rem;
   text-align: center;
   font-size: 0.95rem;
@@ -891,4 +921,302 @@ select:focus {
   .logo {
     height: 100px;
   }
+}
+
+/* === TESTIMONIOS === */
+
+.testimonials {
+  padding-block: 4rem 5rem;
+  text-align: center;
+}
+
+.testimonials h2 {
+  margin-bottom: 2rem;
+  /* Mantén el estilo existente de h2 */
+}
+
+/* Contenedor del slider */
+.testimonial-slider {
+  position: relative;
+  overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: var(--radius);
+}
+
+/* Contenedor interno que se desliza */
+.testimonial-container {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+  transition: transform 0.4s ease;
+  will-change: transform;
+  /* Añade un scrollbar personalizado opcional */
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg);
+}
+
+.testimonial-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.testimonial-container::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: 4px;
+}
+
+.testimonial-container::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+/* Cada tarjeta de testimonio */
+.testimonial-card {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 500px;
+  /* Ajusta según necesites */
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(184, 92, 56, 0.15);
+}
+
+/* Icono de comillas */
+.quote-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: rgba(184, 92, 56, 0.2);
+  opacity: 0.7;
+}
+
+/* Estilo del texto del testimonio */
+.testimonial-card blockquote p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text);
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+/* Estilo del autor */
+.testimonial-card cite {
+  font-size: 0.95rem;
+  font-style: normal;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Botones de navegación */
+.testimonial-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.nav-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+}
+
+.nav-btn:hover,
+.nav-btn:focus {
+  background: var(--accent);
+  color: var(--bg);
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive: Mostrar menos tarjetas en móvil */
+@media (max-width: 768px) {
+  .testimonial-card {
+    min-width: 85vw;
+    padding: 1.5rem;
+  }
+
+  .testimonial-container {
+    padding: 0.5rem;
+  }
+
+  .quote-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .testimonial-card blockquote p {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .testimonial-card {
+    min-width: 45vw;
+  }
+}
+
+/* === GÉNEROS === */
+
+.genres-section {
+  padding-block: 4rem 5rem;
+  text-align: center;
+}
+
+.genres-section h2 {
+  font-size: 2.2rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.genres-section .section-intro {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.genres-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.genre-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  background: var(--bg);
+  /* Fondo oscuro para cada tarjeta */
+  border: 1px solid var(--border);
+  /* Borde sutil */
+  border-radius: var(--radius);
+  /* Bordes redondeados */
+  transition: var(--transition);
+  /* Transición suave para el hover */
+  text-align: center;
+  cursor: pointer;
+  /* Añade un cursor de mano para indicar interactividad */
+}
+
+.genre-item:hover {
+  transform: translateY(-5px);
+  /* Levanta ligeramente al hacer hover */
+  border-color: var(--accent);
+  /* Cambia el color del borde */
+  box-shadow: 0 4px 12px rgba(184, 92, 56, 0.15);
+  /* Añade una sombra sutil */
+}
+
+.genre-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.genre-icon svg {
+  width: 100%;
+  height: 100%;
+  /* Color del icono */
+  color: var(--accent);
+  /* Usa el color principal */
+  /* Opcional: Si quieres que el color cambie en hover */
+  /* transition: color 0.2s ease; */
+}
+
+.genre-item:hover .genre-icon svg {
+  color: var(--accent-dark);
+  /* Color más oscuro en hover */
+}
+
+.genre-item h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  /* Añade un pequeño espaciado entre letras para un look más premium */
+}
+
+/* Responsive: Hacer que las columnas sean 2x2 en tablet */
+@media (max-width: 1023px) and (min-width: 769px) {
+  .genres-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Responsive: Hacer que las columnas sean 1x8 en móviles */
+@media (max-width: 768px) {
+  .genres-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .genre-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .genre-item h4 {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .genre-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .genre-item h4 {
+    font-size: 0.9rem;
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+#floating-telegram {
+  animation: pulse 2s infinite;
 }

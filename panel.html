@@ -64,10 +64,50 @@
                 </div>
                 <div id="report-content"></div>
             </section>
+
+            <!-- Gráficos de Edades y Plataformas -->
+            <section class="panel-section">
+                <h3>Audiencia</h3>
+                <div id="audience-charts">
+                    <div id="chart-ages" class="chart-container">
+                        <h4>Edades</h4>
+                        <canvas id="chartAgesCanvas"></canvas>
+                    </div>
+                    <div id="chart-platforms" class="chart-container">
+                        <h4>Plataformas</h4>
+                        <canvas id="chartPlatformsCanvas"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Personalización de campaña -->
+            <section class="panel-section">
+                <div class="action-card">
+                    <h3>Personalización de campaña</h3>
+                    <p>¿Tienes alguna propuesta o algún video/imagen que quieras que utilicemos?</p><br>
+                    <a href="https://t.me/adea_oficial" class="btn btn-primary" target="_blank">Enviar propuesta por
+                        Telegram</a>
+                </div>
+            </section>
+
             <section class="panel-section">
                 <h3>Mis obras</h3>
                 <div id="works-container" class="works-grid"></div>
+                <!-- Botón dinámico para añadir obra -->
+                <div id="add-work-section" class="add-work-section" style="display: none;">
+                    <!-- Botón que se muestra si hay cupo -->
+                    <a href="https://t.me/adea_oficial" id="add-work-btn" class="btn btn-primary" target="_blank"
+                        style="display: none;">
+                        ¿Quieres añadir una obra?
+                    </a>
+                    <!-- Botón que se muestra si no hay cupo -->
+                    <a href="https://t.me/adea_oficial?text=Hola,%20quisiera%20añadir%20más%20obras%20al%20plan%20actual"
+                        id="upgrade-work-btn" class="btn btn-secondary" target="_blank" style="display: none;">
+                        Añade otro libro por solo 2,99€ más al mes
+                    </a>
+                </div>
             </section>
+            
             <!-- Presupuesto -->
             <section class="panel-section">
                 <div class="action-card">
@@ -150,6 +190,7 @@
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
     </a>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://npmcdn.com/parse@3.4.0/dist/parse.min.js"></script>
     <script src="./script-panel.js"></script>
 </body>
