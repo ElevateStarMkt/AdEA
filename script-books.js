@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const filteredBooks = allBooks.filter(obra => {
             const objectId = obra.id.toLowerCase();
             // --- CORRECCIÓN AQUÍ ---
-            // const titulo = String(obra.get('titulo') || '').toLowerCase();
+            const titulo = String(obra.get('titulo') || '').toLowerCase();
             const nombreArtistico = String(obra.get('nombreArtistico') || '').toLowerCase(); // Asumiendo este campo existe
             const genero = String(obra.get('genero') || '').toLowerCase();
             // --- CORRECCIÓN AQUÍ ---
