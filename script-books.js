@@ -3,6 +3,13 @@ const Parse = window.Parse;
 Parse.initialize("S88jCtz1uP0qT7s0Fe1fp9aJzUB7YmjIuHd5o06p", "XlOB40PLJiE7LXcAL4rww2HM4ksg9u6YbEPGRhJz");
 Parse.serverURL = 'https://parseapi.back4app.com/';
 Parse.User.enableUnsafeCurrentUser();
+
+// Opcional: Limpiar almacenamiento local de Parse (descomentar si el problema persiste)
+Parse.Storage._clear();
+
+// Intenta limpiar la autenticación al inicio
+Parse.User._cleanupAuthData();
+Parse.User._synchronizeAllAuthData();
 // === VARIABLES GLOBALES ===
 let allBooks = [];
 
