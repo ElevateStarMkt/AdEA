@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookstagramers - AdEA</title>
+    <meta
+      name="description"
+      content="Colabora con AdEA como bookstagramer. Descubre libros nuevos, crece en redes y forma parte de la comunidad lectora más apasionada."
+    />
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/mobile.css" />
+    <style>
+      .bk-hero {
+        padding: 140px 0 80px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .bk-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse 70% 50% at 50% 30%,
+          rgba(200, 16, 46, 0.1) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .bk-hero__label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--red);
+        margin-bottom: 16px;
+        display: block;
+      }
+      .bk-hero__title {
+        max-width: 700px;
+        margin: 0 auto 20px;
+      }
+      .bk-hero__subtitle {
+        max-width: 520px;
+        margin: 0 auto 40px;
+        font-size: 1.05rem;
+      }
+      .bk-hero__ctas {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+
+      .how-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+      .how-step {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .how-step__num {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--red);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+      .how-step__title {
+        font-family: var(--font-serif);
+        font-size: 1.1rem;
+        color: var(--text);
+      }
+
+      .form-section {
+        padding: 80px 0;
+        background: var(--bg2);
+      }
+      .form-inner {
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .testi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+      .testi-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+      }
+      .testi-card__quote {
+        font-style: italic;
+        color: var(--text-muted);
+        font-size: 0.92rem;
+        line-height: 1.7;
+        margin-bottom: 20px;
+      }
+      .testi-card__author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .testi-card__avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+      }
+      .testi-card__name {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .testi-card__handle {
+        font-size: 0.78rem;
+        color: var(--text-dim);
+      }
+
+      .success-msg {
+        display: none;
+        text-align: center;
+        padding: 40px;
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(200, 16, 46, 0.2);
+      }
+      .success-msg.show {
+        display: block;
+      }
+      .success-msg .icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+      }
+
+      /* ---- Instagram preview ---- */
+      .instagram-preview {
+        font-size: 0.78rem;
+        color: var(--text-dim);
+        margin-top: 4px;
+        min-height: 18px;
+        transition: color 0.2s;
+      }
+      .instagram-preview.valid {
+        color: #4ade80;
+      }
+      .instagram-preview.invalid {
+        color: #f87171;
+      }
+
+      /* ---- Password strength ---- */
+      .password-strength {
+        margin-top: 6px;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--border);
+        overflow: hidden;
+      }
+      .password-strength__bar {
+        height: 100%;
+        border-radius: 2px;
+        transition:
+          width 0.3s ease,
+          background 0.3s ease;
+        width: 0%;
+      }
+      .password-strength__text {
+        font-size: 0.72rem;
+        margin-top: 4px;
+        color: var(--text-dim);
+      }
+
+      @media (max-width: 768px) {
+        .benefits-grid,
+        .how-grid,
+        .testi-grid {
+          grid-template-columns: 1fr;
+        }
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="noise-bg">
+    <div id="nav-placeholder"></div>
+
+    <!-- HERO -->
+    <section class="bk-hero">
+      <div class="container">
+        <span class="bk-hero__label">Comunidad de creadores</span>
+        <h1 class="bk-hero__title">
+          Convierte tu pasión por los libros en visibilidad real
+        </h1>
+        <p class="bk-hero__subtitle">
+          Únete a la red de bookstagramers de AdEA. Descubre libros antes que
+          nadie, crece en redes y forma parte de algo más grande.
+        </p>
+        <div class="bk-hero__ctas">
+          <a href="#formulario" class="btn btn-primary btn-lg"
+            >Quiero colaborar →</a
+          >
+          <a href="#como-funciona" class="btn btn-secondary btn-lg"
+            >Cómo funciona</a
+          >
+          <a href="comunidad.html" class="btn btn-secondary btn-lg"
+            >Conoce a Bookstagramers</a
+          >
+          <!-- ✅ Nuevo -->
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- BENEFITS -->
+    <section class="section">
+      <div class="container">
+        <div
+          class="section-header fade-in"
+          style="
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          "
+        >
+          <span class="section-header__label">¿Por qué unirse?</span>
+          <h2 class="section-header__title">Lo que ganas</h2>
+          <p class="section-header__subtitle">
+            Colaborar con AdEA no es trabajo. Es hacer lo que ya haces, pero con
+            más recursos.
+          </p>
+        </div>
+        <div class="benefits-grid">
+          <div class="benefit-card fade-in">
+            <div class="benefit-card__icon">📚</div>
+            <div class="benefit-card__title">Acceso anticipado a libros</div>
+            <p>
+              Recibe recomendaciones antes de que sean virales. Sé la primera en
+              hablar de lo que viene.
+            </p>
+          </div>
+          <div class="benefit-card fade-in">
+            <div class="benefit-card__icon">📈</div>
+            <div class="benefit-card__title">Visibilidad en la comunidad</div>
+            <p>
+              Tu perfil aparece en AdEA. Miles de lectores descubrirán tu cuenta
+              cada mes.
+            </p>
+          </div>
+          <div class="benefit-card fade-in">
+            <div class="benefit-card__icon">🤝</div>
+            <div class="benefit-card__title">Red de bookstagramers</div>
+            <p>
+              Conecta con otras creadoras de contenido literario.
+              Colaboraciones, reposts y crecimiento conjunto.
+            </p>
+          </div>
+          <div class="benefit-card fade-in">
+            <div class="benefit-card__icon">✨</div>
+            <div class="benefit-card__title">Contenido curado para ti</div>
+            <p>
+              Recibes fichas de cada libro: sinopsis emocional, ángulos de
+              reseña y hashtags que funcionan.
+            </p>
+          </div>
+          <div class="benefit-card fade-in">
+            <div class="benefit-card__icon">💬</div>
+            <div class="benefit-card__title">Comunidad privada</div>
+            <p>
+              Acceso a un grupo exclusivo de bookstagramers donde compartir
+              ideas, estrategias y apoyarse.
+            </p>
+          </div>
+          <div class="benefit-card fade-in">
+            <div class="benefit-card__icon">🎯</div>
+            <div class="benefit-card__title">Sin presiones</div>
+            <p>
+              Tú decides cuándo y qué publicar. No hay mínimos ni obligaciones.
+              Solo pasión por los libros.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- HOW IT WORKS -->
+    <section class="section" id="como-funciona" style="background: var(--bg2)">
+      <div class="container">
+        <div
+          class="section-header fade-in"
+          style="
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          "
+        >
+          <span class="section-header__label">El proceso</span>
+          <h2 class="section-header__title">Cómo funciona</h2>
+        </div>
+        <div class="how-grid">
+          <div class="how-step fade-in">
+            <div class="how-step__num">1</div>
+            <div class="how-step__title">Te registras</div>
+            <p>
+              Rellenas el formulario con tu perfil. Lo revisamos en menos de 48
+              horas.
+            </p>
+          </div>
+          <div class="how-step fade-in">
+            <div class="how-step__num">2</div>
+            <div class="how-step__title">Descubre y conecta</div>
+            <p>
+              Explora libros que encajan con tu estilo, habla directamente con
+              escritores y haz match con autores cuyos géneros te inspiran.
+            </p>
+          </div>
+          <div class="how-step fade-in">
+            <div class="how-step__num">3</div>
+            <div class="how-step__title">Publicas y creces</div>
+            <p>
+              Subes tu reseña etiquetando
+              <a
+                href="https://www.instagram.com/adea_libros/"
+                target="_blank"
+                rel="noopener"
+                style="color: var(--red); font-weight: 600"
+                >@adea_libros</a
+              >. Nosotros amplificamos tu contenido.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- TESTIMONIALS -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-header__label">Lo que dicen</span>
+          <h2 class="section-header__title">
+            Bookstagramers que ya están dentro
+          </h2>
+        </div>
+        <div class="testi-grid">
+          <div class="testi-card fade-in">
+            <p class="testi-card__quote">
+              "Desde que colaboro con AdEA, mis publicaciones tienen mucho más
+              alcance. El contenido que me mandan está muy bien pensado."
+            </p>
+            <div class="testi-card__author">
+              <div class="testi-card__avatar">📚</div>
+              <div>
+                <div class="testi-card__name">Marta R.</div>
+                <div class="testi-card__handle">@martaybooksread · 14.2K</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card fade-in">
+            <p class="testi-card__quote">
+              "Me gusta que no me obligan a nada. Publico cuando quiero y con mi
+              estilo. Es la colaboración más respetuosa que he tenido."
+            </p>
+            <div class="testi-card__author">
+              <div class="testi-card__avatar">🌹</div>
+              <div>
+                <div class="testi-card__name">Sara L.</div>
+                <div class="testi-card__handle">@saralovesbooks · 8.7K</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card fade-in">
+            <p class="testi-card__quote">
+              "Gracias a AdEA descubrí libros que nunca habría encontrado sola.
+              Y encima mi comunidad los ha amado tanto como yo."
+            </p>
+            <div class="testi-card__author">
+              <div class="testi-card__avatar">🖤</div>
+              <div>
+                <div class="testi-card__name">Claudia V.</div>
+                <div class="testi-card__handle">@claudia.reads · 22.1K</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- FORM -->
+    <section class="form-section" id="formulario">
+      <div class="container">
+        <div class="form-inner">
+          <div
+            class="section-header fade-in"
+            style="
+              text-align: center;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            "
+          >
+            <span class="section-header__label">Únete ahora</span>
+            <h2 class="section-header__title">Quiero colaborar con AdEA</h2>
+            <p class="section-header__subtitle">
+              Rellena el formulario y te contactamos en menos de 48 horas.
+            </p>
+          </div>
+
+          <form id="bk-form" novalidate>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="nombre"
+                  >Nombre <span style="color: var(--red)">*</span></label
+                >
+                <input
+                  type="text"
+                  id="nombre"
+                  name="nombre"
+                  placeholder="Tu nombre completo"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="email"
+                  >Email <span style="color: var(--red)">*</span></label
+                >
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="hola@email.com"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="password">
+                  Contraseña <span style="color: var(--red)">*</span>
+                  <span
+                    style="
+                      color: var(--text-dim);
+                      font-size: 0.75em;
+                      text-transform: none;
+                    "
+                    >(para acceder a tu panel)</span
+                  >
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Mínimo 8 caracteres"
+                  required
+                  minlength="8"
+                />
+                <div class="password-strength">
+                  <div class="password-strength__bar" id="pw-bar"></div>
+                </div>
+                <div class="password-strength__text" id="pw-text"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="instagram"
+                  >Instagram <span style="color: var(--red)">*</span></label
+                >
+                <input
+                  type="text"
+                  id="instagram"
+                  name="instagram"
+                  placeholder="@tu_cuenta"
+                  required
+                />
+                <div class="instagram-preview" id="ig-preview"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="seguidores">Seguidores aprox.</label>
+                <select id="seguidores" name="seguidores">
+                  <option value="">Selecciona</option>
+                  <option value="menos-1k">Menos de 1.000</option>
+                  <option value="1k-5k">1.000 – 5.000</option>
+                  <option value="5k-20k">5.000 – 20.000</option>
+                  <option value="20k-50k">20.000 – 50.000</option>
+                  <option value="mas-50k">Más de 50.000</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="grid-column: 1/-1">
+                <label for="genero">Géneros favoritos</label>
+                <select id="genero" name="genero">
+                  <option value="">Selecciona</option>
+                  <option value="romance">Romance / spicy</option>
+                  <option value="thriller">Thriller / suspense</option>
+                  <option value="fantasia">Fantasía</option>
+                  <option value="literaria">Ficción literaria</option>
+                  <option value="varios">Varios géneros</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="grid-column: 1/-1">
+                <label for="mensaje"
+                  >Cuéntanos algo sobre ti
+                  <span
+                    style="
+                      color: var(--text-dim);
+                      font-size: 0.85em;
+                      text-transform: none;
+                    "
+                    >(opcional)</span
+                  ></label
+                >
+                <textarea
+                  id="mensaje"
+                  name="mensaje"
+                  placeholder="¿Por qué quieres colaborar con AdEA? ¿Qué tipo de contenido creas?"
+                ></textarea>
+              </div>
+            </div>
+
+            <div style="margin-top: 24px; text-align: center">
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg"
+                id="btn-submit"
+                style="min-width: 240px"
+              >
+                Quiero colaborar →
+              </button>
+              <p
+                style="
+                  font-size: 0.75rem;
+                  margin-top: 12px;
+                  color: var(--text-dim);
+                "
+              >
+                Sin spam. Tus datos solo se usan para gestionar la colaboración.
+              </p>
+            </div>
+          </form>
+
+          <!-- SUCCESS -->
+          <div class="success-msg" id="success-msg">
+            <div class="icon">🎉</div>
+            <h3 style="font-family: var(--font-serif); margin-bottom: 12px">
+              ¡Ya eres parte de AdEA!
+            </h3>
+            <p id="success-detail">
+              Hemos recibido tu solicitud. Te contactamos en menos de 48 horas.
+              Mientras, sígenos en Instagram para no perderte nada.
+            </p>
+            <a
+              href="dashboard.html"
+              class="btn btn-primary"
+              style="margin-top: 24px"
+              >Ir a mi panel →</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+    <script src="js/backend.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+      injectShell("");
+
+      /* ---- Instagram preview en tiempo real ---- */
+      document
+        .getElementById("instagram")
+        .addEventListener("input", function () {
+          const val = this.value.trim();
+          const prev = document.getElementById("ig-preview");
+          if (!val) {
+            prev.textContent = "";
+            prev.className = "instagram-preview";
+            return;
+          }
+
+          const clean = val.startsWith("@") ? val : "@" + val;
+          const valid = /^@[a-zA-Z0-9_.]{1,30}$/.test(clean);
+
+          if (valid) {
+            prev.textContent = "✓ Se usará como: " + clean;
+            prev.className = "instagram-preview valid";
+          } else {
+            prev.textContent =
+              "⚠ Solo letras, números, puntos y guiones bajos. Máx. 30 caracteres.";
+            prev.className = "instagram-preview invalid";
+          }
+        });
+
+      /* ---- Password strength ---- */
+      document
+        .getElementById("password")
+        .addEventListener("input", function () {
+          const v = this.value;
+          const bar = document.getElementById("pw-bar");
+          const txt = document.getElementById("pw-text");
+          let score = 0;
+          if (v.length >= 8) score++;
+          if (v.length >= 12) score++;
+          if (/[A-Z]/.test(v)) score++;
+          if (/[0-9]/.test(v)) score++;
+          if (/[^a-zA-Z0-9]/.test(v)) score++;
+
+          const labels = [
+            "",
+            "Muy débil",
+            "Débil",
+            "Aceptable",
+            "Fuerte",
+            "Muy fuerte",
+          ];
+          const colors = [
+            "",
+            "#f87171",
+            "#fb923c",
+            "#facc15",
+            "#4ade80",
+            "#22d3ee",
+          ];
+          const widths = ["0%", "20%", "40%", "60%", "80%", "100%"];
+
+          bar.style.width = widths[score] || "0%";
+          bar.style.background = colors[score] || "transparent";
+          txt.textContent = v.length > 0 ? labels[score] : "";
+          txt.style.color = colors[score] || "var(--text-dim)";
+        });
+
+      /* ---- Submit ---- */
+      document.addEventListener("DOMContentLoaded", () => {
+        // Si ya está logueado como bookstagramer, redirigir
+        const user = usuarioActual();
+        //if (user && user.get("rol") === "bookstagramer") {
+        //showToast("✅ Ya tienes cuenta de bookstagramer");
+        //setTimeout(() => (location.href = "dashboard.html"), 1500);
+        //return;
+        //}
+
+        document
+          .getElementById("bk-form")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const nombre = document.getElementById("nombre").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const instagram = document.getElementById("instagram").value.trim();
+            const seguidores = document.getElementById("seguidores").value;
+            const genero = document.getElementById("genero").value;
+            const mensaje = document.getElementById("mensaje").value.trim();
+
+            // Validaciones
+            if (!nombre) {
+              showToast("⚠️ El nombre es obligatorio");
+              return;
+            }
+            if (!email) {
+              showToast("⚠️ El email es obligatorio");
+              return;
+            }
+            if (!password) {
+              showToast("⚠️ La contraseña es obligatoria");
+              return;
+            }
+            if (password.length < 8) {
+              showToast("⚠️ La contraseña debe tener al menos 8 caracteres");
+              return;
+            }
+            if (!instagram) {
+              showToast("⚠️ El Instagram es obligatorio");
+              return;
+            }
+
+            const btn = document.getElementById("btn-submit");
+            btn.textContent = "Enviando…";
+            btn.disabled = true;
+
+            const result = await enviarSolicitudBookstagramer({
+              nombre,
+              email,
+              password,
+              instagram,
+              seguidores,
+              genero,
+              mensaje,
+            });
+
+            if (result.ok) {
+              document.getElementById("bk-form").style.display = "none";
+              if (result.warning) {
+                document.getElementById("success-detail").textContent =
+                  "Cuenta creada correctamente. Te contactamos en menos de 48 horas.";
+              }
+              document.getElementById("success-msg").classList.add("show");
+              window.scrollTo({
+                top: document.getElementById("formulario").offsetTop - 80,
+                behavior: "smooth",
+              });
+            } else {
+              showToast(
+                "❌ " +
+                  (result.error || "Error al enviar. Inténtalo de nuevo."),
+              );
+              btn.textContent = "Quiero colaborar →";
+              btn.disabled = false;
+            }
+          });
+      });
+    </script>
+  </body>
+</html>

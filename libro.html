@@ -1,0 +1,1580 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="page-title">Libro - AdEA</title>
+    <meta
+      name="description"
+      id="page-desc"
+      content="Descubre este libro en AdEA"
+    />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/mobile.css" />
+    <style>
+      .book-hero {
+        padding: 120px 0 80px;
+      }
+      .book-hero__inner {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 64px;
+        align-items: start;
+      }
+      .book-cover-wrap {
+        position: sticky;
+        top: 88px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .book-cover {
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+        aspect-ratio: 2/3;
+        background: var(--bg3);
+      }
+      .book-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .book-info__back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.82rem;
+        color: var(--text-dim);
+        margin-bottom: 24px;
+        transition: color var(--transition);
+      }
+      .book-info__back:hover {
+        color: var(--text);
+      }
+      .book-info__generos {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .book-info__title {
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        margin-bottom: 8px;
+      }
+      .book-info__author {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
+      .book-info__rating {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+      .book-info__rating .stars {
+        font-size: 1.1rem;
+        color: var(--gold);
+      }
+      .book-info__rating span {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+      .book-info__sinopsis {
+        font-size: 1rem;
+        line-height: 1.8;
+        color: var(--text-muted);
+        margin-bottom: 32px;
+        max-width: 600px;
+      }
+      .book-info__tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 36px;
+      }
+      .book-info__tag {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+      .buy-box {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        margin-bottom: 32px;
+      }
+      .buy-box__label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin-bottom: 12px;
+      }
+      .buy-box__main {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .buy-box__btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .affiliate-note {
+        font-size: 0.72rem;
+        color: var(--text-dim);
+        text-align: center;
+        line-height: 1.5;
+      }
+      .related {
+        padding: 80px 0;
+      }
+      .skeleton-book {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+      .skeleton-cover {
+        aspect-ratio: 2/3;
+      }
+      .skeleton-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .skeleton-line {
+        height: 14px;
+        border-radius: 4px;
+      }
+
+      /* RESEÑAS */
+      .reviews-section {
+        margin-top: 48px;
+        padding-top: 32px;
+        border-top: 1px solid var(--border);
+      }
+      .reviews-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .reviews-title {
+        font-family: var(--font-serif);
+        font-size: 1.3rem;
+        margin: 0;
+      }
+      .reviews-filters {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .review-filter {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all var(--transition);
+        color: var(--white);
+      }
+      .review-filter:hover,
+      .review-filter.active {
+        border-color: var(--red);
+        background: var(--red-glow);
+      }
+      .review-filter .count {
+        color: var(--text-dim);
+        font-weight: 600;
+      }
+      .review-filter.active .count {
+        color: var(--white);
+      }
+      .review-filter.stars-filter {
+        color: var(--gold);
+      }
+
+      .review-card {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: border-color var(--transition);
+      }
+      .review-card:hover {
+        border-color: var(--red);
+      }
+      .review-card__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+      .review-card__author {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .review-card__avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--text);
+        flex-shrink: 0;
+      }
+      .review-card__name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .review-card__stars {
+        color: var(--gold);
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+      }
+      .review-card__mood {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        background: var(--surface);
+        padding: 2px 8px;
+        border-radius: 12px;
+      }
+      .review-card__text {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+        margin-bottom: 8px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      .review-card__text.expanded {
+        -webkit-line-clamp: unset;
+      }
+      .review-card__tag {
+        display: inline-block;
+        background: var(--surface);
+        padding: 3px 10px;
+        border-radius: 16px;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+      .review-card__actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+      }
+      .review-card__actions-left,
+      .review-card__actions-right {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .review-card__btn {
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        font-size: 0.75rem;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .review-card__btn:hover {
+        color: var(--text);
+        background: var(--surface);
+      }
+      .review-card__btn.delete:hover {
+        color: #f87171;
+        background: rgba(239, 68, 68, 0.1);
+      }
+      .review-card__btn.edit:hover {
+        color: #60a5fa;
+        background: rgba(96, 165, 250, 0.1);
+      }
+      .review-card__btn.helpful.active {
+        color: #4ade80;
+      }
+      .review-card__btn.not-helpful.active {
+        color: #f87171;
+      }
+      .review-card__helpful-count {
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        margin-left: 4px;
+      }
+
+      .reviews-pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 24px;
+      }
+      .review-page-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all var(--transition);
+      }
+      .review-page-btn:hover,
+      .review-page-btn.active {
+        background: var(--red);
+        border-color: var(--red);
+        color: var(--white);
+      }
+      .review-page-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        width: 100%;
+        max-width: 520px;
+        max-height: 90vh;
+        padding: 28px;
+        position: relative;
+        animation: modalIn 0.25s ease;
+        overflow-y: auto;
+        margin: auto;
+      }
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .modal__close {
+        position: sticky;
+        top: -8px;
+        float: right;
+        background: var(--surface);
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.4rem;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition);
+        z-index: 10;
+      }
+      .modal__close:hover {
+        color: var(--red);
+        background: var(--bg3);
+      }
+      .modal__title {
+        font-family: var(--font-serif);
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+      }
+      .modal__form .form-group {
+        margin-bottom: 16px;
+      }
+      .modal__form label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        display: block;
+        margin-bottom: 6px;
+      }
+      .modal__form input,
+      .modal__form select,
+      .modal__form textarea {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 12px 14px;
+        border-radius: var(--radius);
+        font-size: 0.9rem;
+        font-family: var(--font-sans);
+      }
+      .modal__form input:focus,
+      .modal__form select:focus,
+      .modal__form textarea:focus {
+        outline: none;
+        border-color: var(--red);
+        background: var(--bg3);
+      }
+      .modal__form textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+      .modal__form .rating-input {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .modal__form .rating-input input {
+        width: 80px;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+      .modal__form .rating-hint {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        margin-top: 4px;
+      }
+      .modal__actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 16px;
+      }
+      .modal__actions .btn {
+        flex: 1;
+        justify-content: center;
+      }
+
+      .expandable-form {
+        margin-top: 24px;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        display: none;
+      }
+      .expandable-form.show {
+        display: block;
+        animation: slideDown 0.25s ease;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .book-hero__inner {
+          grid-template-columns: 1fr;
+        }
+        .book-cover-wrap {
+          position: static;
+          flex-direction: row;
+          align-items: flex-start;
+          gap: 20px;
+          justify-content: center;
+        }
+        .book-cover {
+          width: 120px;
+          flex-shrink: 0;
+        }
+        .book-info__generos {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-bottom: 3%;
+          justify-content: center;
+          margin-top: -12%;
+        }
+        .book-info__tags {
+          display: grid;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-bottom: 36px;
+          justify-content: center;
+          grid-template-columns: 50% 50%;
+        }
+        .book-cover img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .book-info__rating {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 28px;
+          padding-top: 3%;
+          justify-content: center;
+        }
+        .reviews-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .reviews-filters {
+          width: 100%;
+          overflow-x: auto;
+          padding-bottom: 8px;
+        }
+        .modal {
+          max-height: 85vh;
+          padding: 20px;
+        }
+        .modal__actions {
+          flex-direction: column-reverse;
+        }
+      }
+    </style>
+  </head>
+  <body class="noise-bg">
+    <div id="nav-placeholder"></div>
+
+    <section class="book-hero">
+      <div class="container">
+        <div class="book-hero__inner" id="book-content">
+          <!-- Loading skeleton -->
+          <div class="book-cover-wrap">
+            <div class="skeleton-book">
+              <div class="skeleton-cover skeleton"></div>
+            </div>
+          </div>
+          <div>
+            <div
+              style="height: 16px; width: 180px; margin-bottom: 24px"
+              class="skeleton"
+            ></div>
+            <div
+              style="height: 48px; width: 80%; margin-bottom: 12px"
+              class="skeleton"
+            ></div>
+
+            <div
+              style="height: 20px; width: 200px; margin-bottom: 28px"
+              class="skeleton"
+            ></div>
+            <div
+              style="height: 14px; width: 100%; margin-bottom: 8px"
+              class="skeleton"
+            ></div>
+            <div
+              style="height: 14px; width: 95%; margin-bottom: 8px"
+              class="skeleton"
+            ></div>
+            <div style="height: 14px; width: 90%" class="skeleton"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+    <br />
+    <!-- Buscar la sección .book-info__tags y añadir después -->
+    <div
+      class="book-info__actions"
+      style="
+        display: flex;
+        gap: 12px;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+        justify-content: center;
+      "
+    >
+      <button
+        class="btn btn-secondary"
+        id="btn-add-fav"
+        style="flex: 1; max-width: 200px"
+      >
+        ♥ Agregar a favoritos
+      </button>
+      <button
+        class="btn btn-secondary"
+        id="btn-mark-read"
+        style="flex: 1; max-width: 200px"
+      >
+        Marcar como leído
+      </button>
+    </div>
+    <div class="divider"></div>
+
+    <section class="related">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-header__label">Te puede gustar</span>
+          <h2 class="section-header__title">Libros similares</h2>
+        </div>
+        <div class="books-grid" id="related-grid"></div>
+      </div>
+    </section>
+
+    <!-- RESEÑAS -->
+    <section class="section-sm" style="border-top: 1px solid var(--border)">
+      <div class="container">
+        <div class="reviews-section">
+          <div class="reviews-header">
+            <h3 class="reviews-title">Reseñas de lectores</h3>
+            <div class="reviews-filters" id="reviews-filters"></div>
+          </div>
+          <div id="reviews-list"></div>
+          <div class="reviews-pagination" id="reviews-pagination"></div>
+          <div style="margin-top: 24px">
+            <button class="btn btn-secondary" id="btn-add-resena">
+              ✍️ Escribir reseña
+            </button>
+          </div>
+          <div class="expandable-form" id="expandable-resena-form">
+            <form id="inline-resena-form">
+              <input type="hidden" id="resena-edit-id" />
+              <div class="form-group">
+                <label>Tu valoración (0-5) *</label>
+                <div class="rating-input">
+                  <input
+                    type="text"
+                    id="resena-rating"
+                    placeholder="4.5"
+                    maxlength="3"
+                    required
+                  />
+                  <span style="font-size: 0.8rem; color: var(--text-dim)"
+                    >estrellas</span
+                  >
+                </div>
+                <div class="rating-hint">
+                  Ej: 4, 4.5, 5 - Se aceptan coma o punto decimal
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Tu reseña *</label>
+                <textarea
+                  id="resena-texto"
+                  placeholder="¿Qué te ha parecido? Sé sincero/a..."
+                  required
+                  style="min-height: 100px"
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label>Mood al leerlo</label>
+                <select id="resena-mood">
+                  <option value="">Selecciona...</option>
+                  <option value="adictivo">⚡ Adictivo</option>
+                  <option value="devastador">💔 Devastador</option>
+                  <option value="spicy">🌶️ Spicy</option>
+                  <option value="reflexivo">💭 Reflexivo</option>
+                  <option value="épico">🐉 Épico</option>
+                  <option value="oscuro">🖤 Oscuro</option>
+                  <option value="ligero">☀️ Ligero</option>
+                  <option value="emotivo">😭 Emotivo</option>
+                  <option value="aburrido">😴 Aburrido</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Etiqueta resumen</label>
+                <input
+                  type="text"
+                  id="resena-etiqueta"
+                  placeholder="Ej: 🫢 No te esperas el final"
+                  maxlength="50"
+                />
+              </div>
+              <div class="modal__actions" style="border-top: none">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="btn-submit-resena"
+                >
+                  Publicar reseña
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  id="btn-cancel-inline"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODAL (para editar) -->
+    <div id="resena-modal" class="modal-overlay" style="display: none">
+      <div class="modal">
+        <button class="modal__close" id="modal-close" title="Cerrar">×</button>
+        <h3 class="modal__title" id="modal-title">Escribe tu reseña</h3>
+        <form id="modal-resena-form" class="modal__form">
+          <input type="hidden" id="m-resena-edit-id" />
+          <div class="form-group">
+            <label>Tu valoración (0-5) *</label>
+            <div class="rating-input">
+              <input
+                type="text"
+                id="m-resena-rating"
+                placeholder="4.5"
+                maxlength="3"
+                required
+              />
+              <span style="font-size: 0.8rem; color: var(--text-dim)"
+                >estrellas</span
+              >
+            </div>
+            <div class="rating-hint">
+              Ej: 4, 4.5, 5 - Se aceptan coma o punto decimal
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tu reseña *</label>
+            <textarea
+              id="m-resena-texto"
+              placeholder="¿Qué te ha parecido? Sé sincero/a..."
+              required
+              style="min-height: 100px"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>Mood al leerlo</label>
+            <select id="m-resena-mood">
+              <option value="">Selecciona...</option>
+              <option value="adictivo">⚡ Adictivo</option>
+              <option value="devastador">💔 Devastador</option>
+              <option value="spicy">🌶️ Spicy</option>
+              <option value="reflexivo">💭 Reflexivo</option>
+              <option value="épico">🐉 Épico</option>
+              <option value="oscuro">🖤 Oscuro</option>
+              <option value="ligero">☀️ Ligero</option>
+              <option value="emotivo">😭 Emotivo</option>
+              <option value="aburrido">😴 Aburrido</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Etiqueta resumen</label>
+            <input
+              type="text"
+              id="m-resena-etiqueta"
+              placeholder="Ej: 🫢 No te esperas el final"
+              maxlength="50"
+            />
+          </div>
+          <div class="modal__actions">
+            <button type="submit" class="btn btn-primary" id="btn-submit-modal">
+              Publicar reseña
+            </button>
+            <button type="button" class="btn btn-secondary" id="modal-cancel">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <!-- MODAL SOLICITUD COLABORACIÓN -->
+    <div id="collab-modal" class="modal-overlay" style="display: none">
+      <div class="modal">
+        <button class="modal__close" onclick="closeCollabModal()">×</button>
+        <h3 class="modal__title" id="collab-modal-title">
+          Solicitar colaboración
+        </h3>
+        <form id="collab-form">
+          <input type="hidden" id="collab-tipo" />
+          <input type="hidden" id="collab-libroId" />
+          <input type="hidden" id="collab-destinatarioId" />
+
+          <!-- Campos dinámicos -->
+          <div id="collab-fields"></div>
+
+          <div class="form-group">
+            <label>Mensaje</label>
+            <textarea
+              id="collab-mensaje"
+              placeholder="Cuéntale por qué te gustaría colaborar..."
+              style="min-height: 100px"
+            ></textarea>
+          </div>
+
+          <div
+            style="
+              background: var(--bg3);
+              padding: 12px 16px;
+              border-radius: var(--radius);
+              margin: 16px 0;
+              font-size: 0.8rem;
+              color: var(--text-muted);
+            "
+            id="collab-note"
+          >
+            <!-- Nota sobre coste -->
+          </div>
+
+          <div class="modal__actions">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="btn-submit-collab"
+            >
+              Enviar solicitud
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeCollabModal()"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+    <script src="js/backend.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+      injectShell("");
+
+      let currentBook = null;
+      let currentReviews = [];
+      let activeFilter = { stars: null, mood: null };
+      let defaultBookData = null;
+      let currentPage = 1;
+      const REVIEWS_PER_PAGE = 10;
+
+      async function loadAndRenderReviews(bookId) {
+        currentReviews = await getResenasPorLibro(bookId);
+        currentPage = 1;
+        renderReviewFilters();
+        renderReviews();
+        renderPagination();
+        updateBookStats();
+      }
+
+      function renderReviewFilters() {
+        const container = document.getElementById("reviews-filters");
+        const starCounts = [5, 4, 3, 2, 1, 0].map((s) => ({
+          stars: s,
+          count: currentReviews.filter((r) => Math.round(r.estrellas) === s)
+            .length,
+        }));
+        const moodCounts = {};
+        currentReviews.forEach((r) => {
+          if (r.mood) moodCounts[r.mood] = (moodCounts[r.mood] || 0) + 1;
+        });
+
+        let html = `<button class="review-filter ${!activeFilter.stars && !activeFilter.mood ? "active" : ""}" data-filter="all">Todas <span class="count">(${currentReviews.length})</span></button>`;
+        starCounts.forEach((s) => {
+          if (s.count > 0)
+            html += `<button class="review-filter stars-filter ${activeFilter.stars === s.stars ? "active" : ""}" data-filter="star" data-value="${s.stars}">★${s.stars} <span class="count">(${s.count})</span></button>`;
+        });
+        const MOOD_EMOJIS = {
+          adictivo: "⚡",
+          devastador: "💔",
+          spicy: "🌶️",
+          reflexivo: "💭",
+          épico: "🐉",
+          oscuro: "🖤",
+          ligero: "☀️",
+          emotivo: "😭",
+          aburrido: "😴",
+        };
+        Object.entries(moodCounts).forEach(([mood, count]) => {
+          if (count > 0) {
+            const emoji = MOOD_EMOJIS[mood] || "";
+            html += `<button class="review-filter ${activeFilter.mood === mood ? "active" : ""}" data-filter="mood" data-value="${mood}">${emoji} ${mood} <span class="count">(${count})</span></button>`;
+          }
+        });
+        container.innerHTML = html;
+        container.querySelectorAll(".review-filter").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const type = btn.dataset.filter,
+              value = btn.dataset.value;
+            if (type === "all") activeFilter = { stars: null, mood: null };
+            else if (type === "star")
+              activeFilter = { stars: parseInt(value), mood: null };
+            else if (type === "mood")
+              activeFilter = { stars: null, mood: value };
+            currentPage = 1;
+            renderReviewFilters();
+            renderReviews();
+            renderPagination();
+          });
+        });
+      }
+
+      function getFilteredReviews() {
+        let filtered = [...currentReviews];
+        if (activeFilter.stars !== null)
+          filtered = filtered.filter(
+            (r) => Math.round(r.estrellas) === activeFilter.stars,
+          );
+        if (activeFilter.mood)
+          filtered = filtered.filter((r) => r.mood === activeFilter.mood);
+        filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        return filtered;
+      }
+
+      function renderReviews() {
+        const list = document.getElementById("reviews-list");
+        const user = usuarioActual();
+        const filtered = getFilteredReviews();
+        const start = (currentPage - 1) * REVIEWS_PER_PAGE;
+        const pageItems = filtered.slice(start, start + REVIEWS_PER_PAGE);
+
+        if (!pageItems.length) {
+          list.innerHTML = `<p style="color:var(--text-muted);text-align:center;padding:40px 0;">${activeFilter.stars !== null || activeFilter.mood ? "No hay reseñas con esos filtros." : "No hay reseñas aún. ¡Sé el primero!"}</p>`;
+          return;
+        }
+
+        list.innerHTML = pageItems
+          .map((r) => {
+            const name =
+              r.displayName ||
+              r.usuario?.get?.("displayName") ||
+              r.usuario?.get?.("username") ||
+              "A";
+            const initial = name.charAt(0).toUpperCase() + ".";
+            const isOwner = user && r.usuarioId === user.id;
+            const fullText = r.texto || "";
+            const shortText =
+              fullText.length > 150
+                ? fullText.substring(0, 150) + "…"
+                : fullText;
+            const utiles = r.utiles || 0,
+              noUtiles = r.noUtiles || 0;
+            const userVote = r.votos?.[user?.id] || null;
+            const starsStr =
+              "★".repeat(Math.floor(r.estrellas)) +
+              (r.estrellas % 1 >= 0.5 ? "½" : "") +
+              "☆".repeat(5 - Math.ceil(r.estrellas));
+            return `
+            <div class="review-card" onclick="toggleReviewText(this)">
+              <div class="review-card__header">
+                <div class="review-card__author">
+                  <div class="review-card__avatar">${initial}</div>
+                  <!-- <span class="review-card__name">${name}</span> -->
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <span class="review-card__stars">${starsStr}</span>
+                  ${r.mood ? `<span class="review-card__mood">${r.mood}</span>` : ""}
+                </div>
+              </div>
+              <p class="review-card__text" data-full="${fullText.replace(/"/g, "&quot;")}">${shortText}</p>
+              ${r.etiqueta ? `<span class="review-card__tag">${r.etiqueta}</span>` : ""}
+              <div class="review-card__actions">
+                <div class="review-card__actions-left">
+                  <button class="review-card__btn helpful ${userVote === "up" ? "active" : ""}" onclick="voteReview('${r.id}','up',event)">👍 Útil <span class="review-card__helpful-count">(${utiles})</span></button>
+                  <button class="review-card__btn not-helpful ${userVote === "down" ? "active" : ""}" onclick="voteReview('${r.id}','down',event)">👎 No útil <span class="review-card__helpful-count">(${noUtiles})</span></button>
+                </div>
+                <div class="review-card__actions-right">
+                  ${isOwner ? `<button class="review-card__btn edit" onclick="editReview('${r.id}',event)">✏️ Editar</button>` : ""}
+                  ${isOwner ? `<button class="review-card__btn delete" onclick="deleteReview('${r.id}',event)">🗑️ Eliminar</button>` : ""}
+                </div>
+              </div>
+            </div>`;
+          })
+          .join("");
+      }
+
+      function renderPagination() {
+        const container = document.getElementById("reviews-pagination");
+        const filtered = getFilteredReviews();
+        const totalPages = Math.ceil(filtered.length / REVIEWS_PER_PAGE);
+        if (totalPages <= 1) {
+          container.innerHTML = "";
+          return;
+        }
+        let html = `<button class="review-page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}>←</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+          if (
+            i === 1 ||
+            i === totalPages ||
+            (i >= currentPage - 2 && i <= currentPage + 2)
+          ) {
+            html += `<button class="review-page-btn ${i === currentPage ? "active" : ""}" onclick="changePage(${i})">${i}</button>`;
+          } else if (i === currentPage - 3 || i === currentPage + 3) {
+            html += `<span style="color:var(--text-dim)">…</span>`;
+          }
+        }
+        html += `<button class="review-page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? "disabled" : ""}>→</button>`;
+        container.innerHTML = html;
+      }
+
+      function changePage(page) {
+        const filtered = getFilteredReviews();
+        const totalPages = Math.ceil(filtered.length / REVIEWS_PER_PAGE);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderReviews();
+        renderPagination();
+        const sec = document.querySelector(".reviews-section");
+        if (sec)
+          window.scrollTo({ top: sec.offsetTop - 100, behavior: "smooth" });
+      }
+
+      function toggleReviewText(card) {
+        const textEl = card.querySelector(".review-card__text");
+        if (!textEl) return;
+        const isExpanded = textEl.classList.contains("expanded");
+        const fullText = textEl.dataset.full || "";
+        if (isExpanded) {
+          textEl.textContent =
+            fullText.length > 150 ? fullText.substring(0, 150) + "…" : fullText;
+          textEl.classList.remove("expanded");
+        } else {
+          textEl.textContent = fullText;
+          textEl.classList.add("expanded");
+        }
+      }
+
+      function updateBookStats() {
+        if (!currentReviews.length && defaultBookData) {
+          document.getElementById("book-rating-stars").innerHTML = renderStars(
+            defaultBookData.valoracion,
+          );
+          document.getElementById("book-rating-value").textContent =
+            `${defaultBookData.valoracion.toFixed(1)} / 5`;
+          document.getElementById("book-rating-count").textContent = "";
+          return;
+        }
+        if (!currentReviews.length) return;
+        const avg =
+          currentReviews.reduce((sum, r) => sum + r.estrellas, 0) /
+          currentReviews.length;
+        const rounded = Math.round(avg * 10) / 10;
+        document.getElementById("book-rating-stars").innerHTML =
+          renderStars(rounded);
+        document.getElementById("book-rating-value").textContent =
+          `${rounded.toFixed(1)} / 5`;
+        document.getElementById("book-rating-count").textContent =
+          `(${currentReviews.length})`;
+      }
+
+      function getRandomTags(allTags, count = 6) {
+        if (!allTags?.length)
+          return (defaultBookData?.etiquetas || []).slice(0, count);
+        const shuffled = [...allTags].sort(() => Math.random() - 0.5);
+        return [...new Set(shuffled)].slice(0, count);
+      }
+
+      function openResenaModalForEdit(review) {
+        document.getElementById("modal-title").textContent = "Editar tu reseña";
+        document.getElementById("m-resena-edit-id").value = review.id;
+        document.getElementById("m-resena-rating").value = review.estrellas;
+        document.getElementById("m-resena-texto").value = review.texto;
+        document.getElementById("m-resena-mood").value = review.mood || "";
+        document.getElementById("m-resena-etiqueta").value =
+          review.etiqueta || "";
+        document.getElementById("btn-submit-modal").textContent =
+          "Guardar cambios";
+        document.getElementById("resena-modal").style.display = "flex";
+      }
+
+      function closeResenaModal() {
+        document.getElementById("resena-modal").style.display = "none";
+        document.getElementById("modal-resena-form").reset();
+        document.getElementById("m-resena-edit-id").value = "";
+        document.getElementById("modal-title").textContent =
+          "Escribe tu reseña";
+        document.getElementById("btn-submit-modal").textContent =
+          "Publicar reseña";
+      }
+
+      async function submitResenaForm(source) {
+        const prefix = source === "modal" ? "m-" : "";
+        const editId = document.getElementById(`${prefix}resena-edit-id`).value;
+        let rating = parseFloat(
+          document
+            .getElementById(`${prefix}resena-rating`)
+            .value.replace(",", "."),
+        );
+        const texto = document
+          .getElementById(`${prefix}resena-texto`)
+          .value.trim();
+        const mood = document.getElementById(`${prefix}resena-mood`).value;
+        const etiqueta = document
+          .getElementById(`${prefix}resena-etiqueta`)
+          .value.trim();
+
+        if (isNaN(rating) || rating < 0 || rating > 5) {
+          showToast("⚠️ Valoración entre 0 y 5");
+          return;
+        }
+        if (!texto) {
+          showToast("⚠️ Escribe tu reseña");
+          return;
+        }
+        rating = Math.round(rating * 2) / 2;
+
+        const user = usuarioActual();
+        if (!user) {
+          showToast("⚠️ Debes iniciar sesión");
+          return;
+        }
+
+        const result = editId
+          ? await updateResena(editId, {
+              estrellas: rating,
+              texto,
+              mood,
+              etiqueta,
+            })
+          : await addResenaLibro(currentBook.id, {
+              estrellas: rating,
+              texto,
+              mood,
+              etiqueta,
+              usuarioId: user.id,
+              displayName: user.get("displayName") || user.get("username"),
+            });
+
+        if (result.ok) {
+          showToast(editId ? "✅ Reseña actualizada" : "✅ Reseña publicada");
+          closeResenaModal();
+          document
+            .getElementById("expandable-resena-form")
+            .classList.remove("show");
+          document.getElementById("inline-resena-form").reset();
+          await loadAndRenderReviews(currentBook.id);
+        } else {
+          showToast("❌ " + (result.error || "Error"));
+        }
+      }
+
+      async function editReview(reviewId, event) {
+        event.stopPropagation();
+        const review = currentReviews.find((r) => r.id === reviewId);
+        if (!review) return;
+        openResenaModalForEdit(review);
+      }
+
+      async function deleteReview(reviewId, event) {
+        event.stopPropagation();
+        if (!confirm("¿Eliminar esta reseña?")) return;
+        const result = await deleteResena(reviewId);
+        if (result.ok) {
+          showToast("✅ Reseña eliminada");
+          await loadAndRenderReviews(currentBook.id);
+        } else {
+          showToast("❌ Error al eliminar");
+        }
+      }
+
+      async function voteReview(reviewId, vote, event) {
+        event.stopPropagation();
+        const user = usuarioActual();
+        if (!user) {
+          showToast("⚠️ Debes iniciar sesión para votar");
+          return;
+        }
+        const result = await voteResena(reviewId, vote, user.id);
+        if (result.ok) {
+          showToast(
+            vote === "up"
+              ? "✅ Gracias por tu voto 👍"
+              : "✅ Gracias por tu voto 👎",
+          );
+          await loadAndRenderReviews(currentBook.id);
+        } else {
+          showToast("❌ Error al votar");
+        }
+      }
+      /* ═══════════════════════════════════════
+COLABORACIONES - MODAL & FORM
+═══════════════════════════════════════ */
+
+      // Mostrar/ocultar CTA en libro.html
+      function initCollabCTA() {
+        const user = usuarioActual();
+        const collabCta = document.getElementById("collab-cta");
+        const collabHint = document.getElementById("collab-hint");
+        const btnRequest = document.getElementById("btn-request-collab");
+
+        // Debug en consola (eliminar en producción)
+        console.log("🔍 initCollabCTA:", {
+          user: user?.get("rol"),
+          currentBook: currentBook?.titulo,
+          colabF: currentBook?.colabF,
+          colabE: currentBook?.colabE,
+          ctaFound: !!collabCta,
+          hintFound: !!collabHint,
+          btnFound: !!btnRequest,
+        });
+
+        if (!currentBook || !collabCta || !collabHint || !btnRequest) {
+          console.warn("⚠️ initCollabCTA: Faltan elementos DOM o currentBook");
+          return;
+        }
+
+        // Verificar que el libro acepta colaboraciones
+        const aceptaColab =
+          currentBook.colabF === true || currentBook.colabE === true;
+        const esAutor =
+          user && currentBook.escritorId && user.id === currentBook.escritorId;
+
+        console.log("📋 Condiciones:", {
+          aceptaColab,
+          esAutor,
+          userRol: user?.get("rol"),
+        });
+
+        if (aceptaColab && user && !esAutor) {
+          collabCta.style.display = "block";
+
+          if (user.get("rol") === "bookstagramer") {
+            collabHint.textContent =
+              "Como bookstagramer, puedes solicitar reseñar este libro. No hay coste para el autor.";
+            btnRequest.onclick = () =>
+              openCollabModal("bookstagramer_a_escritor", currentBook);
+          } else if (user.get("rol") === "escritor") {
+            collabHint.textContent =
+              "Como escritor, puedes invitar a un bookstagramer a reseñar este libro. Se aplicará su tarifa.";
+            btnRequest.onclick = () =>
+              openCollabModal("escritor_a_bookstagramer", currentBook);
+          }
+        } else {
+          console.log("ℹ️ CTA no mostrado:", {
+            aceptaColab,
+            tieneUser: !!user,
+            esAutor,
+          });
+        }
+      }
+
+      // Abrir modal de colaboración
+      function openCollabModal(tipo, book) {
+        document.getElementById("collab-tipo").value = tipo;
+        document.getElementById("collab-libroId").value = book.id;
+        document.getElementById("collab-destinatarioId").value =
+          book.escritorId;
+
+        const fields = document.getElementById("collab-fields");
+        const note = document.getElementById("collab-note");
+        const title = document.getElementById("collab-modal-title");
+
+        if (tipo === "bookstagramer_a_escritor") {
+          title.textContent = "Solicitar reseñar este libro";
+          fields.innerHTML = `
+      <div class="form-group">
+        <label>Modalidad de colaboración</label>
+        <select id="collab-modalidad" required>
+          <option value="fisico">Envío físico del libro</option>
+          <option value="ebook">Ebook / PDF</option>
+          <option value="ambos">Ambos formatos</option>
+        </select>
+      </div>
+    `;
+          note.innerHTML =
+            "✅ <strong>Sin coste:</strong> Esta solicitud no genera ningún pago para el autor.";
+        } else if (tipo === "escritor_a_bookstagramer") {
+          title.textContent = "Invitar bookstagramer a colaborar";
+          fields.innerHTML = `
+      <div class="form-group">
+        <label>Tarifa a pagar (€)</label>
+        <input type="number" id="collab-tarifa" step="0.01" placeholder="Ej: 25.00" required />
+        <small style="color:var(--text-dim)">Esta tarifa se cobrará a tu cuenta si el bookstagramer acepta.</small>
+      </div>
+    `;
+          note.innerHTML =
+            "⚠️ <strong>Con coste:</strong> Si el bookstagramer acepta, se cobrará la tarifa indicada a tu cuenta.";
+        }
+
+        document.getElementById("collab-modal").style.display = "flex";
+      }
+
+      function closeCollabModal() {
+        document.getElementById("collab-modal").style.display = "none";
+        document.getElementById("collab-form").reset();
+        document.getElementById("collab-fields").innerHTML = "";
+      }
+
+      // Submit del formulario
+      document
+        .getElementById("collab-form")
+        ?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const tipo = document.getElementById("collab-tipo").value;
+          const libroId = parseInt(
+            document.getElementById("collab-libroId").value,
+          );
+          const destinatarioId = document.getElementById(
+            "collab-destinatarioId",
+          ).value;
+          const mensaje = document
+            .getElementById("collab-mensaje")
+            .value.trim();
+
+          const data = {
+            tipo,
+            libroId,
+            destinatarioId,
+            mensaje:
+              mensaje || "Hola, me gustaría colaborar contigo en este libro.",
+          };
+
+          if (tipo === "bookstagramer_a_escritor") {
+            data.modalidad = document.getElementById("collab-modalidad").value;
+          } else if (tipo === "escritor_a_bookstagramer") {
+            const tarifa = parseFloat(
+              document.getElementById("collab-tarifa").value,
+            );
+            if (isNaN(tarifa) || tarifa <= 0) {
+              showToast("⚠️ Introduce una tarifa válida");
+              return;
+            }
+            data.tarifa = tarifa;
+          }
+
+          const btn = document.getElementById("btn-submit-collab");
+          btn.disabled = true;
+          btn.textContent = "Enviando…";
+
+          const result = await solicitarColaboracion(data);
+
+          if (result.ok) {
+            showToast(
+              "✅ Solicitud enviada. Te avisaremos cuando haya respuesta.",
+            );
+            closeCollabModal();
+          } else {
+            showToast("❌ Error: " + (result.error || "No se pudo enviar"));
+          }
+
+          btn.disabled = false;
+          btn.textContent = "Enviar solicitud";
+        });
+
+      // Cerrar modal al hacer clic fuera
+      document
+        .getElementById("collab-modal")
+        ?.addEventListener("click", (e) => {
+          if (e.target.id === "collab-modal") closeCollabModal();
+        });
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const params = new URLSearchParams(location.search);
+        const bookId = parseInt(params.get("id"));
+        const books = await loadBooks();
+        const book = books.find((b) => b.id === bookId);
+        currentBook = book;
+
+        defaultBookData = book
+          ? {
+              valoracion: book.valoracion || 4.5,
+              mood: book.mood || [],
+              etiquetas: book.etiquetas || [],
+            }
+          : null;
+
+        if (!book) {
+          document.getElementById("book-content").innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:60px 0;">
+              <div style="font-size:3rem;margin-bottom:16px;">📚</div>
+              <h2>Libro no encontrado</h2>
+              <p style="margin:16px 0 24px;">Ese libro no existe en nuestro catálogo.</p>
+              <a href="catalogo.html" class="btn btn-primary">Ver catálogo</a>
+            </div>`;
+          return;
+        }
+
+        document.getElementById("page-title").textContent =
+          `${book.titulo} - AdEA`;
+        document.getElementById("page-desc").content =
+          book.sinopsis_corta || "";
+
+        document.getElementById("book-content").innerHTML = `
+          <div class="book-cover-wrap">
+            <div class="book-cover">
+              <img src="${book.imagen || ""}" alt="${book.titulo || ""}"
+                onerror="this.src='assets/img/cover-placeholder.svg'">
+            </div>
+          </div>
+          <div class="book-info">
+            <div class="book-info__generos">
+              ${(book.genero || []).map((g) => `<span class="badge badge-gold">${g}</span>`).join("")}
+            </div>
+            <h1 class="book-info__title">${book.titulo || ""}</h1>
+            <div class="book-info__author">${book.autor || ""}</div>
+            <div class="book-info__rating">
+              <span class="stars" id="book-rating-stars">${renderStars(book.valoracion || 4.5)}</span>
+              <span id="book-rating-value">${(book.valoracion || 4.5).toFixed(1)} / 5</span>
+              <span id="book-rating-count" style="font-size:0.8rem;color:var(--text-dim);margin-left:8px;"></span>
+            </div>
+            <p class="book-info__sinopsis" style="text-align:justify;">${book.sinopsis_larga || ""}</p>
+            <div class="book-info__tags" id="book-tags">
+              ${getRandomTags(book.etiquetas || [])
+                .map((t) => `<span class="book-info__tag">${t}</span>`)
+                .join("")}
+            </div>
+            <div id="collab-cta" style="display:none; margin-top:24px; padding:20px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-lg);">
+  <div style="font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+    <span>🤝</span>
+    <span>¿Quieres colaborar en este libro?</span>
+  </div>
+  <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;" id="collab-hint"></p>
+  <button class="btn btn-amazon btn-lg buy-box__btn" id="btn-request-collab" style="
+    background: #beb6b7;
+    color: #852121;">
+    Solicitar colaboración
+  </button>
+</div><br>
+            <div class="buy-box">
+              <div class="buy-box__label">¿Dónde comprarlo?</div>
+              <div class="buy-box__main">
+                <a href="${book.afiliado_url || "#"}" target="_blank" rel="noopener sponsored"
+                  class="btn btn-amazon btn-lg buy-box__btn">👉 Amazon</a>
+                <p class="affiliate-note">Muy recomendado esta semana · Entrega rápida con Prime</p>
+                <p class="affiliate-note">*AdEA participa en el programa de afiliados de Amazon. Tu precio no cambia.</p>
+              </div>
+            </div>
+            <a href="catalogo.html?mood=${(book.mood || [])[0] || ""}" class="btn btn-secondary">
+              Ver más libros ${(book.mood || [])[0] || "similares"} →
+            </a><br><br>
+            <a href="catalogo.html" class="book-info__back" style="justify-content: center;">← Volver al catálogo</a>
+          </div>`;
+
+        const related = books
+          .filter(
+            (b) =>
+              b.id !== book.id &&
+              (b.mood || []).some((m) => (book.mood || []).includes(m)),
+          )
+          .slice(0, 4);
+        document.getElementById("related-grid").innerHTML = related
+          .map((b) => buildBookCard(b, ""))
+          .join("");
+        initFadeIn();
+        // Botones de favoritos y leído
+
+        document
+          .getElementById("btn-mark-read")
+          ?.addEventListener("click", async () => {
+            const user = usuarioActual();
+            if (!user) {
+              showToast("⚠️ Debes iniciar sesión");
+              location.href = "auth.html";
+              return;
+            }
+            const result = await addLeido(currentBook.id);
+            if (result.ok) {
+              showToast(
+                result.duplicado
+                  ? "✓ Ya marcado como leído"
+                  : "✓ Marcado como leído",
+              );
+            } else {
+              showToast("❌ Error al guardar");
+            }
+          });
+
+        await loadAndRenderReviews(book.id);
+
+        document
+          .getElementById("btn-add-resena")
+          .addEventListener("click", () => {
+            const form = document.getElementById("expandable-resena-form");
+            form.classList.toggle("show");
+            if (form.classList.contains("show")) {
+              document.getElementById("inline-resena-form").reset();
+              document.getElementById("resena-edit-id").value = "";
+              document.getElementById("btn-submit-resena").textContent =
+                "Publicar reseña";
+            }
+          });
+        document
+          .getElementById("btn-cancel-inline")
+          .addEventListener("click", () => {
+            document
+              .getElementById("expandable-resena-form")
+              .classList.remove("show");
+            document.getElementById("inline-resena-form").reset();
+          });
+        document
+          .getElementById("inline-resena-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            submitResenaForm("inline");
+          });
+
+        document
+          .getElementById("modal-close")
+          .addEventListener("click", closeResenaModal);
+        document
+          .getElementById("modal-cancel")
+          .addEventListener("click", closeResenaModal);
+        document
+          .getElementById("resena-modal")
+          .addEventListener("click", (e) => {
+            if (e.target === document.getElementById("resena-modal"))
+              closeResenaModal();
+          });
+        document
+          .getElementById("modal-resena-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            submitResenaForm("modal");
+          });
+
+        ["resena-rating", "m-resena-rating"].forEach((id) => {
+          document.getElementById(id).addEventListener("input", (e) => {
+            e.target.value = e.target.value
+              .replace(",", ".")
+              .replace(/[^0-5.]/g, "")
+              .slice(0, 3);
+          });
+        });
+        initCollabCTA();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo - AdEA</title>
+    <meta
+      name="description"
+      content="Explora más de 20 libros curados por emoción. Filtra por género, mood y popularidad. Tu próxima lectura te está esperando."
+    />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/mobile.css" />
+    <style>
+      .catalog-hero {
+        padding: 120px 0 48px;
+      }
+      .catalog-hero__title {
+        margin-bottom: 12px;
+      }
+      .catalog-hero__inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+      .results-info {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        margin-bottom: 24px;
+      }
+      .results-info strong {
+        color: var(--text);
+      }
+      .no-results {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 80px 24px;
+        color: var(--text-muted);
+      }
+      .no-results span {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 16px;
+      }
+      .active-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      .filter-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--red-glow);
+        border: 1px solid rgba(200, 16, 46, 0.3);
+        color: #ff4d6d;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .filter-tag::after {
+        content: "×";
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body class="noise-bg">
+    <div id="nav-placeholder"></div>
+
+    <section class="catalog-hero">
+      <div class="container">
+        <div class="catalog-hero__inner">
+          <div>
+            <span class="section-header__label">Todos los libros</span>
+            <h1 class="catalog-hero__title">Catálogo completo</h1>
+            <p>
+              Filtra por género, mood o búsqueda libre. Sin algoritmos raros.
+            </p>
+          </div>
+          <div class="search-wrap">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Buscar título o autor…"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section-sm">
+      <div class="container">
+        <!-- FILTERS -->
+        <div class="filters fade-in">
+          <div class="filters__row">
+            <div class="filter-group">
+              <label>Género</label>
+              <select id="filter-genero">
+                <option value="">Todos los géneros</option>
+                <option value="romance">Romance</option>
+                <option value="thriller">Thriller</option>
+                <option value="fantasia">Fantasía</option>
+                <option value="ficción">Ficción</option>
+                <option value="histórica">Histórica</option>
+                <option value="drama">Drama</option>
+                <option value="literaria">Literaria</option>
+                <option value="ciencia ficción">Ciencia ficción</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Mood</label>
+              <select id="filter-mood">
+                <option value="">Todos los moods</option>
+                <option value="adictivo">⚡ Adictivo</option>
+                <option value="devastador">💔 Devastador</option>
+                <option value="spicy">🌶️ Spicy</option>
+                <option value="reflexivo">💭 Reflexivo</option>
+                <option value="épico">🐉 Épico</option>
+                <option value="oscuro">🖤 Oscuro</option>
+                <option value="ligero">☀️ Ligero</option>
+                <option value="emotivo">😭 Emotivo</option>
+                <option value="esperanzador">🌟 Esperanzador</option>
+                <option value="melancólico">🌧️ Melancólico</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Ordenar por</label>
+              <select id="filter-order">
+                <option value="destacado">Destacados primero</option>
+                <option value="valoracion">Mejor valorados</option>
+                <option value="titulo">Alfabético</option>
+              </select>
+            </div>
+            <div>
+              <button
+                class="btn btn-ghost"
+                id="btn-reset"
+                style="margin-top: 24px"
+              >
+                ↺ Limpiar filtros
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MOOD PILLS -->
+        <div
+          class="mood-pills fade-in"
+          style="margin-bottom: 32px"
+          id="mood-pills"
+        >
+          <button class="mood-pill active" data-mood="">Todos</button>
+          <button class="mood-pill" data-mood="adictivo">⚡ Adictivo</button>
+          <button class="mood-pill" data-mood="devastador">
+            💔 Devastador
+          </button>
+          <button class="mood-pill" data-mood="spicy">🌶️ Spicy</button>
+          <button class="mood-pill" data-mood="reflexivo">💭 Reflexivo</button>
+          <button class="mood-pill" data-mood="épico">🐉 Épico</button>
+          <button class="mood-pill" data-mood="oscuro">🖤 Oscuro</button>
+          <button class="mood-pill" data-mood="ligero">☀️ Ligero</button>
+          <button class="mood-pill" data-mood="emotivo">😭 Emotivo</button>
+        </div>
+
+        <!-- ACTIVE FILTERS -->
+        <div class="active-filters" id="active-filters"></div>
+
+        <!-- RESULTS INFO -->
+        <p class="results-info" id="results-info"></p>
+
+        <!-- GRID -->
+        <div class="books-grid" id="catalog-grid"></div>
+      </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+    <script src="js/backend.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+      injectShell("");
+
+      let allBooks = [];
+      let activeGenero = "";
+      let activeMood = "";
+      let activeOrder = "destacado";
+      let searchQuery = "";
+      let filterByEscritorId = null; // ← NUEVO: filtro por escritor
+
+      // ---- Calcular promedio de reseñas ----
+      function calcularRatingDesdeResenas(reviews) {
+        if (!reviews?.length) return null;
+        const sum = reviews.reduce((acc, r) => acc + (r.estrellas || 0), 0);
+        return Math.round((sum / reviews.length) * 10) / 10;
+      }
+
+      function getTopEtiquetasDesdeResenas(reviews, limit = 2) {
+        if (!reviews?.length) return [];
+        const freq = {};
+        reviews.forEach((r) => {
+          if (r.etiqueta) freq[r.etiqueta] = (freq[r.etiqueta] || 0) + 1;
+        });
+        return Object.entries(freq)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, limit)
+          .map(([tag]) => tag);
+      }
+
+      async function enriquecerLibrosConResenas(libros) {
+        if (typeof getResenasPorLibro !== "function") return libros;
+        const enriched = await Promise.all(
+          libros.map(async (book) => {
+            try {
+              const reviews = await getResenasPorLibro(book.id);
+              const avgRating = calcularRatingDesdeResenas(reviews);
+              const topTags = getTopEtiquetasDesdeResenas(reviews, 2);
+              return {
+                ...book,
+                valoracion_review: avgRating,
+                topEtiquetas: topTags,
+                valoracion: avgRating !== null ? avgRating : book.valoracion,
+              };
+            } catch (e) {
+              return book;
+            }
+          }),
+        );
+        return enriched;
+      }
+
+      // ---- Filtros ----
+      function applyFilters() {
+        let books = [...allBooks];
+
+        // Filtro por escritor (desde URL)
+        if (filterByEscritorId) {
+          books = books.filter((b) => b.escritorId === filterByEscritorId);
+        }
+
+        // Solo libros activos
+        books = books.filter((b) => b.activo !== false);
+
+        // Búsqueda por texto
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          books = books.filter(
+            (b) =>
+              (b.titulo || "").toLowerCase().includes(q) ||
+              (b.autor || "").toLowerCase().includes(q) ||
+              (b.sinopsis_corta || "").toLowerCase().includes(q),
+          );
+        }
+
+        // Filtro por género
+        if (activeGenero)
+          books = books.filter((b) => (b.genero || []).includes(activeGenero));
+
+        // Filtro por mood
+        if (activeMood)
+          books = books.filter((b) => (b.mood || []).includes(activeMood));
+
+        // Ordenamiento
+        if (activeOrder === "destacado")
+          books.sort((a, b) => (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0));
+        else if (activeOrder === "valoracion")
+          books.sort(
+            (a, b) =>
+              (b.valoracion_review || b.valoracion || 0) -
+              (a.valoracion_review || a.valoracion || 0),
+          );
+        else if (activeOrder === "titulo")
+          books.sort((a, b) => (a.titulo || "").localeCompare(b.titulo || ""));
+
+        renderGrid(books);
+        renderResultsInfo(books.length);
+        renderActiveFilters();
+      }
+
+      function renderGrid(books) {
+        const grid = document.getElementById("catalog-grid");
+        if (!books.length) {
+          grid.innerHTML = `<div class="no-results"><span>📚</span><p>No encontramos libros con esos filtros.<br>Prueba combinando de otra forma.</p></div>`;
+          return;
+        }
+        grid.innerHTML = books.map((b) => buildBookCard(b, "")).join("");
+        initFadeIn();
+      }
+
+      function renderResultsInfo(count) {
+        document.getElementById("results-info").innerHTML =
+          `Mostrando <strong>${count}</strong> libro${count !== 1 ? "s" : ""}`;
+      }
+
+      function renderActiveFilters() {
+        const wrap = document.getElementById("active-filters");
+        const tags = [];
+        if (filterByEscritorId)
+          tags.push(`autor: ${filterByEscritorId.substring(0, 8)}...`);
+        if (activeMood) tags.push(`mood: ${activeMood}`);
+        if (activeGenero) tags.push(`género: ${activeGenero}`);
+        if (searchQuery) tags.push(`búsqueda: "${searchQuery}"`);
+        wrap.innerHTML = tags
+          .map(
+            (t) =>
+              `<span class="filter-tag" onclick="clearAllFilters()">${t}</span>`,
+          )
+          .join("");
+      }
+
+      function clearAllFilters() {
+        filterByEscritorId = null;
+        activeGenero = "";
+        activeMood = "";
+        searchQuery = "";
+        document.getElementById("filter-genero").value = "";
+        document.getElementById("filter-mood").value = "";
+        document.getElementById("search-input").value = "";
+        document
+          .querySelectorAll(".mood-pill")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelector('.mood-pill[data-mood=""]')
+          .classList.add("active");
+        applyFilters();
+      }
+
+      // ---- Init ----
+      document.addEventListener("DOMContentLoaded", async () => {
+        allBooks = await loadBooks();
+        allBooks = await enriquecerLibrosConResenas(allBooks);
+
+        // ← CORRECCIÓN: leer parámetros de URL y filtrar en memoria
+        const params = new URLSearchParams(location.search);
+        const escritorId = params.get("escritorId");
+        if (escritorId) {
+          filterByEscritorId = escritorId;
+        }
+        if (params.get("mood")) {
+          activeMood = params.get("mood");
+          document.getElementById("filter-mood").value = activeMood;
+        }
+        if (params.get("genero")) {
+          activeGenero = params.get("genero");
+          document.getElementById("filter-genero").value = activeGenero;
+        }
+
+        // Mood pills
+        document.querySelectorAll(".mood-pill").forEach((btn) => {
+          if (btn.dataset.mood === activeMood) btn.classList.add("active");
+          else btn.classList.remove("active");
+          btn.addEventListener("click", () => {
+            activeMood = btn.dataset.mood;
+            document
+              .querySelectorAll(".mood-pill")
+              .forEach((p) => p.classList.remove("active"));
+            btn.classList.add("active");
+            document.getElementById("filter-mood").value = activeMood;
+            applyFilters();
+          });
+        });
+
+        // Filtros select
+        document
+          .getElementById("filter-genero")
+          .addEventListener("change", (e) => {
+            activeGenero = e.target.value;
+            applyFilters();
+          });
+        document
+          .getElementById("filter-mood")
+          .addEventListener("change", (e) => {
+            activeMood = e.target.value;
+            document
+              .querySelectorAll(".mood-pill")
+              .forEach((p) => p.classList.remove("active"));
+            const match = document.querySelector(
+              `.mood-pill[data-mood="${activeMood}"]`,
+            );
+            if (match) match.classList.add("active");
+            else
+              document
+                .querySelector('.mood-pill[data-mood=""]')
+                .classList.add("active");
+            applyFilters();
+          });
+        document
+          .getElementById("filter-order")
+          .addEventListener("change", (e) => {
+            activeOrder = e.target.value;
+            applyFilters();
+          });
+        document
+          .getElementById("btn-reset")
+          .addEventListener("click", clearAllFilters);
+
+        // Búsqueda con debounce
+        let searchTimer;
+        document
+          .getElementById("search-input")
+          .addEventListener("input", (e) => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+              searchQuery = e.target.value.trim();
+              applyFilters();
+            }, 300);
+          });
+
+        applyFilters();
+      });
+    </script>
+  </body>
+</html>

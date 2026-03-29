@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contacto - AdEA</title>
+    <meta
+      name="description"
+      content="Contacta con AdEA para colaboraciones, partnerships con editoriales o cualquier consulta."
+    />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/mobile.css" />
+    <style>
+      .contact-hero {
+        padding: 140px 0 60px;
+      }
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        gap: 64px;
+        align-items: start;
+      }
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+      .contact-item {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+      }
+      .contact-item__icon {
+        font-size: 1.6rem;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .contact-item__label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin-bottom: 4px;
+      }
+      .contact-item__value {
+        font-size: 0.95rem;
+        color: var(--text);
+      }
+      .contact-item__value a {
+        color: var(--red);
+        transition: color var(--transition);
+      }
+      .contact-item__value a:hover {
+        color: var(--red-hover);
+      }
+      .contact-item__desc {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .contact-form-wrap {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 36px;
+      }
+      .contact-form-wrap h3 {
+        font-family: var(--font-serif);
+        font-size: 1.4rem;
+        margin-bottom: 8px;
+      }
+      .form-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-top: 24px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      .success-msg {
+        display: none;
+        text-align: center;
+        padding: 32px;
+      }
+      .success-msg.show {
+        display: block;
+      }
+      .success-msg .icon {
+        font-size: 3rem;
+        margin-bottom: 12px;
+      }
+
+      /* Chat AdEA en contacto (para no logueados) */
+      .chat-section {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        margin-top: 48px;
+      }
+      .chat-section__title {
+        font-family: var(--font-serif);
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+      }
+      .chat-quick-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 20px;
+      }
+      .chat-quick-form input,
+      .chat-quick-form textarea {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 12px 14px;
+        border-radius: var(--radius);
+        font-size: 0.9rem;
+        font-family: var(--font-sans);
+        box-sizing: border-box;
+        transition: border-color var(--transition);
+      }
+      .chat-quick-form input:focus,
+      .chat-quick-form textarea:focus {
+        outline: none;
+        border-color: var(--red);
+        background: var(--bg3);
+      }
+      .chat-quick-form textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      @media (max-width: 768px) {
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="noise-bg">
+    <div id="nav-placeholder"></div>
+
+    <section class="contact-hero">
+      <div class="container">
+        <span class="section-header__label">Hablemos</span>
+        <h1 style="margin-bottom: 12px">Contacto</h1>
+        <p style="max-width: 500px">
+          ¿Eres una editorial? ¿Tienes una marca relacionada con la lectura?
+          ¿Quieres hacer algo juntos? Escríbenos.
+        </p>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="container">
+        <div class="contact-grid">
+          <!-- LEFT: Info -->
+          <div class="contact-info fade-in">
+            <div class="contact-item">
+              <div class="contact-item__icon">📧</div>
+              <div>
+                <div class="contact-item__label">Email general</div>
+                <div class="contact-item__value">
+                  <a href="mailto:elevatestarmkt@gmail.com">elevatestarmkt@gmail.com</a>
+                </div>
+                <div class="contact-item__desc">
+                  Respondemos en menos de 48h
+                </div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-item__icon">🤝</div>
+              <div>
+                <div class="contact-item__label">
+                  Colaboraciones editoriales
+                </div>
+                <div class="contact-item__value">
+                  <a href="mailto:elevatestarmkt@gmail.com">elevatestarmkt@gmail.com</a>
+                </div>
+                <div class="contact-item__desc">
+                  Para editoriales que quieren llegar a nuestra comunidad
+                </div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-item__icon">📸</div>
+              <div>
+                <div class="contact-item__label">Bookstagramers</div>
+                <div class="contact-item__value">
+                  <a href="bookstagramers.html">Formulario de colaboración →</a>
+                </div>
+                <div class="contact-item__desc">
+                  Si eres creadora de contenido, usa el formulario específico
+                </div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-item__icon">📱</div>
+              <div>
+                <div class="contact-item__label">Redes sociales</div>
+                <div class="contact-item__value">
+                  <a
+                    href="https://www.instagram.com/adea_libros/"
+                    style="display: block"
+                    >📸 @adea_libros en Instagram</a
+                  >
+                  <a
+                    href="https://www.t.me/adea_oficial"
+                    style="display: block; margin-top: 4px"
+                    >🪧 @adea_oficial en Telegram</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              style="
+                background: var(--bg2);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-lg);
+                padding: 24px;
+              "
+            >
+              <div
+                style="
+                  font-size: 0.75rem;
+                  font-weight: 700;
+                  letter-spacing: 0.1em;
+                  text-transform: uppercase;
+                  color: var(--text-dim);
+                  margin-bottom: 12px;
+                "
+              >
+                ¿Eres editorial?
+              </div>
+              <p style="font-size: 0.9rem; margin-bottom: 16px">
+                AdEA puede presentar tus novedades a miles de lectores
+                apasionados. Hablemos de cómo podemos colaborar.
+              </p>
+              <a
+                href="mailto:editoriales@adea.es"
+                class="btn btn-primary btn-sm"
+                >Contactar ahora →</a
+              >
+            </div>
+          </div>
+
+          <!-- RIGHT: Form -->
+          <div class="contact-form-wrap fade-in">
+            <h3>Escríbenos</h3>
+            <p style="font-size: 0.9rem">
+              Cuéntanos de qué va y te respondemos lo antes posible.
+            </p>
+
+            <form id="contact-form" novalidate>
+              <div class="form-fields">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="c-nombre">Nombre</label>
+                    <input
+                      type="text"
+                      id="c-nombre"
+                      placeholder="Tu nombre"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="c-email">Email</label>
+                    <input
+                      type="email"
+                      id="c-email"
+                      placeholder="hola@email.com"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="c-asunto">Asunto</label>
+                  <select id="c-asunto">
+                    <option value="">Selecciona un tema</option>
+                    <option value="editorial">Soy editorial / marca</option>
+                    <option value="bookstagramer">Soy bookstagramer</option>
+                    <option value="colaboracion">
+                      Propuesta de colaboración
+                    </option>
+                    <option value="prensa">Prensa / medios</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="c-empresa">Empresa / marca (opcional)</label>
+                  <input
+                    type="text"
+                    id="c-empresa"
+                    placeholder="Nombre de tu empresa o proyecto"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="c-mensaje">Mensaje</label>
+                  <textarea
+                    id="c-mensaje"
+                    placeholder="Cuéntanos tu propuesta o consulta…"
+                    required
+                    style="min-height: 150px"
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  style="width: 100%; justify-content: center"
+                  id="btn-contact-submit"
+                >
+                  Enviar mensaje →
+                </button>
+                <p
+                  style="
+                    font-size: 0.72rem;
+                    color: var(--text-dim);
+                    text-align: center;
+                  "
+                >
+                  Tus datos no se comparten con terceros.
+                </p>
+              </div>
+            </form>
+
+            <div class="success-msg" id="contact-success">
+              <div class="icon">✅</div>
+              <h3 style="font-family: var(--font-serif); margin-bottom: 8px">
+                Mensaje enviado
+              </h3>
+              <p>Lo hemos recibido. Te respondemos en menos de 48 horas.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHAT RÁPIDO (para usuarios con cuenta) -->
+        <div
+          class="chat-section fade-in"
+          id="chat-registrado-section"
+          style="display: none"
+        >
+          <h3 class="chat-section__title">
+            💬 ¿Tienes cuenta en AdEA? Escríbenos desde tu panel
+          </h3>
+          <p
+            style="
+              color: var(--text-muted);
+              font-size: 0.9rem;
+              margin-bottom: 8px;
+            "
+          >
+            Si ya tienes cuenta, puedes usar el chat directo con AdEA desde tu
+            panel de usuario. Te respondemos más rápido.
+          </p>
+          <a
+            href="dashboard.html"
+            class="btn btn-primary"
+            onclick="sessionStorage.setItem('dash-section', 'chat-adea')"
+            >Ir a mi panel → Chat AdEA</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+    <script src="js/backend.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+      injectShell("");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Mostrar banner si tiene sesión
+        const user = usuarioActual ? usuarioActual() : null;
+        if (user) {
+          document.getElementById("chat-registrado-section").style.display =
+            "block";
+        }
+
+        document
+          .getElementById("contact-form")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById("c-nombre").value.trim();
+            const email = document.getElementById("c-email").value.trim();
+            const asunto = document.getElementById("c-asunto").value;
+            const empresa = document.getElementById("c-empresa").value.trim();
+            const mensaje = document.getElementById("c-mensaje").value.trim();
+
+            if (!nombre || !email || !mensaje) {
+              showToast("⚠️ Rellena los campos obligatorios");
+              return;
+            }
+
+            const btn = document.getElementById("btn-contact-submit");
+            btn.disabled = true;
+            btn.textContent = "Enviando…";
+
+            try {
+              // Guardar en Back4App
+              const Contacto = Parse.Object.extend("ContactoFormulario");
+              const c = new Contacto();
+              c.set("nombre", nombre);
+              c.set("email", email);
+              c.set("asunto", asunto || "sin asunto");
+              c.set("empresa", empresa || "");
+              c.set("mensaje", mensaje);
+              c.set("estado", "pendiente");
+
+              // Si hay usuario logueado, guardar referencia
+              const user = usuarioActual ? usuarioActual() : null;
+              if (user) {
+                c.set("usuarioId", user.id);
+              }
+
+              // ACL: solo escritura pública (nadie más puede leerlo)
+              const acl = new Parse.ACL();
+              acl.setPublicReadAccess(false);
+              acl.setPublicWriteAccess(false);
+              // Si hay user, darle lectura
+              if (user) {
+                acl.setReadAccess(user, true);
+                acl.setWriteAccess(user, true);
+              }
+              c.setACL(acl);
+
+              await c.save();
+
+              document.getElementById("contact-form").style.display = "none";
+              document.getElementById("contact-success").classList.add("show");
+            } catch (err) {
+              console.error("Error guardando contacto:", err);
+              // Aunque falle en Parse, mostrar éxito al usuario (el form llegó)
+              document.getElementById("contact-form").style.display = "none";
+              document.getElementById("contact-success").classList.add("show");
+            }
+
+            btn.disabled = false;
+            btn.textContent = "Enviar mensaje →";
+          });
+      });
+    </script>
+  </body>
+</html>

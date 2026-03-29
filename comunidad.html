@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comunidad - AdEA</title>
+    <meta
+      name="description"
+      content="Descubre reseñas reales de lectores apasionados. Sin nombres, sin portadas. Solo historias que te harán sentir."
+    />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/mobile.css" />
+    <style>
+      .comunidad-hero {
+        padding: 120px 0 48px;
+        text-align: center;
+      }
+      .comunidad-search {
+        max-width: 480px;
+        margin: 0 auto 24px;
+        position: relative;
+      }
+      .comunidad-search input {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 12px 16px 12px 44px;
+        border-radius: 30px;
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        transition: border-color var(--transition);
+      }
+      .comunidad-search input:focus {
+        outline: none;
+        border-color: var(--red);
+      }
+      .comunidad-search svg {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-dim);
+        pointer-events: none;
+      }
+      .comunidad-filters {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 24px 0 40px;
+      }
+      .filter-chip {
+        padding: 8px 20px;
+        border-radius: 30px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        cursor: pointer;
+        transition: all var(--transition);
+        font-size: 0.85rem;
+        color: var(--text); /* ✅ Corregido: era aliceblue */
+      }
+      .filter-chip.active,
+      .filter-chip:hover {
+        border-color: var(--red);
+        background: var(--red-glow);
+        color: var(--text);
+      }
+      .reviews-anonimas {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+      }
+      .review-anonima {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        cursor: pointer;
+        transition: border-color var(--transition);
+      }
+      .review-anonima:hover {
+        border-color: var(--red);
+      }
+      .review-anonima__text {
+        font-family: var(--font-serif);
+        font-size: 1.1rem;
+        line-height: 1.7;
+        font-style: italic;
+        margin-bottom: 16px;
+        text-align: justify;
+      }
+      .review-anonima__meta {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+      }
+      .review-anonima__stars {
+        color: var(--gold);
+      }
+      .review-anonima__mood {
+        background: var(--surface);
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+      }
+      .review-anonima__cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--red);
+        color: var(--white);
+        padding: 10px 20px;
+        border-radius: var(--radius);
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: background var(--transition);
+      }
+      .review-anonima__cta:hover {
+        background: var(--red-hover);
+      }
+      .profiles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 48px;
+      }
+      .profile-mini {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all var(--transition);
+        text-decoration: none;
+        display: block;
+      }
+      .profile-mini:hover {
+        border-color: var(--red);
+        transform: translateY(-2px);
+      }
+      .profile-mini__avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--red);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 auto 12px;
+      }
+      .profile-mini__name {
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: var(--text);
+      }
+      .profile-mini__rol {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+      }
+      .profile-mini__bio {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-muted);
+        grid-column: 1 / -1;
+      }
+      .empty-state__icon {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+      }
+
+      @media (max-width: 768px) {
+        .reviews-anonimas {
+          grid-template-columns: 1fr;
+        }
+        .profiles-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .comunidad-filters {
+          gap: 8px;
+        }
+        .filter-chip {
+          padding: 6px 14px;
+          font-size: 0.8rem;
+        }
+      }
+      @media (max-width: 480px) {
+        .profiles-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="noise-bg">
+    <div id="nav-placeholder"></div>
+
+    <section class="comunidad-hero">
+      <div class="container">
+        <span class="section-header__label">Comunidad real</span>
+        <h1>Reseñas sin filtros</h1>
+        <p style="max-width: 600px; margin: 0 auto 24px">
+          Lee lo que otros sienten al leer. Sin nombres de libros, sin portadas,
+          sin autores. Solo la emoción pura. ¿Te gusta? Cómpralo en Amazon.
+        </p>
+
+        <!-- 🔍 BUSCADOR POR NOMBRE -->
+        <div class="comunidad-search">
+          <svg
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            id="search-users"
+            placeholder="Buscar usuarios por nombre..."
+          />
+        </div>
+
+        <div class="comunidad-filters" id="rol-filters">
+          <button class="filter-chip active" data-rol="">Todos</button>
+          <button class="filter-chip" data-rol="lector">📖 Lectores</button>
+          <button class="filter-chip" data-rol="escritor">✍️ Escritores</button>
+          <button class="filter-chip" data-rol="bookstagramer">
+            📸 Bookstagramers
+          </button>
+        </div>
+      </div>
+    </section>
+    
+    <section class="section-sm" style="background: var(--bg2)">
+      <div class="container">
+        <h2
+          style="
+            margin-bottom: 24px;
+            font-family: var(--font-serif);
+            text-align: center;
+          "
+        >
+          Perfiles de la comunidad
+        </h2>
+        <div class="profiles-grid" id="profiles-grid"></div>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="container">
+        <h2 style="margin-bottom: 24px; font-family: var(--font-serif)">
+          Últimas reseñas
+        </h2>
+        <div class="reviews-anonimas" id="reviews-grid"></div>
+      </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+    <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+    <script src="js/backend.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+      injectShell("");
+
+      let activeRol = "";
+      let searchQuery = "";
+      let allReviews = [];
+      let allProfiles = [];
+      let profilesByUserId = {}; // ✅ Mapa para búsqueda rápida
+
+      // =====================================================
+      // CARGA INICIAL
+      // =====================================================
+      async function loadComunidad() {
+        try {
+          // Cargar reseñas (ahora con usuarioId incluido)
+          allReviews = await getUltimasResenas(50);
+
+          // Cargar perfiles y crear mapa de búsqueda
+          allProfiles = await getTodosLosPerfiles();
+          profilesByUserId = {};
+          allProfiles.forEach((p) => {
+            if (p?.userId) profilesByUserId[p.userId] = p;
+          });
+
+          renderReviews();
+          renderProfiles();
+
+          // Debug en consola (eliminar en producción)
+          console.log("✅ Perfiles cargados:", allProfiles.length);
+          console.log("✅ Reseñas cargadas:", allReviews.length);
+        } catch (err) {
+          console.error("❌ Error cargando comunidad:", err.message);
+          document.getElementById("reviews-grid").innerHTML =
+            `<div class="empty-state"><div class="empty-state__icon">⚠️</div><p>Error al cargar la comunidad</p></div>`;
+        }
+      }
+
+      // =====================================================
+      // RENDERIZAR RESEÑAS (ANÓNIMAS - sin libro/autor)
+      // =====================================================
+      function renderReviews() {
+        const grid = document.getElementById("reviews-grid");
+
+        // Filtrar por rol si está activo
+        let filtered = [...allReviews];
+        if (activeRol) {
+          filtered = filtered.filter((r) => {
+            // ✅ Buscar perfil por usuarioId (ahora disponible)
+            const perfil = profilesByUserId[r.usuarioId];
+            return perfil?.rol === activeRol;
+          });
+        }
+
+        if (!filtered.length) {
+          grid.innerHTML = `<div class="empty-state"><div class="empty-state__icon">📚</div><p>No hay reseñas aún con este filtro.</p></div>`;
+          return;
+        }
+
+        grid.innerHTML = filtered
+          .slice(0, 12)
+          .map((r) => {
+            const stars =
+              "★".repeat(Math.floor(r.estrellas)) +
+              "☆".repeat(5 - Math.floor(r.estrellas));
+            const textoCorto =
+              r.texto?.length > 180
+                ? r.texto.substring(0, 180) + "…"
+                : r.texto || "";
+
+            return `
+<div class="review-anonima fade-in" onclick="window.location.href='libro.html?id=${r.libroId}'">
+  <p class="review-anonima__text">"${textoCorto}"</p>
+  <div class="review-anonima__meta">
+    <span class="review-anonima__stars">${stars}</span>
+    ${r.mood ? `<span class="review-anonima__mood">${r.mood}</span>` : ""}
+  </div>
+  ${
+    r.etiqueta
+      ? `<p style="font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    background: var(--surface);
+    padding: 3px 10px;
+    border-radius: 12px;
+    max-width: fit-content;">${r.etiqueta}</p>`
+      : ""
+  }
+  <a href="${r.afiliadoUrl || "#"}" target="_blank" rel="noopener sponsored" class="review-anonima__cta" 
+     onclick="event.stopPropagation(); if(typeof trackClick==='function') trackClick('${r.libroId}')">
+    Comprar
+  </a>
+</div>`;
+          })
+          .join("");
+        initFadeIn();
+      }
+
+      // =====================================================
+      // RENDERIZAR PERFILES (con buscador por nombre)
+      // =====================================================
+      function renderProfiles() {
+        const grid = document.getElementById("profiles-grid");
+
+        // Filtrar por rol - con validación de datos
+        let filtered = allProfiles.filter((p) => {
+          if (!p?.rol) return false; // ✅ Excluir perfiles sin rol definido
+          return activeRol ? p.rol === activeRol : true;
+        });
+
+        // 🔍 Filtrar por búsqueda de nombre (case-insensitive)
+        if (searchQuery.trim()) {
+          const query = searchQuery.toLowerCase().trim();
+          filtered = filtered.filter((p) => {
+            const nombre = (p.nombre || p.displayName || "").toLowerCase();
+            return nombre.includes(query);
+          });
+        }
+
+        if (!filtered.length) {
+          grid.innerHTML = `<div class="empty-state"><div class="empty-state__icon">👥</div><p>${searchQuery ? "No hay usuarios con ese nombre" : "No hay perfiles con este filtro"}</p></div>`;
+          return;
+        }
+
+        grid.innerHTML = filtered
+          .slice(0, 12)
+          .map((p) => {
+            const nombre = p.nombre || p.displayName || "Usuario";
+            const initial = nombre.charAt(0).toUpperCase();
+            const bioCorta = p.bio
+              ? p.bio.length > 60
+                ? p.bio.substring(0, 60) + "…"
+                : p.bio
+              : "";
+
+            return `
+<a href="perfil.html?id=${p.userId}" class="profile-mini">
+  <div class="profile-mini__avatar">${initial}</div>
+  <div class="profile-mini__name">${nombre}</div>
+  <div class="profile-mini__rol">${p.rol}</div>
+  ${bioCorta ? `<p class="profile-mini__bio">${bioCorta}</p>` : ""}
+  <div style="font-size:0.75rem;color:var(--text-muted);margin-top:8px">
+  ${typeof p.seguidoresAdEA === "number" ? p.seguidoresAdEA : 0} seguidores
+</div>
+</a>`;
+          })
+          .join("");
+      }
+
+      // =====================================================
+      // EVENT LISTENERS
+      // =====================================================
+
+      // Filtros por rol
+      document.getElementById("rol-filters").addEventListener("click", (e) => {
+        if (e.target.classList.contains("filter-chip")) {
+          document
+            .querySelectorAll(".filter-chip")
+            .forEach((c) => c.classList.remove("active"));
+          e.target.classList.add("active");
+          activeRol = e.target.dataset.rol;
+          // ✅ Re-renderizar ambas secciones
+          renderReviews();
+          renderProfiles();
+        }
+      });
+
+      // 🔍 Buscador por nombre (con debounce)
+      let searchTimer;
+      document.getElementById("search-users").addEventListener("input", (e) => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+          searchQuery = e.target.value;
+          renderProfiles(); // Solo afecta a perfiles
+        }, 300);
+      });
+
+      // Inicialización
+      document.addEventListener("DOMContentLoaded", loadComunidad);
+    </script>
+  </body>
+</html>
