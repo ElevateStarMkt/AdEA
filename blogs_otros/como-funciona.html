@@ -1,236 +1,536 @@
 <!doctype html>
 <html lang="es">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" type="image/x-icon" href="../favicon.ico" />
-<title>10 consejos para leer más libros al año - Blog AdEA</title>
-<meta
-name="description"
-content="Descubre estrategias prácticas para aumentar tu ritmo de lectura sin perder el disfrute."
-/>
-<link rel="stylesheet" href="../css/main.css" />
-<link rel="stylesheet" href="../css/mobile.css" />
-<style>
-.blog-post-hero {
-padding: 140px 0 60px;
-}
-.blog-post-content {
-padding: 60px 0 100px;
-}
-.blog-post-header {
-max-width: 800px;
-margin: 0 auto 48px;
-text-align: center;
-}
-.blog-post-category {
-font-size: 0.75rem;
-font-weight: 700;
-letter-spacing: 0.14em;
-text-transform: uppercase;
-color: var(--red);
-margin-bottom: 16px;
-display: inline-block;
-}
-.blog-post-title {
-font-family: var(--font-serif);
-font-size: clamp(2rem, 5vw, 3rem);
-margin-bottom: 24px;
-color: var(--text);
-}
-.blog-post-meta {
-display: flex;
-justify-content: center;
-gap: 24px;
-font-size: 0.85rem;
-color: var(--text-dim);
-}
-.blog-post-body {
-max-width: 720px;
-margin: 0 auto;
-}
-.blog-post-body h2 {
-font-family: var(--font-serif);
-font-size: 1.8rem;
-color: var(--text);
-margin: 48px 0 24px;
-}
-.blog-post-body h3 {
-font-family: var(--font-serif);
-font-size: 1.4rem;
-color: var(--text);
-margin: 32px 0 16px;
-}
-.blog-post-body p {
-font-size: 1.05rem;
-line-height: 1.9;
-color: var(--text-muted);
-margin-bottom: 24px;
-}
-.blog-post-body ul,
-.blog-post-body ol {
-margin: 24px 0;
-padding-left: 24px;
-}
-.blog-post-body li {
-font-size: 1.05rem;
-line-height: 1.8;
-color: var(--text-muted);
-margin-bottom: 16px;
-}
-.blog-post-body blockquote {
-background: var(--bg2);
-border-left: 4px solid var(--red);
-padding: 24px 32px;
-margin: 32px 0;
-font-family: var(--font-serif);
-font-size: 1.2rem;
-font-style: italic;
-color: var(--text);
-}
-.blog-post-body .highlight {
-background: var(--red-glow);
-padding: 24px 32px;
-border-radius: var(--radius-lg);
-margin: 32px 0;
-}
-.blog-post-body .highlight strong {
-color: var(--text);
-}
-.blog-post-tags {
-display: flex;
-gap: 8px;
-flex-wrap: wrap;
-margin: 48px 0;
-padding-top: 32px;
-border-top: 1px solid var(--border);
-}
-.blog-post-tag {
-font-size: 0.75rem;
-padding: 6px 14px;
-background: var(--surface);
-border-radius: 20px;
-color: var(--text-muted);
-}
-.blog-post-nav {
-display: flex;
-justify-content: space-between;
-gap: 24px;
-margin-top: 64px;
-padding-top: 32px;
-border-top: 1px solid var(--border);
-}
-.blog-post-nav__link {
-flex: 1;
-padding: 24px;
-background: var(--bg2);
-border: 1px solid var(--border);
-border-radius: var(--radius-lg);
-text-decoration: none;
-transition: all var(--transition);
-}
-.blog-post-nav__link:hover {
-border-color: var(--red);
-}
-.blog-post-nav__label {
-font-size: 0.75rem;
-color: var(--text-dim);
-margin-bottom: 8px;
-}
-.blog-post-nav__title {
-font-family: var(--font-serif);
-font-size: 1rem;
-color: var(--text);
-}
-@media (max-width: 768px) {
-.blog-post-nav {
-flex-direction: column;
-}
-}
-</style>
-</head>
-<body class="noise-bg">
-<div id="nav-placeholder"></div>
-<section class="blog-post-hero">
-<div class="container">
-<div class="blog-post-header">
-<span class="blog-post-category">💡 Consejos</span>
-<h1 class="blog-post-title">10 consejos para leer más libros al año</h1>
-<div class="blog-post-meta">
-<span>10 de Marzo, 2026</span>
-<span>7 min de lectura</span>
-<span>Por AdEA Team</span>
-</div>
-</div>
-</div>
-</section>
-<div class="divider"></div>
-<section class="blog-post-content">
-<div class="container">
-<article class="blog-post-body">
-<p>¿Sientes que no tienes tiempo para leer? ¿Te gustaría aumentar tu ritmo de lectura pero no sabes cómo? No estás solo. Muchos lectores se enfrentan a este desafío. La buena noticia es que con pequeños cambios en tus hábitos, puedes leer significativamente más sin sacrificar el disfrute.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/AdEA/favicon.ico" />
+    <title>Cómo funciona AdEA - Guía completa</title>
+    <meta
+      name="description"
+      content="Descubre cómo usar AdEA para encontrar tu próxima lectura. Te explicamos el modo Déjate Sorprender, el catálogo y todas las funcionalidades."
+    />
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/mobile.css" />
+    <style>
+      .guide-hero {
+        padding: 140px 0 60px;
+      }
+      .guide-content {
+        padding: 60px 0;
+      }
+      .guide-section {
+        margin-bottom: 64px;
+      }
+      .guide-section__title {
+        font-family: var(--font-serif);
+        font-size: clamp(1.4rem, 3vw, 2rem);
+        margin-bottom: 24px;
+        color: var(--text);
+      }
+      .guide-section__intro {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        margin-bottom: 32px;
+        max-width: 700px;
+      }
+      .feature-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        margin-bottom: 24px;
+      }
+      .feature-card__header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .feature-card__icon {
+        font-size: 2.5rem;
+      }
+      .feature-card__title {
+        font-family: var(--font-serif);
+        font-size: 1.3rem;
+        color: var(--text);
+      }
+      .feature-card__content {
+        color: var(--text-muted);
+        line-height: 1.8;
+      }
+      .feature-card__content ul {
+        margin: 16px 0;
+        padding-left: 24px;
+      }
+      .feature-card__content li {
+        margin-bottom: 8px;
+      }
+      .swipe-demo {
+        background: var(--bg3);
+        border: 2px dashed var(--border);
+        border-radius: var(--radius-lg);
+        padding: 40px;
+        text-align: center;
+        margin: 32px 0;
+      }
+      .swipe-demo__visual {
+        max-width: 400px;
+        margin: 0 auto 24px;
+        background: var(--bg2);
+        border-radius: 12px;
+        padding: 32px;
+        border: 1px solid var(--border);
+      }
+      .step-list {
+        counter-reset: step;
+        list-style: none;
+        padding: 0;
+      }
+      .step-list li {
+        position: relative;
+        padding-left: 64px;
+        margin-bottom: 32px;
+      }
+      .step-list li::before {
+        counter-increment: step;
+        content: counter(step);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 44px;
+        height: 44px;
+        background: var(--red);
+        color: var(--white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+      .step-list__title {
+        font-family: var(--font-serif);
+        font-size: 1.2rem;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      .tips-box {
+        background: var(--red-glow);
+        border: 1px solid rgba(200, 16, 46, 0.3);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        margin-top: 32px;
+      }
+      .tips-box__title {
+        font-family: var(--font-serif);
+        font-size: 1.2rem;
+        color: var(--text);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body class="noise-bg">
+    <div id="nav-placeholder"></div>
 
-<h2>1. Establece una meta realista</h2>
-<p>No te propongas leer 50 libros si el año pasado leíste 5. Empieza con un objetivo alcanzable, como 12 libros al año (uno al mes). Una vez que lo consigas, podrás aumentar gradualmente.</p>
+    <section class="guide-hero">
+      <div class="container">
+        <span class="section-header__label">Guía de uso</span>
+        <h1 style="margin-bottom: 12px">Cómo funciona AdEA</h1>
+        <p style="max-width: 600px">
+          Te explicamos paso a paso cómo sacar el máximo partido a nuestra
+          plataforma de descubrimiento emocional de libros.
+        </p>
+      </div>
+    </section>
 
-<h2>2. Crea un ritual de lectura</h2>
-<p>Asocia la lectura con un momento específico del día: antes de dormir, con el café de la mañana, o durante tu commute. La consistencia es clave.</p>
+    <div class="divider"></div>
 
-<h2>3. Lleva siempre un libro contigo</h2>
-<p>Aprovecha los tiempos muertos: esperas, transporte público, colas. Ten siempre un libro físico o tu e-reader a mano.</p>
+    <section class="guide-content">
+      <div class="container">
+        <!-- INTRO -->
+        <div class="guide-section">
+          <p class="guide-section__intro">
+            AdEA no es una biblioteca convencional. Aquí no buscas por título ni
+            autor.
+            <strong>Buscas por cómo te sientes</strong>. Te guiamos para que
+            encuentres el libro que necesitas en este momento exacto.
+          </p>
+        </div>
 
-<blockquote>"No es cuestión de tener tiempo, es cuestión de hacer tiempo para lo que importa."</blockquote>
+        <!-- MODO DÉJATE SORPRENDER -->
+        <div class="guide-section">
+          <h2 class="guide-section__title">🎲 Modo "Déjate Sorprender"</h2>
+          <p class="guide-section__intro">
+            Nuestra joya de la corona. Un sistema tipo scroll pero con libros.
+            Sin portadas, sin títulos, sin autores. Solo la historia y lo que te
+            va a hacer sentir.
+          </p>
 
-<h2>4. Reduce el tiempo de pantalla</h2>
-<p>Cambia 30 minutos de redes sociales por 30 minutos de lectura. Notarás la diferencia en pocas semanas.</p>
+          <div class="feature-card">
+            <div class="feature-card__header">
+              <span class="feature-card__icon">🃏</span>
+              <h3 class="feature-card__title">¿Cómo funciona?</h3>
+            </div>
+            <div class="feature-card__content">
+              <ol class="step-list">
+                <li>
+                  <div class="step-list__title">Las cartas aparecen</div>
+                  <p>
+                    Cada carta es un libro. Verás solo: los moods (emociones),
+                    una sinopsis corta, etiquetas descriptivas, páginas, precio
+                    y valoración. <strong>Nada de portadas ni nombres</strong>.
+                  </p>
+                </li>
+                <li>
+                  <div class="step-list__title">Desliza o usa los botones</div>
+                  <p>
+                    <strong>→ Desliza a la derecha</strong> o pulsa
+                    <span style="color: #4ade80">♥</span> si te interesa.<br />
+                    <strong>← Desliza a la izquierda</strong> o pulsa
+                    <span style="color: #f87171">✕</span> si no es tu momento.
+                  </p>
+                </li>
+                <li>
+                  <div class="step-list__title">
+                    Se guardan en tu lista secreta
+                  </div>
+                  <p>
+                    Los libros que guardes aparecen en el panel derecho (o abajo
+                    en móvil). Desde ahí puedes comprarlos en Amazon con un
+                    clic.
+                  </p>
+                </li>
+                <li>
+                  <div class="step-list__title">Los descartados vuelven</div>
+                  <p>
+                    Si descartas un libro, no lo verás en
+                    <strong>36 horas</strong>. Después vuelve a la baraja por si
+                    cambias de opinión.
+                  </p>
+                </li>
+              </ol>
+            </div>
+          </div>
 
-<h2>5. Únete a un club de lectura</h2>
-<p>La responsabilidad social te motivará a mantener el ritmo. En AdEA tienes una comunidad de lectores apasionados.</p>
+          <div class="swipe-demo">
+            <div class="swipe-demo__visual">
+              <div style="font-size: 3rem; margin-bottom: 16px">📱</div>
+              <p style="font-size: 0.9rem">
+                Desliza a los lados<br />o usa los botones
+              </p>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-dim)">
+              <strong>Consejo:</strong> No pienses demasiado. Si la sinopsis te
+              atrapa en 5 segundos, guárdalo.
+            </p>
+          </div>
 
-<div class="highlight">
-<strong>💡 Consejo pro:</strong> Usa la función "Déjate Sorprender" de AdEA para descubrir libros que realmente te enganchen desde las primeras páginas.
-</div>
+          <div class="tips-box">
+            <div class="tips-box__title">💡 Consejos para este modo</div>
+            <ul style="margin: 0; padding-left: 24px; color: var(--text-muted)">
+              <li>
+                Activa los filtros si tienes preferencias (género, mood, número
+                de páginas)
+              </li>
+              <li>Usa el botón "Deshacer" (↩) si te equivocas al deslizar</li>
+              <li>
+                Cuando se acaben las cartas, pulsa "Ver todos de nuevo" para
+                reiniciar
+              </li>
+              <li>
+                Los libros guardados no aparecen hasta que los quites de la
+                lista
+              </li>
+            </ul>
+          </div>
+        </div>
 
-<h2>6. No te obligues a terminar libros que no te gustan</h2>
-<p>La vida es demasiado corta para leer libros que no disfrutas. Si después de 50 páginas no te atrapa, déjalo y pasa al siguiente.</p>
+        <!-- CATÁLOGO -->
+        <div class="guide-section">
+          <h2 class="guide-section__title">📚 Catálogo completo</h2>
+          <p class="guide-section__intro">
+            Prefieres ver todo de una vez. Sin misterios. Con portadas, títulos
+            y autores.
+          </p>
 
-<h2>7. Varía los géneros</h2>
-<p>Alternar entre diferentes géneros mantiene la lectura fresca y evita el aburrimiento.</p>
+          <div class="feature-card">
+            <div class="feature-card__header">
+              <span class="feature-card__icon">🔍</span>
+              <h3 class="feature-card__title">Funcionalidades</h3>
+            </div>
+            <div class="feature-card__content">
+              <ul>
+                <li>
+                  <strong>Filtros:</strong> Por género, mood y ordenación
+                  (destacados, valoración, alfabético)
+                </li>
+                <li>
+                  <strong>Búsqueda:</strong> Encuentra libros por título o autor
+                </li>
+                <li>
+                  <strong>Pills de mood:</strong> Acceso rápido a emociones
+                  (Adictivo, Spicy, Devastador...)
+                </li>
+                <li>
+                  <strong> Vista rápida:</strong> Haz clic en cualquier libro
+                  para ver su ficha completa
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
-<h2>8. Escucha audiolibros</h2>
-<p>Los audiolibros cuentan como lectura. Perfectos para hacer ejercicio, conducir o tareas domésticas.</p>
+        <!-- FICHA DE LIBRO -->
+        <div class="guide-section">
+          <h2 class="guide-section__title">📖 Ficha de libro</h2>
+          <p class="guide-section__intro">
+            Cuando haces clic en un libro (desde el catálogo o tu lista), ves
+            toda la información.
+          </p>
 
-<h2>9. Registra tus lecturas</h2>
-<p>Usa una app o una libreta para trackear tus libros. Ver tu progreso te motivará a seguir.</p>
+          <div class="feature-card">
+            <div class="feature-card__content">
+              <p>Verás:</p>
+              <ul>
+                <li>Portada en grande</li>
+                <li>Título y autor</li>
+                <li>Géneros y moods</li>
+                <li>Valoración con estrellas</li>
+                <li><strong>Sinopsis larga</strong> (la versión completa)</li>
+                <li>Etiquetas descriptivas</li>
+                <li>Botón de compra en Amazon</li>
+                <li>Libros similares (basados en el mismo mood)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
-<h2>10. Disfruta el proceso</h2>
-<p>No conviertas la lectura en una carrera. Lo importante es disfrutar cada libro, no la cantidad.</p>
+        <!-- LISTA SECRETA -->
+        <div class="guide-section">
+          <h2 class="guide-section__title">🤫 Tu lista secreta</h2>
+          <p class="guide-section__intro">
+            Todos los libros que guardas en "Déjate Sorprender" van aquí. Es tu
+            carrito de compras emocional.
+          </p>
 
-<div class="blog-post-tags">
-<span class="blog-post-tag">#lectura</span>
-<span class="blog-post-tag">#consejos</span>
-<span class="blog-post-tag">#hábitos</span>
-<span class="blog-post-tag">#libros</span>
-</div>
+          <div class="feature-card">
+            <div class="feature-card__content">
+              <p><strong>Características:</strong></p>
+              <ul>
+                <li>
+                  Se guarda en tu navegador (si no tienes cuenta) o en tu perfil
+                  (si estás registrado)
+                </li>
+                <li>
+                  Cada libro tiene sinopsis, páginas, precio y botón de compra
+                  directo
+                </li>
+                <li>
+                  Puedes eliminar libros individualmente o vaciar toda la lista
+                </li>
+                <li>
+                  En móvil, la lista se abre desde el botón flotante "🤫 Mi
+                  lista"
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
-<nav class="blog-post-nav">
-<a href="../blog.html" class="blog-post-nav__link">
-<div class="blog-post-nav__label">← Volver al</div>
-<div class="blog-post-nav__title">Blog AdEA</div>
-</a>
-<a href="../blogs_otros/como-funciona.html" class="blog-post-nav__link" style="text-align: right;">
-<div class="blog-post-nav__label">Siguiente artículo →</div>
-<div class="blog-post-nav__title">Cómo funciona AdEA</div>
-</a>
-</nav>
-</article>
-</div>
-</section>
-<div id="footer-placeholder"></div>
-<script src="../js/components.js"></script>
-<script src="../js/utils.js"></script>
-<script>
-injectShell("../");
-</script>
-</body>
+        <!-- MOODS -->
+        <div class="guide-section">
+          <h2 class="guide-section__title">💭 ¿Qué son los Moods?</h2>
+          <p class="guide-section__intro">
+            Los moods son emociones. Cada libro tiene entre 2 y 4 moods
+            asignados. Así es como los clasificamos:
+          </p>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+              gap: 16px;
+              margin-top: 24px;
+            "
+          >
+            <div class="feature-card" style="margin: 0">
+              <div style="font-size: 1.8rem; margin-bottom: 8px">⚡</div>
+              <div
+                style="font-weight: 700; color: var(--text); margin-bottom: 4px"
+              >
+                Adictivo
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-dim)">
+                No podrás dejarlo. Page-turner garantizado.
+              </div>
+            </div>
+            <div class="feature-card" style="margin: 0">
+              <div style="font-size: 1.8rem; margin-bottom: 8px">💔</div>
+              <div
+                style="font-weight: 700; color: var(--text); margin-bottom: 4px"
+              >
+                Devastador
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-dim)">
+                Prepárate para llorar. Mucho.
+              </div>
+            </div>
+            <div class="feature-card" style="margin: 0">
+              <div style="font-size: 1.8rem; margin-bottom: 8px">🌶️</div>
+              <div
+                style="font-weight: 700; color: var(--text); margin-bottom: 4px"
+              >
+                Spicy
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-dim)">
+                Romance con escenas picantes.
+              </div>
+            </div>
+            <div class="feature-card" style="margin: 0">
+              <div style="font-size: 1.8rem; margin-bottom: 8px">💭</div>
+              <div
+                style="font-weight: 700; color: var(--text); margin-bottom: 4px"
+              >
+                Reflexivo
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-dim)">
+                Te hará pensar durante días.
+              </div>
+            </div>
+            <div class="feature-card" style="margin: 0">
+              <div style="font-size: 1.8rem; margin-bottom: 8px">🐉</div>
+              <div
+                style="font-weight: 700; color: var(--text); margin-bottom: 4px"
+              >
+                Épico
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-dim)">
+                Mundos fantásticos, sagas enormes.
+              </div>
+            </div>
+            <div class="feature-card" style="margin: 0">
+              <div style="font-size: 1.8rem; margin-bottom: 8px">🖤</div>
+              <div
+                style="font-weight: 700; color: var(--text); margin-bottom: 4px"
+              >
+                Oscuro
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-dim)">
+                Thrillers, dark romance, gore.
+              </div>
+            </div>
+            <div class="feature-card" style="margin: 0">
+              <div style="font-size: 1.8rem; margin-bottom: 8px">☀️</div>
+              <div
+                style="font-weight: 700; color: var(--text); margin-bottom: 4px"
+              >
+                Ligero
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-dim)">
+                Lectura fácil, feel-good.
+              </div>
+            </div>
+            <div class="feature-card" style="margin: 0">
+              <div style="font-size: 1.8rem; margin-bottom: 8px">😭</div>
+              <div
+                style="font-weight: 700; color: var(--text); margin-bottom: 4px"
+              >
+                Emotivo
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-dim)">
+                Te removerá por dentro.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CUENTA DE USUARIO -->
+        <div class="guide-section">
+          <h2 class="guide-section__title">👤 Cuenta de usuario (opcional)</h2>
+          <p class="guide-section__intro">
+            No es obligatorio registrarse, pero tiene ventajas:
+          </p>
+
+          <div class="feature-card">
+            <div class="feature-card__content">
+              <p><strong>Sin cuenta:</strong></p>
+              <ul>
+                <li>Tu lista se guarda en el navegador (localStorage)</li>
+                <li>Los descartados se guardan 36 horas</li>
+                <li>Si borras caché, pierdes todo</li>
+              </ul>
+              <p style="margin-top: 20px"><strong>Con cuenta:</strong></p>
+              <ul>
+                <li>Tu lista se sincroniza en la nube</li>
+                <li>Accede desde cualquier dispositivo</li>
+                <li>Historial de libros vistos</li>
+                <li>Recomendaciones personalizadas (próximamente)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- PREGUNTAS FRECUENTES -->
+        <div class="guide-section">
+          <h2 class="guide-section__title">❓ Preguntas frecuentes</h2>
+
+          <div class="feature-card">
+            <div class="feature-card__content">
+              <div style="margin-bottom: 24px">
+                <strong
+                  style="color: var(--text); display: block; margin-bottom: 8px"
+                  >¿Por qué no se ven las portadas en Déjate Sorprender?</strong
+                >
+                <p style="margin: 0">
+                  Porque queremos que elijas por la historia, no por la portada.
+                  Es una forma de descubrir libros que quizás nunca hubieras
+                  considerado.
+                </p>
+              </div>
+              <div style="margin-bottom: 24px">
+                <strong
+                  style="color: var(--text); display: block; margin-bottom: 8px"
+                  >¿Puedo volver a ver un libro que descarté?</strong
+                >
+                <p style="margin: 0">
+                  Sí, pero tienes que esperar 36 horas. O pulsar "Ver todos de
+                  nuevo" cuando se acaben las cartas.
+                </p>
+              </div>
+              <div style="margin-bottom: 24px">
+                <strong
+                  style="color: var(--text); display: block; margin-bottom: 8px"
+                  >¿Los enlaces de Amazon son de afiliados?</strong
+                >
+                <p style="margin: 0">
+                  Sí. AdEA participa en el Programa de Afiliados de Amazon. Tu
+                  precio no cambia, pero nosotros recibimos una pequeña
+                  comisión.
+                </p>
+              </div>
+              <div>
+                <strong
+                  style="color: var(--text); display: block; margin-bottom: 8px"
+                  >¿Puedo sugerir libros?</strong
+                >
+                <p style="margin: 0">
+                  ¡Sí! Escríbenos a https://www.t.me/adea_oficial con tu
+                  recomendación. Leemos todo.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+    <script src="/js/components.js"></script>
+    <script>
+      injectShell("../");
+    </script>
+  </body>
 </html>
