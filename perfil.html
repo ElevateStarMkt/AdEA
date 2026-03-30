@@ -1303,22 +1303,31 @@
       }
 
       async function handleToggleFollow(targetUserId) {
-        try {
-          const result = await Parse.Cloud.run("toggleFollow", {
-            targetUserId,
-          });
-          if (result.ok) {
-            showToast(
-              result.siguiendo
-                ? "✅ Ahora sigues a este usuario"
-                : "❌ Dejaste de seguir",
-            );
-            await loadProfile();
-          }
-        } catch (err) {
-          showToast("❌ " + err.message);
-        }
+  try {
+    const result = await Parse.Cloud.run("toggleFollow", {
+      targetUserId,
+    });
+    
+    if (result.ok) {
+      showToast(
+        result.siguiendo
+          ? "✅ Ahora sigues a este usuario"
+          : "❌ Dejaste de seguir",
+      );
+      
+      // ✅ NUEVO: Refrescar el usuario actual para actualizar el array "following"
+      const currentUser = Parse.User.current();
+      if (currentUser) {
+        await currentUser.fetch();  // ← Esto actualiza los datos locales
       }
+      
+      // ✅ Ahora sí recargar el perfil con los datos actualizados
+      await loadProfile();
+    }
+  } catch (err) {
+    showToast("❌ " + err.message);
+  }
+}
 
       /* ─────────────────────────────────────────────
          DOMContentLoaded — aquí se registran TODOS
