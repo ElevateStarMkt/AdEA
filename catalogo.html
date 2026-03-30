@@ -67,6 +67,60 @@
         content: "×";
         font-size: 1rem;
       }
+      /* PAGINACIÓN */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 40px;
+        flex-wrap: wrap;
+      }
+      .pagination__btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pagination__btn:hover,
+      .pagination__btn.active {
+        background: var(--red);
+        border-color: var(--red);
+        color: var(--white);
+        transform: translateY(-2px);
+      }
+      .pagination__btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .pagination__info {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin: 0 12px;
+        min-width: 100px;
+        text-align: center;
+      }
+      @media (max-width: 768px) {
+        .pagination__btn {
+          width: 36px;
+          height: 36px;
+          font-size: 0.85rem;
+        }
+        .pagination__info {
+          font-size: 0.8rem;
+          margin: 0 8px;
+        }
+      }
     </style>
   </head>
   <body class="noise-bg">
@@ -155,9 +209,10 @@
             <div class="filter-group">
               <label>Ordenar por</label>
               <select id="filter-order">
-                <option value="destacado">Destacados primero</option>
-                <option value="valoracion">Mejor valorados</option>
+                <option value="default">Orden predeterminado</option>
+                <option value="valoracion">Solo por valoración</option>
                 <option value="titulo">Alfabético</option>
+                <option value="nuevos">Más nuevos primero</option>
               </select>
             </div>
             <div>
@@ -189,12 +244,12 @@
           <button class="mood-pill" data-mood="oscuro">🖤 Oscuro</button>
           <button class="mood-pill" data-mood="ligero">☀️ Ligero</button>
           <button class="mood-pill" data-mood="emotivo">😭 Emotivo</button>
-<button class="mood-pill" data-mood="esperanzador">🌟 Esperanzador</button>
-<button class="mood-pill" data-mood="melancólico">🌧️ Melancólico</button>
-<button class="mood-pill" data-mood="nostalgico">🕰️ Nostálgico</button>
-<button class="mood-pill" data-mood="divertido">😄 Divertido</button>
-<button class="mood-pill" data-mood="intrigante">🔍 Intrigante</button>
-<button class="mood-pill" data-mood="reconfortante">🫂 Reconfortante</button>
+          <button class="mood-pill" data-mood="esperanzador">🌟 Esperanzador</button>
+          <button class="mood-pill" data-mood="melancolico">🌧️ Melancólico</button>
+          <button class="mood-pill" data-mood="nostalgico">🕰️ Nostálgico</button>
+          <button class="mood-pill" data-mood="divertido">😄 Divertido</button>
+          <button class="mood-pill" data-mood="intrigante">🔍 Intrigante</button>
+          <button class="mood-pill" data-mood="reconfortante">🫂 Reconfortante</button>
         </div>
 
         <!-- ACTIVE FILTERS -->
@@ -205,6 +260,13 @@
 
         <!-- GRID -->
         <div class="books-grid" id="catalog-grid"></div>
+        
+        <!-- PAGINACIÓN -->
+        <div class="pagination" id="pagination" style="display: none">
+          <button class="pagination__btn" id="prev-page" disabled>←</button>
+          <span class="pagination__info" id="page-info">Página 1</span>
+          <button class="pagination__btn" id="next-page">→</button>
+        </div>
       </div>
     </section>
 
@@ -220,9 +282,14 @@
       let allBooks = [];
       let activeGenero = "";
       let activeMood = "";
-      let activeOrder = "destacado";
+      let activeOrder = "default";
       let searchQuery = "";
-      let filterByEscritorId = null; // ← NUEVO: filtro por escritor
+      let filterByEscritorId = null;
+      
+      // Paginación
+      const BOOKS_PER_PAGE = 36;
+      let currentPage = 1;
+      let filteredBooks = [];
 
       // ---- Calcular promedio de reseñas ----
       function calcularRatingDesdeResenas(reviews) {
@@ -265,7 +332,27 @@
         return enriched;
       }
 
-      // ---- Filtros ----
+      // ---- Ordenamiento MULTICRITERIO predeterminado ----
+      function sortBooksDefault(a, b) {
+        // 1. Destacado primero
+        if ((a.destacado ? 1 : 0) !== (b.destacado ? 1 : 0)) {
+          return (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0);
+        }
+        // 2. Mejor valoración
+        const ratingA = a.valoracion_review || a.valoracion || 0;
+        const ratingB = b.valoracion_review || b.valoracion || 0;
+        if (ratingA !== ratingB) {
+          return ratingB - ratingA;
+        }
+        // 3. Más nuevo (libroId más alto = más reciente)
+        if (a.libroId !== b.libroId) {
+          return b.libroId - a.libroId;
+        }
+        // 4. Alfabético por título
+        return (a.titulo || "").localeCompare(b.titulo || "");
+      }
+
+      // ---- Filtros y ordenamiento ----
       function applyFilters() {
         let books = [...allBooks];
 
@@ -297,35 +384,58 @@
           books = books.filter((b) => (b.mood || []).includes(activeMood));
 
         // Ordenamiento
-        if (activeOrder === "destacado")
-          books.sort((a, b) => (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0));
-        else if (activeOrder === "valoracion")
-          books.sort(
-            (a, b) =>
-              (b.valoracion_review || b.valoracion || 0) -
-              (a.valoracion_review || a.valoracion || 0),
-          );
-        else if (activeOrder === "titulo")
+        if (activeOrder === "default") {
+          books.sort(sortBooksDefault);
+        } else if (activeOrder === "valoracion") {
+          books.sort((a, b) => {
+            const ratingA = a.valoracion_review || a.valoracion || 0;
+            const ratingB = b.valoracion_review || b.valoracion || 0;
+            return ratingB - ratingA;
+          });
+        } else if (activeOrder === "titulo") {
           books.sort((a, b) => (a.titulo || "").localeCompare(b.titulo || ""));
+        } else if (activeOrder === "nuevos") {
+          books.sort((a, b) => b.libroId - a.libroId);
+        }
 
-        renderGrid(books);
-        renderResultsInfo(books.length);
+        // Guardar para paginación
+        filteredBooks = books;
+        currentPage = 1;
+        
+        renderGrid();
+        renderResultsInfo();
         renderActiveFilters();
+        renderPagination();
       }
 
-      function renderGrid(books) {
+      function renderGrid() {
         const grid = document.getElementById("catalog-grid");
-        if (!books.length) {
+        if (!filteredBooks.length) {
           grid.innerHTML = `<div class="no-results"><span>📚</span><p>No encontramos libros con esos filtros.<br>Prueba combinando de otra forma.</p></div>`;
           return;
         }
-        grid.innerHTML = books.map((b) => buildBookCard(b, "")).join("");
+        
+        // Paginación: calcular rango
+        const start = (currentPage - 1) * BOOKS_PER_PAGE;
+        const end = start + BOOKS_PER_PAGE;
+        const pageBooks = filteredBooks.slice(start, end);
+        
+        grid.innerHTML = pageBooks.map((b) => buildBookCard(b, "")).join("");
         initFadeIn();
       }
 
-      function renderResultsInfo(count) {
-        document.getElementById("results-info").innerHTML =
-          `Mostrando <strong>${count}</strong> libro${count !== 1 ? "s" : ""}`;
+      function renderResultsInfo() {
+        const total = filteredBooks.length;
+        const start = Math.min((currentPage - 1) * BOOKS_PER_PAGE + 1, total);
+        const end = Math.min(currentPage * BOOKS_PER_PAGE, total);
+        
+        if (total === 0) {
+          document.getElementById("results-info").innerHTML = 
+            "No hay libros que coincidan con los filtros";
+        } else {
+          document.getElementById("results-info").innerHTML = 
+            `Mostrando <strong>${start}-${end}</strong> de <strong>${total}</strong> libro${total !== 1 ? "s" : ""}`;
+        }
       }
 
       function renderActiveFilters() {
@@ -349,8 +459,10 @@
         activeGenero = "";
         activeMood = "";
         searchQuery = "";
+        activeOrder = "default";
         document.getElementById("filter-genero").value = "";
         document.getElementById("filter-mood").value = "";
+        document.getElementById("filter-order").value = "default";
         document.getElementById("search-input").value = "";
         document
           .querySelectorAll(".mood-pill")
@@ -361,12 +473,47 @@
         applyFilters();
       }
 
+      // ---- Paginación ----
+      function renderPagination() {
+        const pagination = document.getElementById("pagination");
+        const totalPages = Math.ceil(filteredBooks.length / BOOKS_PER_PAGE);
+        
+        if (totalPages <= 1) {
+          pagination.style.display = "none";
+          return;
+        }
+        
+        pagination.style.display = "flex";
+        document.getElementById("page-info").textContent = 
+          `Página ${currentPage} de ${totalPages}`;
+        document.getElementById("prev-page").disabled = currentPage === 1;
+        document.getElementById("next-page").disabled = currentPage === totalPages;
+      }
+
+      function changePage(direction) {
+        const totalPages = Math.ceil(filteredBooks.length / BOOKS_PER_PAGE);
+        const newPage = currentPage + direction;
+        
+        if (newPage < 1 || newPage > totalPages) return;
+        
+        currentPage = newPage;
+        renderGrid();
+        renderResultsInfo();
+        renderPagination();
+        
+        // Scroll suave hacia el grid
+        const grid = document.getElementById("catalog-grid");
+        if (grid) {
+          grid.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
       // ---- Init ----
       document.addEventListener("DOMContentLoaded", async () => {
         allBooks = await loadBooks();
         allBooks = await enriquecerLibrosConResenas(allBooks);
 
-        // ← CORRECCIÓN: leer parámetros de URL y filtrar en memoria
+        // Leer parámetros de URL
         const params = new URLSearchParams(location.search);
         const escritorId = params.get("escritorId");
         if (escritorId) {
@@ -383,8 +530,17 @@
 
         // Mood pills
         document.querySelectorAll(".mood-pill").forEach((btn) => {
-          if (btn.dataset.mood === activeMood) btn.classList.add("active");
-          else btn.classList.remove("active");
+          // Normalizar para comparación (sin tildes en data-mood)
+          const btnMood = btn.dataset.mood;
+          const activeMoodNormalized = activeMood?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          const btnMoodNormalized = btnMood?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          
+          if (btnMoodNormalized === activeMoodNormalized) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+          
           btn.addEventListener("click", () => {
             activeMood = btn.dataset.mood;
             document
@@ -429,6 +585,10 @@
         document
           .getElementById("btn-reset")
           .addEventListener("click", clearAllFilters);
+
+        // Paginación
+        document.getElementById("prev-page").addEventListener("click", () => changePage(-1));
+        document.getElementById("next-page").addEventListener("click", () => changePage(1));
 
         // Búsqueda con debounce
         let searchTimer;
