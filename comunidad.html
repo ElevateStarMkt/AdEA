@@ -59,7 +59,7 @@
         cursor: pointer;
         transition: all var(--transition);
         font-size: 0.85rem;
-        color: var(--text); /* ✅ Corregido: era aliceblue */
+        color: var(--text);
       }
       .filter-chip.active,
       .filter-chip:hover {
@@ -139,6 +139,7 @@
         transition: all var(--transition);
         text-decoration: none;
         display: block;
+        position: relative;
       }
       .profile-mini:hover {
         border-color: var(--red);
@@ -176,6 +177,92 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
       }
+      .profile-mini__followers {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+      .profile-mini__followers strong {
+        color: var(--red);
+        font-family: var(--font-serif);
+      }
+      /* BOTÓN SEGUIR */
+      .profile-mini__follow {
+        margin-top: 12px;
+        width: 100%;
+        padding: 8px 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text);
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .profile-mini__follow:hover {
+        border-color: var(--red);
+        background: var(--red-glow);
+      }
+      .profile-mini__follow.following {
+        background: var(--red);
+        border-color: var(--red);
+        color: var(--white);
+      }
+      .profile-mini__follow.loading {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      .profile-mini__follow:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      /* PAGINACIÓN */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 32px;
+        flex-wrap: wrap;
+      }
+      .pagination__btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pagination__btn:hover,
+      .pagination__btn.active {
+        background: var(--red);
+        border-color: var(--red);
+        color: var(--white);
+      }
+      .pagination__btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .pagination__info {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin: 0 12px;
+      }
       .empty-state {
         text-align: center;
         padding: 40px 20px;
@@ -186,7 +273,20 @@
         font-size: 2.5rem;
         margin-bottom: 12px;
       }
-
+      .loading-state {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-muted);
+        grid-column: 1 / -1;
+      }
+      .loading-state__spinner {
+        font-size: 2rem;
+        animation: spin 1s linear infinite;
+        margin-bottom: 12px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
       @media (max-width: 768px) {
         .reviews-anonimas {
           grid-template-columns: 1fr;
@@ -205,6 +305,11 @@
       @media (max-width: 480px) {
         .profiles-grid {
           grid-template-columns: 1fr 1fr;
+        }
+        .pagination__btn {
+          width: 32px;
+          height: 32px;
+          font-size: 0.8rem;
         }
       }
     </style>
@@ -263,7 +368,18 @@
         >
           Perfiles de la comunidad
         </h2>
-        <div class="profiles-grid" id="profiles-grid"></div>
+        <div class="profiles-grid" id="profiles-grid">
+          <div class="loading-state">
+            <div class="loading-state__spinner">⏳</div>
+            <p>Cargando perfiles...</p>
+          </div>
+        </div>
+        <!-- PAGINACIÓN -->
+        <div class="pagination" id="profiles-pagination" style="display: none">
+          <button class="pagination__btn" id="prev-page" disabled>←</button>
+          <span class="pagination__info" id="page-info">Página 1</span>
+          <button class="pagination__btn" id="next-page">→</button>
+        </div>
       </div>
     </section>
 
@@ -284,51 +400,61 @@
     <script>
       injectShell("");
 
+      // ==================== ESTADO GLOBAL ====================
       let activeRol = "";
       let searchQuery = "";
       let allReviews = [];
       let allProfiles = [];
-      let profilesByUserId = {}; // ✅ Mapa para búsqueda rápida
+      let profilesByUserId = {};
+      
+      // Paginación
+      const PROFILES_PER_PAGE = 12;
+      let currentPage = 1;
+      let filteredProfiles = [];
+      
+      // Seguimiento de usuarios que sigues
+      let followingSet = new Set();
 
-      // =====================================================
-      // CARGA INICIAL
-      // =====================================================
+      // ==================== CARGA INICIAL ====================
       async function loadComunidad() {
         try {
-          // Cargar reseñas (ahora con usuarioId incluido)
+          // Cargar usuario actual para saber a quién sigues
+          const currentUser = Parse.User.current();
+          if (currentUser) {
+            const following = currentUser.get("following") || [];
+            followingSet = new Set(following);
+          }
+
+          // Cargar reseñas
           allReviews = await getUltimasResenas(50);
 
-          // Cargar perfiles y crear mapa de búsqueda
+          // Cargar perfiles
           allProfiles = await getTodosLosPerfiles();
           profilesByUserId = {};
           allProfiles.forEach((p) => {
             if (p?.userId) profilesByUserId[p.userId] = p;
           });
 
+          // Renderizar
           renderReviews();
-          renderProfiles();
+          applyProfileFiltersAndRender();
 
-          // Debug en consola (eliminar en producción)
           console.log("✅ Perfiles cargados:", allProfiles.length);
           console.log("✅ Reseñas cargadas:", allReviews.length);
         } catch (err) {
           console.error("❌ Error cargando comunidad:", err.message);
-          document.getElementById("reviews-grid").innerHTML =
+          document.getElementById("profiles-grid").innerHTML =
             `<div class="empty-state"><div class="empty-state__icon">⚠️</div><p>Error al cargar la comunidad</p></div>`;
         }
       }
 
-      // =====================================================
-      // RENDERIZAR RESEÑAS (ANÓNIMAS - sin libro/autor)
-      // =====================================================
+      // ==================== RESEÑAS ====================
       function renderReviews() {
         const grid = document.getElementById("reviews-grid");
-
-        // Filtrar por rol si está activo
         let filtered = [...allReviews];
+        
         if (activeRol) {
           filtered = filtered.filter((r) => {
-            // ✅ Buscar perfil por usuarioId (ahora disponible)
             const perfil = profilesByUserId[r.usuarioId];
             return perfil?.rol === activeRol;
           });
@@ -359,13 +485,7 @@
   </div>
   ${
     r.etiqueta
-      ? `<p style="font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-    background: var(--surface);
-    padding: 3px 10px;
-    border-radius: 12px;
-    max-width: fit-content;">${r.etiqueta}</p>`
+      ? `<p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; background: var(--surface); padding: 3px 10px; border-radius: 12px; max-width: fit-content;">${r.etiqueta}</p>`
       : ""
   }
   <a href="${r.afiliadoUrl || "#"}" target="_blank" rel="noopener sponsored" class="review-anonima__cta" 
@@ -378,19 +498,15 @@
         initFadeIn();
       }
 
-      // =====================================================
-      // RENDERIZAR PERFILES (con buscador por nombre)
-      // =====================================================
-      function renderProfiles() {
-        const grid = document.getElementById("profiles-grid");
-
-        // Filtrar por rol - con validación de datos
+      // ==================== PERFILES CON PAGINACIÓN ====================
+      function applyProfileFiltersAndRender() {
+        // Filtrar por rol
         let filtered = allProfiles.filter((p) => {
-          if (!p?.rol) return false; // ✅ Excluir perfiles sin rol definido
+          if (!p?.rol) return false;
           return activeRol ? p.rol === activeRol : true;
         });
 
-        // 🔍 Filtrar por búsqueda de nombre (case-insensitive)
+        // Filtrar por búsqueda
         if (searchQuery.trim()) {
           const query = searchQuery.toLowerCase().trim();
           filtered = filtered.filter((p) => {
@@ -399,63 +515,182 @@
           });
         }
 
-        if (!filtered.length) {
+        // ✅ ORDENAR POR SEGUIDORES (de mayor a menor)
+        filtered.sort((a, b) => {
+          const followersA = typeof a.seguidoresAdEA === "number" ? a.seguidoresAdEA : 0;
+          const followersB = typeof b.seguidoresAdEA === "number" ? b.seguidoresAdEA : 0;
+          return followersB - followersA;
+        });
+
+        filteredProfiles = filtered;
+        currentPage = 1;
+        renderProfilesPage();
+        renderPagination();
+      }
+
+      function renderProfilesPage() {
+        const grid = document.getElementById("profiles-grid");
+        const pagination = document.getElementById("profiles-pagination");
+        
+        if (!filteredProfiles.length) {
           grid.innerHTML = `<div class="empty-state"><div class="empty-state__icon">👥</div><p>${searchQuery ? "No hay usuarios con ese nombre" : "No hay perfiles con este filtro"}</p></div>`;
+          pagination.style.display = "none";
           return;
         }
 
-        grid.innerHTML = filtered
-          .slice(0, 12)
+        pagination.style.display = "flex";
+        
+        const start = (currentPage - 1) * PROFILES_PER_PAGE;
+        const end = start + PROFILES_PER_PAGE;
+        const pageProfiles = filteredProfiles.slice(start, end);
+        const currentUser = Parse.User.current();
+
+        grid.innerHTML = pageProfiles
           .map((p) => {
             const nombre = p.nombre || p.displayName || "Usuario";
             const initial = nombre.charAt(0).toUpperCase();
             const bioCorta = p.bio
-              ? p.bio.length > 60
-                ? p.bio.substring(0, 60) + "…"
-                : p.bio
+              ? p.bio.length > 60 ? p.bio.substring(0, 60) + "…" : p.bio
               : "";
+            const seguidores = typeof p.seguidoresAdEA === "number" ? p.seguidoresAdEA : 0;
+            const isFollowing = followingSet.has(p.userId);
+            const isOwnProfile = currentUser && currentUser.id === p.userId;
 
             return `
-<a href="perfil.html?id=${p.userId}" class="profile-mini">
+<a href="perfil.html?id=${p.userId}" class="profile-mini" data-user-id="${p.userId}">
   <div class="profile-mini__avatar">${initial}</div>
   <div class="profile-mini__name">${nombre}</div>
   <div class="profile-mini__rol">${p.rol}</div>
   ${bioCorta ? `<p class="profile-mini__bio">${bioCorta}</p>` : ""}
-  <div style="font-size:0.75rem;color:var(--text-muted);margin-top:8px">
-  ${typeof p.seguidoresAdEA === "number" ? p.seguidoresAdEA : 0} seguidores
-</div>
+  <div class="profile-mini__followers">
+    <span>👥</span><strong id="followers-${p.userId}">${seguidores}</strong> seguidores
+  </div>
+  ${!isOwnProfile ? `
+  <button 
+    class="profile-mini__follow ${isFollowing ? 'following' : ''}" 
+    data-target="${p.userId}"
+    onclick="handleFollowClick(event, '${p.userId}')"
+  >
+    ${isFollowing ? '✓ Siguiendo' : '+ Seguir'}
+  </button>` : ''}
 </a>`;
           })
           .join("");
       }
 
-      // =====================================================
-      // EVENT LISTENERS
-      // =====================================================
+      function renderPagination() {
+        const pagination = document.getElementById("profiles-pagination");
+        const totalPages = Math.ceil(filteredProfiles.length / PROFILES_PER_PAGE);
+        
+        if (totalPages <= 1) {
+          pagination.style.display = "none";
+          return;
+        }
+        
+        pagination.style.display = "flex";
+        document.getElementById("page-info").textContent = `Página ${currentPage} de ${totalPages}`;
+        document.getElementById("prev-page").disabled = currentPage === 1;
+        document.getElementById("next-page").disabled = currentPage === totalPages;
+      }
 
-      // Filtros por rol
+      function changePage(direction) {
+        const totalPages = Math.ceil(filteredProfiles.length / PROFILES_PER_PAGE);
+        const newPage = currentPage + direction;
+        
+        if (newPage < 1 || newPage > totalPages) return;
+        
+        currentPage = newPage;
+        renderProfilesPage();
+        renderPagination();
+        
+        // Scroll suave hacia la sección de perfiles
+        const section = document.querySelector(".profiles-grid");
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      // ==================== SEGUIR USUARIOS ====================
+      async function handleFollowClick(event, targetUserId) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const btn = event.currentTarget;
+        const currentUser = Parse.User.current();
+        
+        if (!currentUser) {
+          showToast("⚠️ Debes iniciar sesión para seguir usuarios");
+          return;
+        }
+        
+        if (currentUser.id === targetUserId) return; // No seguirse a sí mismo
+        
+        // Estado loading
+        btn.classList.add("loading");
+        btn.disabled = true;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "⏳";
+        
+        try {
+          const result = await toggleFollow(targetUserId);
+          
+          if (result.ok) {
+            // Actualizar estado local
+            if (result.siguiendo) {
+              followingSet.add(targetUserId);
+              btn.classList.add("following");
+              btn.innerHTML = "✓ Siguiendo";
+              showToast("✅ Ahora sigues a este usuario");
+            } else {
+              followingSet.delete(targetUserId);
+              btn.classList.remove("following");
+              btn.innerHTML = "+ Seguir";
+              showToast("❌ Dejaste de seguir");
+            }
+            
+            // Actualizar contador de seguidores en tiempo real
+            const followersEl = document.getElementById(`followers-${targetUserId}`);
+            if (followersEl) {
+              const current = parseInt(followersEl.textContent) || 0;
+              followersEl.textContent = result.siguiendo ? current + 1 : current - 1;
+            }
+          } else {
+            showToast("❌ " + (result.error || "Error al seguir"));
+            btn.innerHTML = originalText;
+          }
+        } catch (err) {
+          console.error("Error en follow:", err);
+          showToast("❌ Error de conexión");
+          btn.innerHTML = originalText;
+        } finally {
+          btn.classList.remove("loading");
+          btn.disabled = false;
+        }
+      }
+
+      // ==================== EVENT LISTENERS ====================
       document.getElementById("rol-filters").addEventListener("click", (e) => {
         if (e.target.classList.contains("filter-chip")) {
-          document
-            .querySelectorAll(".filter-chip")
-            .forEach((c) => c.classList.remove("active"));
+          document.querySelectorAll(".filter-chip").forEach((c) => c.classList.remove("active"));
           e.target.classList.add("active");
           activeRol = e.target.dataset.rol;
-          // ✅ Re-renderizar ambas secciones
+          applyProfileFiltersAndRender();
           renderReviews();
-          renderProfiles();
         }
       });
 
-      // 🔍 Buscador por nombre (con debounce)
       let searchTimer;
       document.getElementById("search-users").addEventListener("input", (e) => {
         clearTimeout(searchTimer);
         searchTimer = setTimeout(() => {
           searchQuery = e.target.value;
-          renderProfiles(); // Solo afecta a perfiles
+          applyProfileFiltersAndRender();
         }, 300);
       });
+
+      // Paginación
+      document.getElementById("prev-page").addEventListener("click", () => changePage(-1));
+      document.getElementById("next-page").addEventListener("click", () => changePage(1));
 
       // Inicialización
       document.addEventListener("DOMContentLoaded", loadComunidad);
