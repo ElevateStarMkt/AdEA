@@ -11,6 +11,18 @@
       .dashboard-hero {
         padding: 140px 0 60px;
       }
+      .telegram-box {
+        transition:
+          border-color var(--transition),
+          transform var(--transition);
+      }
+      .telegram-box:hover {
+        border-color: var(--red);
+        transform: translateY(-2px);
+      }
+      .telegram-box a.btn:hover {
+        background: var(--red-hover);
+      }
       .dashboard-grid {
         display: grid;
         grid-template-columns: 280px 1fr;
@@ -1639,6 +1651,36 @@
           );
       }
 
+      /* ══════════════════════════════════════════════════
+   TELEGRAM LINKS BY ROLE
+══════════════════════════════════════════════════ */
+      function setupTelegramLink() {
+        const linkEl = document.getElementById("telegram-link");
+        const descEl = document.getElementById("telegram-desc");
+        const boxEl = document.getElementById("telegram-box");
+
+        if (!linkEl || !descEl || !boxEl) return;
+
+        // URLs
+        const BS_GROUP = "https://t.me/+SpK_2-X0nHUwNDZk"; // Grupo exclusivo bookstagramers
+        const PUBLIC_CHANNEL = "https://t.me/+LsPSJ4CAql85ODc8"; // Canal público (todos)
+
+        if (userRole === "bookstagramer") {
+          // Bookstagramer: mostrar grupo exclusivo + opción de canal público
+          linkEl.href = BS_GROUP;
+          linkEl.textContent = "Unirme al grupo BS →";
+          descEl.innerHTML = `Grupo exclusivo para bookstagramers.<br><a href="${PUBLIC_CHANNEL}" target="_blank" rel="noopener" style="color:var(--red);text-decoration:underline;font-size:0.7rem">O unirte al canal público</a>`;
+        } else {
+          // Lector/Escritor: mostrar canal público
+          linkEl.href = PUBLIC_CHANNEL;
+          linkEl.textContent = "Unirme al canal →";
+          descEl.textContent =
+            "Novedades, recomendaciones y comunidad lectora.";
+        }
+
+        boxEl.style.display = "block";
+      }
+
       function switchSection(id) {
         document
           .querySelectorAll(".dashboard-nav-btn")
@@ -1714,6 +1756,7 @@
         }
 
         buildNavForRole(userRole);
+        setupTelegramLink();
         allBooks = await loadBooks();
 
         if (userRole === "lector") {
