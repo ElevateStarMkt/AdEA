@@ -168,10 +168,10 @@ Artículos, guías y consejos sobre lectura, bookstagram y descubrimiento de lib
 <!-- CATEGORÍAS -->
 <div class="blog-categories" id="blog-categories">
 <button class="category-pill active" data-category="all">Todos</button>
-<button class="category-pill" data-category="guias">📖 Guías</button>
-<button class="category-pill" data-category="consejos">💡 Consejos</button>
-<button class="category-pill" data-category="bookstagram">📸 Bookstagram</button>
-<button class="category-pill" data-category="lectura">📚 Lectura</button>
+<button class="category-pill" data-category="guias">Guías</button>
+<button class="category-pill" data-category="consejos">Consejos</button>
+<button class="category-pill" data-category="bookstagram">Bookstagram</button>
+<button class="category-pill" data-category="lectura">Lectura</button>
 </div>
 <!-- GRID DE POSTS -->
 <div class="blog-grid" id="blog-grid">
@@ -268,8 +268,8 @@ grid.innerHTML = filtered.map(post => `
 <h3 class="blog-card__title">${post.title}</h3>
 <p class="blog-card__excerpt">${post.excerpt}</p>
 <div class="blog-card__meta">
-<span>📅 ${new Date(post.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-<span>⏱️ ${post.readTime}</span>
+<span>${new Date(post.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+<span>${post.readTime}</span>
 </div>
 <span class="blog-card__read-more">Leer artículo →</span>
 </article>
