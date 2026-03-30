@@ -46,8 +46,8 @@ function getFooter(prefix = "") {
           <ul>
             <li><a href="${prefix}comunidad.html">Comunidad lectora</a></li>
             <li><a href="${prefix}bookstagramers.html">Bookstagramers</a></li>
-            <li><a href="${prefix}contacto.html">Colaboraciones</a></li>
-            <li><a href="${prefix}contacto.html">Editoriales</a></li>
+            <li><a href="${prefix}contacto.html">Contacto</a></li>
+            <li><a href="${prefix}blog.html">Blog</a></li>
           </ul>
         </div>
         <div class="footer__col">
