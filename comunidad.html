@@ -571,15 +571,12 @@
             return `
 <a href="perfil.html?id=${p.userId}" class="profile-mini" data-user-id="${p.userId}">
   <div class="profile-mini__avatar">${initial}</div>
-  <div class="profile-mini__name">${nombre}</div>
+  <div class="profile-mini__name">${nombre}</div><br>
   <div class="profile-mini__followers">
     <span></span><strong id="followers-${p.userId}">${seguidores}</strong> seguidores
-  </div>
+  </div><br>
   <div class="profile-mini__rol">${p.rol}</div>
   ${bioCorta ? `<p class="profile-mini__bio">${bioCorta}</p>` : ""}
-  <div class="profile-mini__followers">
-    <span></span><strong id="followers-${p.userId}">${seguidores}</strong> seguidores
-  </div>
   ${
     !isOwnProfile
       ? `
