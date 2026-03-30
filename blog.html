@@ -251,50 +251,95 @@ date: "2026-03-29",
 readTime: "9 min",
 url: "blogs_otros/libros-adictivos.html"
 }
-];
-let activeCategory = "all";
-function renderBlogPosts(category = "all") {
-const grid = document.getElementById("blog-grid");
-const filtered = category === "all" 
-? BLOG_POSTS 
-: BLOG_POSTS.filter(post => post.category === category);
-if (!filtered.length) {
-grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-muted);">No hay posts en esta categoría aún.</div>`;
-return;
-}
-grid.innerHTML = filtered.map(post => `
+];;
+      let activeCategory = "all";
+
+      function renderBlogPosts(category = "all") {
+        const grid = document.getElementById("blog-grid");
+        const filtered =
+          category === "all"
+            ? BLOG_POSTS
+            : BLOG_POSTS.filter((post) => post.category === category);
+        if (!filtered.length) {
+          grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-muted);">No hay posts en esta categoría aún.</div>`;
+          return;
+        }
+        grid.innerHTML = filtered
+          .map(
+            (post) => `
 <article class="blog-card fade-in" onclick="location.href='${post.url}'">
 <span class="blog-card__category">${post.category}</span>
 <h3 class="blog-card__title">${post.title}</h3>
 <p class="blog-card__excerpt">${post.excerpt}</p>
 <div class="blog-card__meta">
-<span>${new Date(post.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+<span>${new Date(post.date).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}</span>
 <span>${post.readTime}</span>
 </div>
 <span class="blog-card__read-more">Leer artículo →</span>
 </article>
-`).join("");
-initFadeIn();
-}
-// Event listeners
-document.addEventListener("DOMContentLoaded", () => {
-renderBlogPosts();
-// Categorías
-document.querySelectorAll(".category-pill").forEach(pill => {
-pill.addEventListener("click", () => {
-document.querySelectorAll(".category-pill").forEach(p => p.classList.remove("active"));
-pill.classList.add("active");
-activeCategory = pill.dataset.category;
-renderBlogPosts(activeCategory);
-});
-});
-// Newsletter
-document.getElementById("newsletter-form")?.addEventListener("submit", (e) => {
-e.preventDefault();
-showToast("✅ ¡Gracias por suscribirte!");
-e.target.reset();
-});
-});
-</script>
+`,
+          )
+          .join("");
+        initFadeIn();
+      }
+
+      // Event listeners
+      document.addEventListener("DOMContentLoaded", () => {
+        renderBlogPosts();
+
+        // Categorías
+        document.querySelectorAll(".category-pill").forEach((pill) => {
+          pill.addEventListener("click", () => {
+            document
+              .querySelectorAll(".category-pill")
+              .forEach((p) => p.classList.remove("active"));
+            pill.classList.add("active");
+            activeCategory = pill.dataset.category;
+            renderBlogPosts(activeCategory);
+          });
+        });
+
+        // Newsletter — CONEXIÓN CON BACK4APP
+        document
+          .getElementById("newsletter-form")
+          ?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = e.target
+              .querySelector("input[type='email']")
+              .value.trim();
+            const btn = e.target.querySelector("button[type='submit']");
+
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+              showToast("⚠️ Introduce un email válido");
+              return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Suscribiendo…";
+
+            try {
+              const result = await suscribirseBlogNewsletter(email);
+              if (result.ok) {
+                showToast(
+                  result.duplicado
+                    ? "✅ Ya estás suscrito al blog"
+                    : "✅ ¡Gracias por suscribirte!",
+                );
+              } else {
+                showToast(
+                  "❌ Error: " + (result.error || "No se pudo suscribir"),
+                );
+              }
+            } catch (err) {
+              showToast("❌ Error de conexión");
+              console.error("Error newsletter:", err);
+            } finally {
+              btn.disabled = false;
+              btn.textContent = "Suscribirme";
+              e.target.reset();
+            }
+          });
+      });
+    </script>
 </body>
 </html>
