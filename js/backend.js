@@ -1320,3 +1320,52 @@ async function getUserInfo(userId) {
     return null;
   }
 }
+/* =====================================================
+BLOG — Newsletter Subscriptions
+===================================================== */
+async function suscribirseBlogNewsletter(email) {
+  try {
+    const Blog = Parse.Object.extend("Blog");
+    const q = new Parse.Query(Blog);
+    q.equalTo("email", email.toLowerCase().trim());
+    
+    // Verificar si ya está suscrito
+    const existente = await q.first();
+    if (existente) {
+      return { ok: true, duplicado: true };
+    }
+    
+    const suscripcion = new Blog();
+    suscripcion.set("email", email.toLowerCase().trim());
+    suscripcion.set("fecha", new Date());
+    suscripcion.set("activo", true);
+    suscripcion.set("origen", "blog");
+    
+    // Si hay usuario logueado, vincular la suscripción
+    const user = usuarioActual();
+    if (user) {
+      suscripcion.set("usuario", user);
+      suscripcion.set("usuarioId", user.id);
+      suscripcion.set("esRegistrado", true);
+    } else {
+      suscripcion.set("esRegistrado", false);
+    }
+    
+    // ACL: solo lectura para el dueño (si está logueado) + escritura para admin
+    const acl = new Parse.ACL();
+    acl.setPublicReadAccess(false);
+    acl.setPublicWriteAccess(false);
+    if (user) {
+      acl.setReadAccess(user, true);
+      acl.setWriteAccess(user, true);
+    }
+    // Nota: Para que el admin pueda gestionar, configura los CLP en Back4App
+    suscripcion.setACL(acl);
+    
+    await suscripcion.save();
+    return { ok: true };
+  } catch (err) {
+    console.error("Error suscribiendo al blog:", err.message);
+    return { ok: false, error: err.message };
+  }
+}
