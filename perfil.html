@@ -663,7 +663,7 @@
           showToast("⚠️ Debes iniciar sesión como escritor");
           return;
         }
-        if (currentUser.get("rol") !== "escritor") {
+        if (currentuser?.get("rol") !== "escritor") {
           showToast("⚠️ Solo los escritores pueden invitar a colaborar");
           return;
         }
@@ -723,60 +723,38 @@
          PERFIL — carga principal
       ───────────────────────────────────────────── */
       async function loadProfile() {
-        const params = new URLSearchParams(location.search);
-        const userId = params.get("id");
-        if (!userId) {
-          renderError("Perfil no especificado.");
-          return;
-        }
+  const params = new URLSearchParams(location.search);
+  const userId = params.get("id");
+  if (!userId) { renderError("Perfil no especificado."); return; }
 
-        try {
-          const User = Parse.Object.extend("_User");
-          const user = await new Parse.Query(User).get(userId, {
-            useMasterKey: false,
-          });
-          if (!user) {
-            renderError("Usuario no encontrado.");
-            return;
-          }
+  try {
+    // ✅ Usar PublicProfiles en lugar de _User directamente
+    const perfil = await getPerfilPublico(userId);
+    if (!perfil) { renderError("Usuario no encontrado."); return; }
 
-          const rol = user.get("rol") || "lector";
-          const nombre =
-            user.get("nombre") || user.get("displayName") || "Usuario";
-          const perfil = await getPerfilPublico(userId);
-          const seguidoresAdEA =
-            typeof perfil?.seguidoresAdEA === "number"
-              ? perfil.seguidoresAdEA
-              : 0;
-          const currentUser = Parse.User.current();
-          const isFollowing =
-            currentUser?.get("following")?.includes(userId) || false;
+    const rol = perfil.rol || "lector";
+    const nombre = perfil.nombre || perfil.displayName || "Usuario";
+    const seguidoresAdEA = typeof perfil.seguidoresAdEA === "number" ? perfil.seguidoresAdEA : 0;
+    const currentUser = Parse.User.current();
+    const isFollowing = currentUser?.get("following")?.includes(userId) || false;
 
-          let html = renderProfileHeader(nombre, rol);
-          html += renderProfileStats(seguidoresAdEA, rol, user, perfil);
-          html += renderProfileFields(rol, perfil, user);
-          html += renderProfileActions(
-            rol,
-            currentUser,
-            userId,
-            isFollowing,
-            user,
-            perfil,
-          );
+    // Construir HTML con los datos del perfil público (sin acceder a _User)
+    let html = renderProfileHeader(nombre, rol);
+    html += renderProfileStats(seguidoresAdEA, rol, null, perfil);
+    html += renderProfileFields(rol, perfil, null);
+    html += renderProfileActions(rol, currentUser, userId, isFollowing, null, perfil);
 
-          if (rol === "escritor")
-            html += await renderWriterSection(userId, nombre);
-          if (rol === "bookstagramer")
-            html += await renderBookstagramerSection(userId);
-          if (rol === "lector") html += await renderLectorSection(userId);
+    if (rol === "escritor") html += await renderWriterSection(userId, nombre);
+    if (rol === "bookstagramer") html += await renderBookstagramerSection(userId);
+    if (rol === "lector") html += await renderLectorSection(userId);
 
-          document.getElementById("profile-content").innerHTML = html;
-          await renderExtraSections(rol, userId, nombre, perfil);
-        } catch (err) {
-          console.error("Error cargando perfil:", err.message);
-          renderError("Error al cargar el perfil.");
-        }
-      }
+    document.getElementById("profile-content").innerHTML = html;
+    await renderExtraSections(rol, userId, nombre, perfil);
+  } catch (err) {
+    console.error("Error cargando perfil:", err.message);
+    renderError("Error al cargar el perfil.");
+  }
+}
 
       function renderProfileHeader(nombre, rol) {
         return `<div class="profile-header">
@@ -796,8 +774,8 @@
           </div>`;
         if (rol === "bookstagramer") {
           const seguidoresIG =
-            perfil?.seguidoresIG || user.get("seguidores") || 0;
-          const tarifa = perfil?.tarifa || user.get("tarifa") || 0;
+            perfil?.seguidoresIG || user?.get("seguidores") || 0;
+          const tarifa = perfil?.tarifa || user?.get("tarifa") || 0;
           if (seguidoresIG > 0)
             html += `<div class="profile-stat"><div class="profile-stat__value">${seguidoresIG}</div><div class="profile-stat__label">Seguidores IG</div></div>`;
           if (tarifa > 0)
@@ -810,10 +788,10 @@
       function renderProfileFields(rol, perfil, user) {
         let html = "";
         const campos = [];
-        const bio = perfil?.bio || user.get("bio") || "";
-        const web = perfil?.web || user.get("web") || "";
-        const instagram = perfil?.instagram || user.get("instagram") || "";
-        const email = perfil?.email || user.get("email") || "";
+        const bio = perfil?.bio || user?.get("bio") || "";
+        const web = perfil?.web || user?.get("web") || "";
+        const instagram = perfil?.instagram || user?.get("instagram") || "";
+        const email = perfil?.email || user?.get("email") || "";
 
         if (bio) campos.push(`<p class="profile-bio">${bio}</p>`);
         if (web) {
@@ -843,9 +821,9 @@
         }
         if (rol === "bookstagramer") {
           const condiciones =
-            perfil?.condiciones || user.get("condiciones") || "";
+            perfil?.condiciones || user?.get("condiciones") || "";
           const generoFav =
-            perfil?.generoFavorito || user.get("generoFavorito") || "";
+            perfil?.generoFavorito || user?.get("generoFavorito") || "";
           if (condiciones)
             html += `<div class="profile-section"><div class="profile-section__title">Condiciones</div><p class="profile-bio">${condiciones}</p></div>`;
           if (generoFav)
@@ -858,7 +836,7 @@
         }
         if (rol === "lector") {
           const generoFav =
-            perfil?.generoFavorito || user.get("generoFavorito") || "";
+            perfil?.generoFavorito || user?.get("generoFavorito") || "";
           if (generoFav)
             html += `<p class="profile-field"><span class="profile-field__label">💕 Género favorito:</span><span class="profile-field__value">${generoFav}</span></p>`;
           html += `<div class="profile-section"><div class="profile-section__title">Actividad</div>
@@ -891,10 +869,10 @@
           currentUser?.get("rol") === "escritor" &&
           currentUser.id !== userId
         ) {
-          const tarifaBS = perfil?.tarifa || user.get("tarifa") || 0;
+          const tarifaBS = perfil?.tarifa || user?.get("tarifa") || 0;
           const nombreBS = (
             perfil?.nombre ||
-            user.get("nombre") ||
+            user?.get("nombre") ||
             "Bookstagramer"
           ).replace(/'/g, "\\'");
           html += `<button class="btn btn-primary"
@@ -904,7 +882,7 @@
         }
 
         if (rol === "bookstagramer" && currentUser?.get("rol") === "escritor") {
-          const email = perfil?.email || user.get("email") || "";
+          const email = perfil?.email || user?.get("email") || "";
           if (email)
             html += `<a href="mailto:${email}?bcc=elevatestarmkt@gmail.com" class="btn btn-ghost">✉️ Contactar</a>`;
         }
