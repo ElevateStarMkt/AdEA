@@ -1654,31 +1654,58 @@
       /* ══════════════════════════════════════════════════
    TELEGRAM LINKS BY ROLE
 ══════════════════════════════════════════════════ */
+      /* ══════════════════════════════════════════════════
+   TELEGRAM LINKS BY ROLE - VERSIÓN CORREGIDA
+══════════════════════════════════════════════════ */
       function setupTelegramLink() {
-        const linkEl = document.getElementById("telegram-link");
-        const descEl = document.getElementById("telegram-desc");
-        const boxEl = document.getElementById("telegram-box");
+        // Esperar un tick para asegurar que el DOM está listo
+        setTimeout(() => {
+          const linkEl = document.getElementById("telegram-link");
+          const descEl = document.getElementById("telegram-desc");
+          const boxEl = document.getElementById("telegram-box");
 
-        if (!linkEl || !descEl || !boxEl) return;
+          // Debug (puedes eliminar en producción)
+          console.log("🔗 setupTelegramLink:", {
+            found: !!(linkEl && descEl && boxEl),
+            userRole,
+          });
 
-        // URLs
-        const BS_GROUP = "https://t.me/+SpK_2-X0nHUwNDZk"; // Grupo exclusivo bookstagramers
-        const PUBLIC_CHANNEL = "https://t.me/+LsPSJ4CAql85ODc8"; // Canal público (todos)
+          if (!linkEl || !descEl || !boxEl) {
+            console.warn("⚠️ Elementos del Telegram box no encontrados");
+            return;
+          }
 
-        if (userRole === "bookstagramer") {
-          // Bookstagramer: mostrar grupo exclusivo + opción de canal público
-          linkEl.href = BS_GROUP;
-          linkEl.textContent = "Unirme al grupo BS →";
-          descEl.innerHTML = `Grupo exclusivo para bookstagramers.<br><a href="${PUBLIC_CHANNEL}" target="_blank" rel="noopener" style="color:var(--red);text-decoration:underline;font-size:0.7rem">O unirte al canal público</a>`;
-        } else {
-          // Lector/Escritor: mostrar canal público
-          linkEl.href = PUBLIC_CHANNEL;
-          linkEl.textContent = "Unirme al canal →";
-          descEl.textContent =
-            "Novedades, recomendaciones y comunidad lectora.";
-        }
+          // URLs
+          const BS_GROUP = "https://t.me/+SpK_2-X0nHUwNDZk";
+          const PUBLIC_CHANNEL = "https://t.me/+LsPSJ4CAql85ODc8";
 
-        boxEl.style.display = "block";
+          if (userRole === "bookstagramer") {
+            linkEl.href = BS_GROUP;
+            linkEl.textContent = "Unirme al grupo BS →";
+            descEl.innerHTML = `Grupo exclusivo para bookstagramers.<br><a href="${PUBLIC_CHANNEL}" target="_blank" rel="noopener" style="color:var(--red);text-decoration:underline;font-size:0.7rem">O unirte al canal público</a>`;
+          } else {
+            // Lector o Escritor
+            linkEl.href = PUBLIC_CHANNEL;
+            linkEl.textContent = "Unirme al canal →";
+            descEl.textContent =
+              "Novedades, recomendaciones y comunidad lectora.";
+          }
+
+          boxEl.style.display = "block";
+
+          // ✅ PREVENIR comportamiento por defecto si href no se actualizó
+          linkEl.addEventListener("click", (e) => {
+            if (
+              linkEl.href.endsWith("#") ||
+              linkEl.href === window.location.href + "#"
+            ) {
+              e.preventDefault();
+              showToast("⚠️ Cargando enlace de Telegram...");
+              // Reintentar configuración
+              setupTelegramLink();
+            }
+          });
+        }, 0);
       }
 
       function switchSection(id) {
@@ -1756,7 +1783,6 @@
         }
 
         buildNavForRole(userRole);
-        setupTelegramLink();
         allBooks = await loadBooks();
 
         if (userRole === "lector") {
@@ -2486,6 +2512,7 @@
       ══════════════════════════════════════════════════ */
       document.addEventListener("DOMContentLoaded", () => {
         loadUserData();
+        setupTelegramLink();
 
         document
           .getElementById("btn-logout")
