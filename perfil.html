@@ -723,37 +723,45 @@
          PERFIL — carga principal
       ───────────────────────────────────────────── */
       async function loadProfile() {
-  const params = new URLSearchParams(location.search);
-  const userId = params.get("id");
-  if (!userId) { renderError("Perfil no especificado."); return; }
+    const params = new URLSearchParams(location.search);
+    const userId = params.get("id");
+    if (!userId) {
+        renderError("Perfil no especificado.");
+        return;
+    }
+    try {
+        // ✅ 1. Obtener datos públicos (funciona sin permisos especiales)
+        const perfil = await getPerfilPublico(userId);
+        
+        // ✅ 2. Si no existe perfil público, mostrar error
+        if (!perfil) {
+            renderError("Usuario no encontrado o perfil privado.");
+            return;
+        }
 
-  try {
-    // ✅ Usar PublicProfiles en lugar de _User directamente
-    const perfil = await getPerfilPublico(userId);
-    if (!perfil) { renderError("Usuario no encontrado."); return; }
+        // ✅ 3. Obtener usuario actual para verificar seguidores
+        const currentUser = Parse.User.current();
+        const isFollowing = currentUser?.get("following")?.includes(userId) || false;
 
-    const rol = perfil.rol || "lector";
-    const nombre = perfil.nombre || perfil.displayName || "Usuario";
-    const seguidoresAdEA = typeof perfil.seguidoresAdEA === "number" ? perfil.seguidoresAdEA : 0;
-    const currentUser = Parse.User.current();
-    const isFollowing = currentUser?.get("following")?.includes(userId) || false;
-
-    // Construir HTML con los datos del perfil público (sin acceder a _User)
-    let html = renderProfileHeader(nombre, rol);
-    html += renderProfileStats(seguidoresAdEA, rol, null, perfil);
-    html += renderProfileFields(rol, perfil, null);
-    html += renderProfileActions(rol, currentUser, userId, isFollowing, null, perfil);
-
-    if (rol === "escritor") html += await renderWriterSection(userId, nombre);
-    if (rol === "bookstagramer") html += await renderBookstagramerSection(userId);
-    if (rol === "lector") html += await renderLectorSection(userId);
-
-    document.getElementById("profile-content").innerHTML = html;
-    await renderExtraSections(rol, userId, nombre, perfil);
-  } catch (err) {
-    console.error("Error cargando perfil:", err.message);
-    renderError("Error al cargar el perfil.");
-  }
+        // ✅ 4. Usar los datos del perfil público para renderizar
+        const rol = perfil.rol || "lector";
+        const nombre = perfil.nombre || perfil.displayName || "Usuario";
+        
+        let html = renderProfileHeader(nombre, rol);
+        html += renderProfileStats(perfil.seguidoresAdEA || 0, rol, null, perfil);
+        html += renderProfileFields(rol, perfil, null); // Pasamos null para user privado
+        html += renderProfileActions(rol, currentUser, userId, isFollowing, null, perfil);
+        
+        if (rol === "escritor") html += await renderWriterSection(userId, nombre);
+        if (rol === "bookstagramer") html += await renderBookstagramerSection(userId);
+        if (rol === "lector") html += await renderLectorSection(userId);
+        
+        document.getElementById("profile-content").innerHTML = html;
+        await renderExtraSections(rol, userId, nombre, perfil);
+    } catch (err) {
+        console.error("Error cargando perfil:", err.message);
+        renderError("Error al cargar el perfil.");
+    }
 }
 
       function renderProfileHeader(nombre, rol) {
