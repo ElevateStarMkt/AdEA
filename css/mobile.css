@@ -28,7 +28,7 @@ Incluir DESPUÉS de main.css en todos los HTML:
   .catalog-hero,
   .book-hero,
   .dashboard-hero {
-    padding: 100px 0 50px;
+    padding: 100px 0 5%;
   }
 
   /* Books grid */
@@ -63,7 +63,7 @@ Incluir DESPUÉS de main.css en todos los HTML:
     padding: 20px;
   }
   .dashboard-content {
-    padding: 24px;
+    padding: 5%;
   }
 
   /* Forms */
@@ -151,7 +151,7 @@ Incluir DESPUÉS de main.css en todos los HTML:
   .contact-hero,
   .bk-hero,
   .guide-hero {
-    padding: 80px 0 40px;
+    padding: 80px 0 5%;
   }
   .hero__inner,
   .catalog-hero__inner,
@@ -179,7 +179,7 @@ Incluir DESPUÉS de main.css en todos los HTML:
   .section,
   .section-sm,
   .section-lg {
-    padding: 40px 0;
+    padding: 5% 0;
   }
   .section-header {
     margin-bottom: 32px;
@@ -430,7 +430,7 @@ Incluir DESPUÉS de main.css en todos los HTML:
     padding: 1px 6px;
   }
   .dashboard-content {
-    padding: 20px;
+    padding: 5%;
   }
   .dashboard-section__title {
     font-size: 1.2rem;
@@ -804,4 +804,112 @@ Incluir DESPUÉS de main.css en todos los HTML:
     --text-dim: #888888;
   }
   */
+}
+
+/* === SIDEBAR HAMBURGER (MÓVIL) === */
+@media (max-width: 768px) {
+  .dashboard-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    height: 100vh;
+    z-index: 100;
+    transition: left 0.3s ease;
+    padding-top: 80px;
+    overflow-y: auto;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+  }
+  .dashboard-sidebar.open {
+    left: 0;
+  }
+  .dashboard-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 99;
+    display: none;
+  }
+  .dashboard-sidebar-overlay.active {
+    display: block;
+  }
+  .dashboard-hamburger {
+    display: flex !important;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 101;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--red);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .dashboard-hamburger:hover {
+    background: var(--red-hover);
+  }
+  .dashboard-content {
+    padding-top: 5%;
+  }
+}
+
+/* === PAGINACIÓN COLABORACIONES (MÓVIL) === */
+@media (max-width: 480px) {
+  #collabs-container {
+    padding: 0 8px;
+  }
+  .collab-card {
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .collab-card__author,
+  .collab-card__book {
+    font-size: 0.9rem;
+  }
+  .favorite-item__actions {
+    gap: 6px !important;
+  }
+  .favorite-item__actions .btn {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+  }
+  #collabs-pagination {
+    margin-top: 20px;
+    justify-content: center;
+  }
+  .collab-page-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .collab-page-btn:hover:not(:disabled),
+  .collab-page-btn.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--white);
+  }
+  .collab-page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .collab-page-info {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0 12px;
+    min-width: 80px;
+    text-align: center;
+  }
 }
