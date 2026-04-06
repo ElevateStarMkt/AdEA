@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="/AdEA/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/AdEA/favicon.ico" />
     <title>Déjate sorprender - AdEA</title>
     <meta
       name="description"
@@ -56,9 +56,14 @@ LEFT PANEL — Cards + Filtros
         color: var(--text);
         margin-bottom: 6px;
       }
+      /* ✅ CAMBIO DE LETRA SOLICITADO */
       .discover-header__sub {
-        font-size: 0.88rem;
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: 1rem;
         color: var(--text-muted);
+        letter-spacing: 0.02em;
+        line-height: 1.6;
       }
       /* ---- FILTERS ---- */
       .disc-filters {
@@ -140,7 +145,7 @@ SWIPE ARENA
         position: relative;
         width: 100%;
         max-width: 480px;
-        height: 420px;
+        height: 490px !important;
       }
       /* Individual swipe card */
       .swipe-card {
@@ -230,7 +235,6 @@ SWIPE ARENA
         line-height: 1.65;
         color: var(--text);
         flex: 1;
-        font-style: italic;
         /* Seguridad extra para evitar desbordamientos */
         overflow-wrap: break-word;
         word-wrap: break-word;
@@ -277,12 +281,11 @@ SWIPE ARENA
         display: flex;
       }
       .swipe-empty__icon {
-        font-size: 3.5rem;
-      }
-      .swipe-empty__title {
         font-family: var(--font-serif);
-        font-size: 1.4rem;
+        font-size: 2.5rem;
+        font-weight: 700;
         color: var(--text);
+        margin-bottom: 8px;
       }
       /* ---- ACTION BUTTONS ---- */
       .swipe-actions {
@@ -302,11 +305,12 @@ SWIPE ARENA
         cursor: pointer;
         transition: all var(--transition);
         flex-shrink: 0;
+        font-weight: 700;
+        font-size: 1.1rem;
       }
       .swipe-btn--pass {
         width: 56px;
         height: 56px;
-        font-size: 1.4rem;
         border-color: rgba(239, 68, 68, 0.3);
         color: #f87171;
       }
@@ -316,12 +320,12 @@ SWIPE ARENA
         transform: scale(1.08);
       }
       .swipe-btn--save {
-        width: 68px;
-        height: 68px;
-        font-size: 1.8rem;
+        width: 56px;
+        height: 56px;
         border-color: rgba(34, 197, 94, 0.3);
         color: #4ade80;
         background: var(--bg2);
+        font-size: 1.6rem;
       }
       .swipe-btn--save:hover {
         background: rgba(34, 197, 94, 0.12);
@@ -499,7 +503,10 @@ RIGHT PANEL — Carrito secreto
         text-align: center;
       }
       .cart-empty__icon {
-        font-size: 2.5rem;
+        font-family: var(--font-serif);
+        font-size: 1.8rem;
+        color: var(--text-muted);
+        margin-bottom: 8px;
       }
       .cart-empty__text {
         font-size: 0.85rem;
@@ -578,47 +585,112 @@ RESPONSIVE
             Sin portada, sin nombre. Solo la historia que te van a contar.
           </p>
         </div>
+        <!-- CARD ARENA -->
+        <div class="swipe-arena">
+          <div class="card-stack" id="card-stack">
+            <!-- Cards injected by JS -->
+          </div>
+          <div class="swipe-empty" id="swipe-empty">
+            <div class="swipe-empty__icon">Fin del mazo</div>
+            <p
+              style="
+                color: var(--text-muted);
+                font-size: 0.88rem;
+                max-width: 280px;
+              "
+            >
+              Los libros descartados vuelven en 36 horas. Prueba a cambiar los
+              filtros.
+            </p>
+            <button class="btn btn-primary" onclick="resetDescartados()">
+              Ver todos de nuevo
+            </button>
+          </div>
+          <!-- ACTIONS -->
+          <div class="swipe-actions" id="swipe-actions">
+            <button
+              class="swipe-btn swipe-btn--pass"
+              id="btn-pass"
+              title="Descartar"
+            >
+              X
+            </button>
+            <button
+              class="swipe-btn swipe-btn--undo"
+              id="btn-undo"
+              title="Deshacer"
+              disabled
+            >
+              &lt;&lt;
+            </button>
+            <button
+              class="swipe-btn swipe-btn--save"
+              id="btn-save"
+              title="Guardar en mi lista"
+            >
+              +
+            </button>
+          </div>
+          <div class="swipe-hint">
+            <span>Descartar</span>
+            <span style="color: var(--text-dim)">·</span>
+            <span>Guardar</span>
+          </div>
+        </div>
+        <div style="position: relative; width: 100%; max-width: 480px">
+          <div class="swipe-counter" id="swipe-counter">
+            <strong id="count-current">–</strong> /
+            <span id="count-total">–</span>
+          </div>
+        </div>
+        <br />
         <!-- FILTERS -->
         <div class="disc-filters">
           <div class="disc-filter-group">
             <label>Género</label>
             <select id="f-genero">
-              <option value="">Todos</option>
-                <option value="romance">Romance</option>
-                <option value="thriller">Thriller</option>
-                <option value="fantasia">Fantasía</option>
-                <option value="ficción">Ficción</option>
-                <option value="histórica">Histórica</option>
-                <option value="drama">Drama</option>
-                <option value="literaria">Literaria</option>
-                <option value="poesia">Poesía</option>
-                <option value="ciencia ficción">Ciencia ficción</option>
-                <option value="terror">Terror</option>
-                <option value="young-adult">Young Adult</option>
-                <option value="misterio">Misterio</option>
-                <option value="erotica">Erótica</option>
-                <option value="policiaca">Policíaca</option>
-                <option value="distopia">Distopía</option> 
+              <option value="">Todos los géneros</option>
+              <option value="romance">Romance</option>
+              <option value="romantasy">Romantasy</option>
+              <option value="dark-romance">Dark Romance</option>
+              <option value="thriller">Thriller</option>
+              <option value="fantasia">Fantasía</option>
+              <option value="ficción">Ficción</option>
+              <option value="new-adult">New Adult</option>
+              <option value="young-adult">Young Adult</option>
+              <option value="histórica">Histórica</option>
+              <option value="literaria">Literaria</option>
+              <option value="drama">Drama</option>
+              <option value="cozy-mystery">Cozy Mystery</option>
+              <option value="misterio">Misterio</option>
+              <option value="ciencia ficción">Ciencia ficción</option>
+              <option value="terror">Terror</option>
+              <option value="distopia">Distopía</option>
+              <option value="poesia">Poesía</option>
+              <option value="erotica">Erótica</option>
+              <option value="policiaca">Policíaca</option>
             </select>
           </div>
           <div class="disc-filter-group">
             <label>Mood</label>
             <select id="f-mood">
               <option value="">Todos</option>
-                <option value="adictivo">⚡ Adictivo</option>
-                <option value="devastador">💔 Devastador</option>
-                <option value="spicy">🌶️ Spicy</option>
-                <option value="reflexivo">💭 Reflexivo</option>
-                <option value="épico">🐉 Épico</option>
-                <option value="oscuro">🖤 Oscuro</option>
-                <option value="ligero">☀️ Ligero</option>
-                <option value="emotivo">😭 Emotivo</option>
-                <option value="esperanzador">🌟 Esperanzador</option>
-                <option value="melancólico">🌧️ Melancólico</option>
-                <option value="nostalgico">🕰️ Nostálgico</option>
-                <option value="divertido">😄 Divertido</option>
-                <option value="intrigante">🔍 Intrigante</option>
-                <option value="reconfortante">🫂 Reconfortante</option>   
+              <option value="adictivo">Adictivo</option>
+              <option value="devastador">Devastador</option>
+              <option value="spicy">Spicy</option>
+              <option value="reflexivo">Reflexivo</option>
+              <option value="épico">Épico</option>
+              <option value="oscuro">Oscuro</option>
+              <option value="ligero">Ligero</option>
+              <option value="emotivo">Emotivo</option>
+              <option value="esperanzador">Esperanzador</option>
+              <option value="melancólico">Melancólico</option>
+              <option value="nostalgico">Nostálgico</option>
+              <option value="divertido">Divertido</option>
+              <option value="intrigante">Intrigante</option>
+              <option value="reconfortante">Reconfortante</option>
+              <option value="slow-burn">Slow Burn</option>
+              <option value="enemies-to-lovers">Enemies to Lovers</option>
             </select>
           </div>
           <div class="disc-filter-group">
@@ -639,67 +711,8 @@ RESPONSIVE
             id="btn-reset-filters"
             style="align-self: flex-end"
           >
-            ↺ Limpiar
+            Limpiar filtros
           </button>
-        </div>
-        <!-- CARD ARENA -->
-        <div class="swipe-arena">
-          <div style="position: relative; width: 100%; max-width: 480px">
-            <div class="swipe-counter" id="swipe-counter">
-              <strong id="count-current">–</strong> /
-              <span id="count-total">–</span>
-            </div>
-          </div>
-          <div class="card-stack" id="card-stack">
-            <!-- Cards injected by JS -->
-          </div>
-          <div class="swipe-empty" id="swipe-empty">
-            <div class="swipe-empty__icon">📚</div>
-            <div class="swipe-empty__title">Has visto todo por ahora</div>
-            <p
-              style="
-                color: var(--text-muted);
-                font-size: 0.88rem;
-                max-width: 280px;
-              "
-            >
-              Los libros descartados vuelven en 36 horas. Prueba a cambiar los
-              filtros.
-            </p>
-            <button class="btn btn-primary" onclick="resetDescartados()">
-              Ver todos de nuevo
-            </button>
-          </div>
-          <!-- ACTIONS -->
-          <div class="swipe-actions" id="swipe-actions">
-            <button
-              class="swipe-btn swipe-btn--undo"
-              id="btn-undo"
-              title="Deshacer"
-              disabled
-            >
-              ↩
-            </button>
-            <button
-              class="swipe-btn swipe-btn--pass"
-              id="btn-pass"
-              title="Descartar"
-            >
-              ✕
-            </button>
-            <button
-              class="swipe-btn swipe-btn--save"
-              id="btn-save"
-              title="Guardar en mi lista"
-            >
-              ♥
-            </button>
-          </div>
-          <div class="swipe-hint">
-            <span>← Descartar</span>
-            <span style="color: var(--text-dim)">·</span>
-            <span>Guardar →</span>
-          </div>
         </div>
       </div>
       <!-- ============ RIGHT: CART ============ -->
@@ -714,7 +727,7 @@ RESPONSIVE
         </div>
         <div class="cart-list" id="cart-list">
           <div class="cart-empty" id="cart-empty">
-            <div class="cart-empty__icon">🤫</div>
+            <div class="cart-empty__icon">Lista vacía</div>
             <p class="cart-empty__text">
               Desliza a la derecha los libros que te llamen la atención.
               Aparecerán aquí.
@@ -738,7 +751,7 @@ RESPONSIVE
       id="cart-toggle-btn"
       onclick="toggleCartPanel()"
     >
-      <span>🤫 Mi lista</span
+      <span>Mi lista</span
       ><span
         class="count"
         id="cart-count-mobile"
@@ -756,523 +769,6 @@ RESPONSIVE
     <script src="js/components.js"></script>
     <script src="js/backend.js"></script>
     <script src="js/utils.js"></script>
-    <script>
-      injectShell("");
-      /* =====================================================
-      STATE
-      ===================================================== */
-      let allBooks = [];
-      let deck = [];
-      let deckIndex = 0;
-      let history = [];
-      let cart = [];
-      let discarded = new Set();
-      let favoritesIds = new Set(); // NUEVO: IDs de favoritos
-      let isDragging = false;
-      let startX = 0,
-        startY = 0,
-        currentX = 0;
-      let activeCard = null;
-
-      /* =====================================================
-      HELPERS
-      ===================================================== */
-      // Función para truncar texto a un máximo de caracteres
-      function truncateText(text, limit) {
-        if (!text) return "";
-        if (text.length <= limit) return text;
-        return text.substring(0, limit) + "...";
-      }
-
-      /* =====================================================
-      INIT
-      ===================================================== */
-      document.addEventListener("DOMContentLoaded", async () => {
-        allBooks = await loadBooks();
-
-        // ✅ CORRECCIÓN: Usar funciones de Parse en lugar de localStorage
-        const user = usuarioActual();
-
-        if (user) {
-          // Cargar favoritos desde Parse
-          const favoritos = await getFavoritos();
-          favoritos.forEach((f) => {
-            if (!cart.find((c) => c.libroId === f.libroId)) {
-              cart.push({
-                libroId: f.libroId,
-                sinopsis: f.sinopsis,
-                paginas: f.paginas,
-                precio: f.precio,
-                afiliado_url: f.afiliado_url,
-                etiquetas: f.etiquetas,
-                mood: f.mood,
-                titulo: f.titulo,
-                autor: f.autor,
-                imagen: f.imagen,
-              });
-            }
-            favoritesIds.add(f.libroId);
-          });
-
-          // Cargar descartados desde Parse
-          const descartados = await getDescartados();
-          descartados.forEach((id) => discarded.add(id));
-        } else {
-          // ✅ Fallback: Si no hay sesión, usar localStorage (para usuarios no registrados)
-          const d = localStorage.getItem("adea_descartados");
-          if (d) JSON.parse(d).forEach((id) => discarded.add(id));
-
-          const s = localStorage.getItem("adea_favoritos");
-          if (s) {
-            const saved = JSON.parse(s);
-            saved.forEach((f) => {
-              if (!cart.find((c) => c.libroId === f.libroId)) cart.push(f);
-              favoritesIds.add(f.libroId);
-            });
-          }
-        }
-
-        renderCart();
-        applyFiltersAndBuildDeck();
-        bindFilters();
-        bindButtons();
-      });
-
-      /* =====================================================
-      FILTERS → DECK
-      ===================================================== */
-      function applyFiltersAndBuildDeck() {
-        const genero = document.getElementById("f-genero").value;
-        const mood = document.getElementById("f-mood").value;
-        const maxPag = parseInt(document.getElementById("f-pages").value);
-
-        let books = allBooks.filter((b) => {
-          if (b.activo === false) return false;
-          if (discarded.has(b.id)) return false;
-          if (cart.find((c) => c.libroId === b.id)) return false;
-          if (favoritesIds.has(b.id)) return false; // NUEVO: Excluir favoritos
-          if (genero && !b.genero.includes(genero)) return false;
-          if (mood && !b.mood.includes(mood)) return false;
-          if (b.paginas && b.paginas > maxPag) return false;
-          return true;
-        });
-
-        // Shuffle
-        books = books.sort(() => Math.random() - 0.5);
-        deck = books;
-        deckIndex = 0;
-        history = [];
-        renderStack();
-        updateCounter();
-      }
-
-      function bindFilters() {
-        document
-          .getElementById("f-genero")
-          .addEventListener("change", applyFiltersAndBuildDeck);
-        document
-          .getElementById("f-mood")
-          .addEventListener("change", applyFiltersAndBuildDeck);
-        document.getElementById("f-pages").addEventListener("input", (e) => {
-          const v = parseInt(e.target.value);
-          document.getElementById("pages-label").textContent =
-            v >= 600 ? "Todas" : `≤ ${v} págs.`;
-          applyFiltersAndBuildDeck();
-        });
-        document
-          .getElementById("btn-reset-filters")
-          .addEventListener("click", () => {
-            document.getElementById("f-genero").value = "";
-            document.getElementById("f-mood").value = "";
-            document.getElementById("f-pages").value = 600;
-            document.getElementById("pages-label").textContent = "Todas";
-            applyFiltersAndBuildDeck();
-          });
-      }
-      /* =====================================================
-      RENDER STACK
-      ===================================================== */
-      function renderStack() {
-        const stack = document.getElementById("card-stack");
-        const empty = document.getElementById("swipe-empty");
-        const actions = document.getElementById("swipe-actions");
-        const remaining = deck.slice(deckIndex);
-        if (!remaining.length) {
-          stack.innerHTML = "";
-          empty.classList.add("show");
-          actions.style.opacity = ".3";
-          actions.style.pointerEvents = "none";
-          updateCounter();
-          return;
-        }
-        empty.classList.remove("show");
-        actions.style.opacity = "1";
-        actions.style.pointerEvents = "auto";
-        // Render up to 4 cards (top = last in DOM = highest z-index)
-        const visible = remaining.slice(0, 4);
-        stack.innerHTML = "";
-        visible
-          .slice()
-          .reverse()
-          .forEach((book, revIdx) => {
-            const idx = visible.length - 1 - revIdx; // 0 = top card
-            const card = buildSwipeCard(book, idx);
-            stack.appendChild(card);
-            if (idx === 0) attachDragHandlers(card, book);
-          });
-        // Undo button state
-        document.getElementById("btn-undo").disabled = history.length === 0;
-        updateCounter();
-      }
-      function buildSwipeCard(book, stackPos) {
-        const el = document.createElement("div");
-        el.className = `swipe-card ${stackPos === 0 ? "is-top" : `behind-${stackPos}`}`;
-        el.dataset.id = book.id;
-        const tagsHTML = book.etiquetas
-          .slice(0, 2)
-          .map((t) => `<span class="tag" style="font-size:.7rem;">${t}</span>`)
-          .join("");
-        const moodsHTML = book.mood
-          .slice(0, 3)
-          .map((m) => `<span class="swipe-card__mood-badge">${m}</span>`)
-          .join("");
-
-        // TRUNCAMIENTO DE SINOPSIS (Máximo 425 caracteres)
-        const sinopsisTruncada = truncateText(book.sinopsis_larga, 230);
-
-        el.innerHTML = `
-<div class="swipe-card__like-label" id="like-label">✓ Guardado</div>
-<div class="swipe-card__pass-label" id="pass-label">✕ Descartar</div>
-<div class="swipe-card__moods">${moodsHTML}</div>
-<p class="swipe-card__synopsis">"${sinopsisTruncada}"</p>
-<div class="swipe-card__tags">${tagsHTML}</div>
-<div class="swipe-card__meta">
-<div class="swipe-card__meta-item">
-<span class="swipe-card__meta-label">Páginas</span>
-<span class="swipe-card__meta-value">${book.paginas || "—"}</span>
-</div>
-<div class="swipe-card__meta-item">
-<span class="swipe-card__meta-label">Precio aprox.</span>
-<span class="swipe-card__meta-value">${book.precio ? book.precio.toFixed(2) + " €" : "—"}</span>
-</div>
-<div class="swipe-card__meta-item">
-<span class="swipe-card__meta-label">Valoración</span>
-<span class="swipe-card__meta-value">${renderStars(book.valoracion)}</span>
-</div>
-</div>
-`;
-        return el;
-      }
-      function updateCounter() {
-        const remaining = deck.length - deckIndex;
-        document.getElementById("count-current").textContent =
-          deckIndex + 1 > deck.length ? deck.length : deckIndex + 1;
-        document.getElementById("count-total").textContent = deck.length;
-      }
-      /* =====================================================
-      DRAG HANDLERS
-      ===================================================== */
-      function attachDragHandlers(card, book) {
-        // Mouse
-        card.addEventListener("mousedown", (e) =>
-          startDrag(e.clientX, e.clientY, card),
-        );
-        document.addEventListener("mousemove", (e) =>
-          moveDrag(e.clientX, card, book),
-        );
-        document.addEventListener("mouseup", (e) =>
-          endDrag(e.clientX, card, book),
-        );
-        // Touch
-        card.addEventListener(
-          "touchstart",
-          (e) => startDrag(e.touches[0].clientX, e.touches[0].clientY, card),
-          { passive: true },
-        );
-        card.addEventListener(
-          "touchmove",
-          (e) => moveDrag(e.touches[0].clientX, card, book),
-          { passive: true },
-        );
-        card.addEventListener("touchend", (e) =>
-          endDrag(e.changedTouches[0].clientX, card, book),
-        );
-      }
-      function startDrag(x, y, card) {
-        isDragging = true;
-        activeCard = card;
-        startX = x;
-        startY = y;
-        card.style.transition = "none";
-      }
-      function moveDrag(x, card, book) {
-        if (!isDragging || activeCard !== card) return;
-        currentX = x - startX;
-        const rotate = currentX * 0.08;
-        card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
-        // Feedback labels
-        const likeLabel = card.querySelector(".swipe-card__like-label");
-        const passLabel = card.querySelector(".swipe-card__pass-label");
-        const ratio = Math.min(Math.abs(currentX) / 100, 1);
-        if (currentX > 20) {
-          likeLabel.style.opacity = ratio;
-          passLabel.style.opacity = 0;
-          card.style.borderColor = `rgba(34,197,94,${ratio * 0.6})`;
-        } else if (currentX < -20) {
-          passLabel.style.opacity = ratio;
-          likeLabel.style.opacity = 0;
-          card.style.borderColor = `rgba(239,68,68,${ratio * 0.6})`;
-        } else {
-          likeLabel.style.opacity = 0;
-          passLabel.style.opacity = 0;
-          card.style.borderColor = "";
-        }
-      }
-      function endDrag(x, card, book) {
-        if (!isDragging || activeCard !== card) return;
-        isDragging = false;
-        activeCard = null;
-        const delta = x - startX;
-        card.style.transition = "transform .3s ease, opacity .3s ease";
-        if (delta > 90) {
-          flyOut(card, "right", book);
-        } else if (delta < -90) {
-          flyOut(card, "left", book);
-        } else {
-          // Snap back
-          card.style.transform = "";
-          card.style.borderColor = "";
-          const likeLabel = card.querySelector(".swipe-card__like-label");
-          const passLabel = card.querySelector(".swipe-card__pass-label");
-          if (likeLabel) likeLabel.style.opacity = 0;
-          if (passLabel) passLabel.style.opacity = 0;
-        }
-      }
-      /* =====================================================
-      SWIPE ACTIONS
-      ===================================================== */
-      function flyOut(card, dir, book) {
-        const x = dir === "right" ? window.innerWidth : -window.innerWidth;
-        card.style.transform = `translateX(${x}px) rotate(${dir === "right" ? 20 : -20}deg)`;
-        card.style.opacity = "0";
-        card.style.borderColor = "";
-        setTimeout(() => {
-          if (dir === "right") saveBook(book);
-          else discardBook(book);
-        }, 280);
-      }
-
-      async function saveBook(book) {
-        history.push({ action: "save", book });
-
-        // ✅ CORRECCIÓN: Usar backend si hay sesión
-        const user = usuarioActual();
-        if (user) {
-          await addFavorito(book.id, {
-            libroId: book.id,
-            titulo: book.titulo,
-            autor: book.autor,
-            imagen: book.imagen,
-            sinopsis_corta: book.sinopsis_corta,
-            sinopsis: book.sinopsis_larga,
-            paginas: book.paginas,
-            precio: book.precio,
-            afiliado_url: book.afiliado_url,
-            etiquetas: book.etiquetas,
-            mood: book.mood,
-          });
-        } else {
-          // Fallback localStorage
-          let saved = JSON.parse(
-            localStorage.getItem("adea_favoritos") || "[]",
-          );
-          if (!saved.find((f) => f.libroId === book.id)) {
-            saved.push({
-              libroId: book.id,
-              sinopsis: book.sinopsis_corta,
-              paginas: book.paginas,
-              precio: book.precio,
-              afiliado_url: book.afiliado_url,
-              etiquetas: book.etiquetas,
-              mood: book.mood,
-              titulo: book.titulo,
-              autor: book.autor,
-              imagen: book.imagen,
-            });
-            localStorage.setItem("adea_favoritos", JSON.stringify(saved));
-          }
-        }
-
-        cart.unshift({
-          libroId: book.id,
-          sinopsis: book.sinopsis_corta,
-          paginas: book.paginas,
-          precio: book.precio,
-          afiliado_url: book.afiliado_url,
-          etiquetas: book.etiquetas,
-          mood: book.mood,
-          titulo: book.titulo,
-          autor: book.autor,
-          imagen: book.imagen,
-        });
-        favoritesIds.add(book.id);
-        deckIndex++;
-        renderStack();
-        renderCart();
-        showToast("♥ Guardado en tu lista secreta");
-      }
-
-      async function discardBook(book) {
-        history.push({ action: "discard", book });
-
-        // ✅ CORRECCIÓN: Usar backend si hay sesión
-        const user = usuarioActual();
-        if (user) {
-          await descartarLibro(book.id);
-        } else {
-          // Fallback localStorage
-          let d = JSON.parse(localStorage.getItem("adea_descartados") || "[]");
-          if (!d.includes(book.id)) {
-            d.push(book.id);
-            localStorage.setItem("adea_descartados", JSON.stringify(d));
-          }
-        }
-
-        discarded.add(book.id);
-        deckIndex++;
-        renderStack();
-      }
-
-      function undoLast() {
-        if (!history.length) return;
-        const last = history.pop();
-        if (last.action === "save") {
-          cart = cart.filter((c) => c.libroId !== last.book.id);
-          removeFavorito(last.book.id);
-          renderCart();
-        } else {
-          discarded.delete(last.book.id);
-        }
-        deckIndex = Math.max(0, deckIndex - 1);
-        renderStack();
-        showToast("↩ Deshecho");
-      }
-
-      /* =====================================================
-      BUTTON BINDINGS
-      ===================================================== */
-      function bindButtons() {
-        document.getElementById("btn-pass").addEventListener("click", () => {
-          const topCard = document.querySelector(".swipe-card.is-top");
-          const book = deck[deckIndex];
-          if (!topCard || !book) return;
-          flyOut(topCard, "left", book);
-        });
-        document.getElementById("btn-save").addEventListener("click", () => {
-          const topCard = document.querySelector(".swipe-card.is-top");
-          const book = deck[deckIndex];
-          if (!topCard || !book) return;
-          flyOut(topCard, "right", book);
-        });
-        document.getElementById("btn-undo").addEventListener("click", undoLast);
-      }
-      /* =====================================================
-      CART RENDER
-      ===================================================== */
-      function renderCart() {
-        const list = document.getElementById("cart-list");
-        const empty = document.getElementById("cart-empty");
-        const footer = document.getElementById("cart-footer");
-        const count = cart.length;
-        document.getElementById("cart-count").textContent = count;
-        document.getElementById("cart-count-mobile").textContent = count;
-        if (!count) {
-          empty.style.display = "flex";
-          footer.style.display = "none";
-          // Remove items but keep empty state
-          list.querySelectorAll(".cart-item").forEach((el) => el.remove());
-          return;
-        }
-        empty.style.display = "none";
-        footer.style.display = "flex";
-        // Full re-render
-        list.querySelectorAll(".cart-item").forEach((el) => el.remove());
-        cart.forEach((item) => {
-          const el = document.createElement("div");
-          el.className = "cart-item";
-          el.dataset.id = item.libroId;
-          const tagsHTML = (item.etiquetas || [])
-            .slice(0, 1)
-            .map((t) => `<span class="cart-item__meta-pill">${t}</span>`)
-            .join("");
-          el.innerHTML = `
-<button class="cart-item__remove" onclick="removeFromCart(${item.libroId}); event.stopPropagation();" title="Quitar">✕</button>
-<p class="cart-item__synopsis">"${item.sinopsis}"</p>
-<div class="cart-item__meta">
-${item.paginas ? `<span class="cart-item__meta-pill">📄 ${item.paginas} págs.</span>` : ""}
-${item.precio ? `<span class="cart-item__meta-pill cart-item__price">💶 ${item.precio.toFixed(2)} €</span>` : ""}
-${tagsHTML}
-</div>
-<a href="${item.afiliado_url}" target="_blank" rel="noopener sponsored"
-class="cart-item__buy"
-onclick="if(typeof trackClick==='function') trackClick(${item.libroId});">
-👉 Comprar en Amazon
-</a>
-`;
-          list.insertBefore(el, list.firstChild);
-        });
-      }
-      async function removeFromCart(libroId) {
-        cart = cart.filter((c) => c.libroId !== libroId);
-        favoritesIds.delete(libroId);
-
-        // ✅ CORRECCIÓN: Usar backend si hay sesión
-        const user = usuarioActual();
-        if (user) {
-          await removeFavorito(libroId);
-        } else {
-          // Fallback localStorage
-          let saved = JSON.parse(
-            localStorage.getItem("adea_favoritos") || "[]",
-          );
-          saved = saved.filter((f) => f.libroId !== libroId);
-          localStorage.setItem("adea_favoritos", JSON.stringify(saved));
-        }
-
-        renderCart();
-        showToast("Eliminado de tu lista");
-      }
-
-      async function clearCart() {
-        if (!confirm("¿Vaciar toda la lista?")) return;
-
-        const user = usuarioActual();
-        for (const c of cart) {
-          favoritesIds.delete(c.libroId);
-          if (user) {
-            await removeFavorito(c.libroId);
-          }
-        }
-
-        if (!user) {
-          localStorage.removeItem("adea_favoritos");
-        }
-
-        cart = [];
-        renderCart();
-      }
-
-      function resetDescartados() {
-        discarded.clear();
-        localStorage.removeItem("adea_descartados");
-        applyFiltersAndBuildDeck();
-      }
-      /* =====================================================
-      MOBILE PANEL TOGGLE
-      ===================================================== */
-      function toggleCartPanel() {
-        document.getElementById("cart-panel").classList.toggle("open");
-      }
-    </script>
+    <script src="js/descubrir.js"></script>
   </body>
 </html>

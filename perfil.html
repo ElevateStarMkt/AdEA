@@ -3,11 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="/AdEA/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/AdEA/favicon.ico" />
     <title>Perfil - AdEA</title>
     <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/mobile.css" />
     <style>
+      /* (Se mantiene todo el CSS original de perfil.html) */
       .profile-hero {
         padding: 8% 0 8%;
       }
@@ -204,8 +205,6 @@
         font-size: 2rem;
         margin-bottom: 16px;
       }
-
-      /* PROFILE BLOCK */
       .profile-block {
         background: var(--bg2);
         border: 1px solid var(--border);
@@ -236,8 +235,6 @@
         font-size: 0.9rem;
         font-style: italic;
       }
-
-      /* MINI-COLLAB */
       .mini-collab {
         display: flex;
         align-items: center;
@@ -312,8 +309,6 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
       }
-
-      /* MINI-REVIEW */
       .mini-review {
         padding: 16px;
         background: var(--bg3);
@@ -368,8 +363,6 @@
         color: var(--text-muted);
         font-weight: 500;
       }
-
-      /* MINI-LEIDO */
       .mini-leido {
         display: flex;
         gap: 12px;
@@ -415,8 +408,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
-
-      /* MODAL */
       .modal-overlay {
         position: fixed;
         inset: 0;
@@ -524,7 +515,6 @@
         flex: 1;
         justify-content: center;
       }
-
       @media (max-width: 768px) {
         .profile-block {
           padding: 20px;
@@ -558,7 +548,6 @@
   </head>
   <body class="noise-bg">
     <div id="nav-placeholder"></div>
-
     <section class="profile-hero">
       <div class="container">
         <div class="profile-card" id="profile-content">
@@ -572,10 +561,7 @@
       </div>
     </section>
 
-    <!-- ═══════════════════════════════════════
-         MODAL: INVITAR COLABORACIÓN
-         Debe estar ANTES del <script> que lo referencia
-         ═══════════════════════════════════════ -->
+    <!-- MODAL INVITAR -->
     <div id="invite-collab-modal" class="modal-overlay">
       <div class="modal">
         <button class="modal__close" id="btn-close-invite-modal">×</button>
@@ -585,14 +571,12 @@
         <form id="invite-collab-form">
           <input type="hidden" id="invite-bs-id" />
           <input type="hidden" id="invite-bs-tarifa" />
-
           <div class="form-group">
             <label>Selecciona tu libro *</label>
             <select id="invite-libro-select" required>
               <option value="">Cargando tus libros...</option>
             </select>
           </div>
-
           <div class="form-group">
             <label>Tarifa a pagar (€)</label>
             <input
@@ -607,12 +591,10 @@
                 pointer-events: none;
               "
             />
-            <small style="color: var(--text-dim)">
-              Tarifa fijada por el bookstagramer. Se cobrará si acepta la
-              invitación.
-            </small>
+            <small style="color: var(--text-dim)"
+              >Tarifa fijada por el bookstagramer. Se cobrará si acepta.</small
+            >
           </div>
-
           <div class="form-group">
             <label>Mensaje (opcional)</label>
             <textarea
@@ -620,7 +602,6 @@
               placeholder="Cuéntale por qué te gustaría que reseñe tu libro..."
             ></textarea>
           </div>
-
           <div class="modal__actions">
             <button
               type="submit"
@@ -640,7 +621,6 @@
         </form>
       </div>
     </div>
-
     <div id="footer-placeholder"></div>
 
     <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
@@ -649,68 +629,46 @@
     <script src="js/utils.js"></script>
     <script>
       injectShell("");
-
-      /* ─────────────────────────────────────────────
-         MODAL HELPERS
-      ───────────────────────────────────────────── */
       function openInviteCollabModal(
         bookstagramerId,
         bookstagramerNombre,
         tarifaBS,
       ) {
         const currentUser = usuarioActual();
-
         if (!currentUser) {
           showToast("⚠️ Debes iniciar sesión como escritor");
           return;
         }
-        if (currentuser?.get("rol") !== "escritor") {
+        if (currentUser?.get("rol") !== "escritor") {
           showToast("⚠️ Solo los escritores pueden invitar a colaborar");
           return;
         }
-
         const modal = document.getElementById("invite-collab-modal");
-        const bsIdField = document.getElementById("invite-bs-id");
-        const tarifaField = document.getElementById("invite-tarifa");
-        const titleEl = document.getElementById("invite-modal-title");
-        const select = document.getElementById("invite-libro-select");
-
-        if (!modal || !bsIdField || !tarifaField || !titleEl || !select) {
-          showToast("❌ Error: elementos del modal no encontrados");
-          return;
-        }
-
-        // Rellenar datos
-        bsIdField.value = bookstagramerId;
+        document.getElementById("invite-bs-id").value = bookstagramerId;
         document.getElementById("invite-bs-tarifa").value = tarifaBS || 0;
-        titleEl.textContent = `Invitar a ${bookstagramerNombre}`;
-        tarifaField.value = tarifaBS || "";
-
-        // Cargar libros del escritor
+        document.getElementById("invite-modal-title").textContent =
+          `Invitar a ${bookstagramerNombre}`;
+        document.getElementById("invite-tarifa").value = tarifaBS || "";
+        const select = document.getElementById("invite-libro-select");
         select.innerHTML = '<option value="">Cargando libros...</option>';
         select.disabled = true;
-
         getMisLibros(currentUser.id)
           .then((libros) => {
-            if (libros.length) {
-              select.innerHTML = libros
-                .map((b) => `<option value="${b.libroId}">${b.titulo}</option>`)
-                .join("");
-              select.disabled = false;
-            } else {
-              select.innerHTML =
-                '<option value="">No tienes libros publicados</option>';
-            }
+            select.innerHTML = libros.length
+              ? libros
+                  .map(
+                    (b) => `<option value="${b.libroId}">${b.titulo}</option>`,
+                  )
+                  .join("")
+              : '<option value="">No tienes libros publicados</option>';
+            select.disabled = false;
           })
           .catch(() => {
             select.innerHTML =
               '<option value="">Error cargando libros</option>';
           });
-
-        // Mostrar modal
         modal.style.display = "flex";
       }
-
       function closeInviteCollabModal() {
         const modal = document.getElementById("invite-collab-modal");
         if (modal) modal.style.display = "none";
@@ -720,67 +678,52 @@
         if (select) select.disabled = false;
       }
 
-      /* ─────────────────────────────────────────────
-         PERFIL — carga principal
-      ───────────────────────────────────────────── */
       async function loadProfile() {
-    const params = new URLSearchParams(location.search);
-    const userId = params.get("id");
-    if (!userId) {
-        renderError("Perfil no especificado.");
-        return;
-    }
-    try {
-        // ✅ 1. Obtener datos públicos (funciona sin permisos especiales)
-        const perfil = await getPerfilPublico(userId);
-        
-        // ✅ 2. Si no existe perfil público, mostrar error
-        if (!perfil) {
+        const params = new URLSearchParams(location.search);
+        const userId = params.get("id");
+        if (!userId) {
+          renderError("Perfil no especificado.");
+          return;
+        }
+        try {
+          const perfil = await getPerfilPublico(userId);
+          if (!perfil) {
             renderError("Usuario no encontrado o perfil privado.");
             return;
+          }
+          const currentUser = Parse.User.current();
+          const isFollowing =
+            currentUser?.get("following")?.includes(userId) || false;
+          const rol = perfil.rol || "lector";
+          const nombre = perfil.nombre || perfil.displayName || "Usuario";
+          let html = renderProfileHeader(nombre, rol);
+          html += renderProfileStats(
+            perfil.seguidoresAdEA || 0,
+            rol,
+            null,
+            perfil,
+          );
+          html += renderProfileFields(rol, perfil, null);
+          html += renderProfileActions(
+            rol,
+            currentUser,
+            userId,
+            isFollowing,
+            null,
+            perfil,
+          );
+          document.getElementById("profile-content").innerHTML = html;
+          await renderExtraSections(rol, userId, nombre, perfil);
+        } catch (err) {
+          renderError("Error al cargar el perfil.");
         }
-
-        // ✅ 3. Obtener usuario actual para verificar seguidores
-        const currentUser = Parse.User.current();
-        const isFollowing = currentUser?.get("following")?.includes(userId) || false;
-
-        // ✅ 4. Usar los datos del perfil público para renderizar
-        const rol = perfil.rol || "lector";
-        const nombre = perfil.nombre || perfil.displayName || "Usuario";
-        
-        let html = renderProfileHeader(nombre, rol);
-        html += renderProfileStats(perfil.seguidoresAdEA || 0, rol, null, perfil);
-        html += renderProfileFields(rol, perfil, null); // Pasamos null para user privado
-        html += renderProfileActions(rol, currentUser, userId, isFollowing, null, perfil);
-        
-        if (rol === "escritor") html += await renderWriterSection(userId, nombre);
-        if (rol === "bookstagramer") html += await renderBookstagramerSection(userId);
-        if (rol === "lector") html += await renderLectorSection(userId);
-        
-        document.getElementById("profile-content").innerHTML = html;
-        await renderExtraSections(rol, userId, nombre, perfil);
-    } catch (err) {
-        console.error("Error cargando perfil:", err.message);
-        renderError("Error al cargar el perfil.");
-    }
-}
-
-      function renderProfileHeader(nombre, rol) {
-        return `<div class="profile-header">
-          <div class="profile-avatar">${nombre.charAt(0).toUpperCase()}</div>
-          <div>
-            <div class="profile-name">${nombre}</div>
-            <div class="profile-rol">${rol.toUpperCase()}</div>
-          </div>
-        </div>`;
       }
 
+      function renderProfileHeader(nombre, rol) {
+        return `<div class="profile-header"><div class="profile-avatar">${nombre.charAt(0).toUpperCase()}</div><div><div class="profile-name">${nombre}</div><div class="profile-rol">${rol.toUpperCase()}</div></div></div>`;
+      }
       function renderProfileStats(seguidoresAdEA, rol, user, perfil) {
-        let html = `<div class="profile-stats">
-          <div class="profile-stat">
-            <div class="profile-stat__value" id="stat-followers">${seguidoresAdEA}</div>
-            <div class="profile-stat__label">Seguidores en AdEA</div>
-          </div>`;
+        let html = `<div class="profile-stats"><div class="profile-stat"><div class="profile-stat__value" id="stat-followers">${seguidoresAdEA}</div><div class="profile-stat__label">Seguidores en AdEA</div></div>`;
         if (rol === "bookstagramer") {
           const seguidoresIG =
             perfil?.seguidoresIG || user?.get("seguidores") || 0;
@@ -790,10 +733,8 @@
           if (tarifa > 0)
             html += `<div class="profile-stat"><div class="profile-stat__value">${tarifa}€</div><div class="profile-stat__label">Tarifa</div></div>`;
         }
-        html += `</div>`;
-        return html;
+        return html + `</div>`;
       }
-
       function renderProfileFields(rol, perfil, user) {
         let html = "";
         const campos = [];
@@ -801,28 +742,21 @@
         const web = perfil?.web || user?.get("web") || "";
         const instagram = perfil?.instagram || user?.get("instagram") || "";
         const email = perfil?.email || user?.get("email") || "";
-
         if (bio) campos.push(`<p class="profile-bio">${bio}</p>`);
-        if (web) {
-          const urlWeb = web.startsWith("http") ? web : `https://${web}`;
+        if (web)
           campos.push(
-            `<p class="profile-field"><span class="profile-field__label">🌐 Web:</span><span class="profile-field__value"><a href="${urlWeb}" target="_blank" rel="noopener">${web}</a></span></p>`,
+            `<p class="profile-field"><span class="profile-field__label">Web:</span><span class="profile-field__value"><a href="${web.startsWith("http") ? web : "https://" + web}" target="_blank" rel="noopener">${web}</a></span></p>`,
           );
-        }
-        if (instagram) {
-          const handle = instagram.replace("@", "");
+        if (instagram)
           campos.push(
-            `<div class="profile-social"><a href="https://instagram.com/${handle}" target="_blank" rel="noopener">📸 @${handle}</a></div>`,
+            `<div class="profile-social"><a href="https://instagram.com/${instagram.replace("@", "")}" target="_blank" rel="noopener">@${instagram.replace("@", "")}</a></div>`,
           );
-        }
-        if (email && rol !== "lector") {
+        if (email && rol !== "lector")
           campos.push(
-            `<p class="profile-field"><a href="mailto:${email}?bcc=elevatestarmkt@gmail.com" class="btn btn-secondary btn-sm">✉️ Contactar por email</a></p>`,
+            `<p class="profile-field"><a href="mailto:${email}?bcc=elevatestarmkt@gmail.com" class="btn btn-secondary btn-sm">Contactar por email</a></p>`,
           );
-        }
         if (campos.length)
           html += `<div class="profile-section">${campos.join("")}</div>`;
-
         if (rol === "escritor") {
           const generos = perfil?.generosPrincipales || [];
           if (generos.length)
@@ -836,26 +770,18 @@
           if (condiciones)
             html += `<div class="profile-section"><div class="profile-section__title">Condiciones</div><p class="profile-bio">${condiciones}</p></div>`;
           if (generoFav)
-            html += `<p class="profile-field"><span class="profile-field__label">💕 Género favorito:</span><span class="profile-field__value">${generoFav}</span></p>`;
-          html += `<div class="profile-section"><div class="profile-section__title">Actividad</div>
-            <div class="profile-counters">
-              <div class="profile-counter"><div class="profile-counter__value" id="count-reseñas">–</div><div class="profile-counter__label">Reseñas</div></div>
-              <div class="profile-counter"><div class="profile-counter__value" id="count-colabs">–</div><div class="profile-counter__label">Colaboraciones AdEA</div></div>
-            </div></div>`;
+            html += `<p class="profile-field"><span class="profile-field__label">Género favorito:</span><span class="profile-field__value">${generoFav}</span></p>`;
+          html += `<div class="profile-section"><div class="profile-section__title">Actividad</div><div class="profile-counters"><div class="profile-counter"><div class="profile-counter__value" id="count-reseñas">–</div><div class="profile-counter__label">Reseñas</div></div><div class="profile-counter"><div class="profile-counter__value" id="count-colabs">–</div><div class="profile-counter__label">Colaboraciones AdEA</div></div></div></div>`;
         }
         if (rol === "lector") {
           const generoFav =
             perfil?.generoFavorito || user?.get("generoFavorito") || "";
           if (generoFav)
-            html += `<p class="profile-field"><span class="profile-field__label">💕 Género favorito:</span><span class="profile-field__value">${generoFav}</span></p>`;
-          html += `<div class="profile-section"><div class="profile-section__title">Actividad</div>
-            <div class="profile-counters">
-              <div class="profile-counter"><div class="profile-counter__value" id="count-reseñas">–</div><div class="profile-counter__label">Reseñas escritas</div></div>
-            </div></div>`;
+            html += `<p class="profile-field"><span class="profile-field__label">Género favorito:</span><span class="profile-field__value">${generoFav}</span></p>`;
+          html += `<div class="profile-section"><div class="profile-section__title">Actividad</div><div class="profile-counters"><div class="profile-counter"><div class="profile-counter__value" id="count-reseñas">–</div><div class="profile-counter__label">Reseñas escritas</div></div></div></div>`;
         }
         return html;
       }
-
       function renderProfileActions(
         rol,
         currentUser,
@@ -865,14 +791,9 @@
         perfil,
       ) {
         let html = `<div class="profile-actions">`;
-
         if (currentUser && currentUser.id !== userId) {
-          html += `<button class="btn ${isFollowing ? "btn-secondary" : "btn-primary"}" id="btn-follow"
-            onclick="handleToggleFollow('${userId}')">
-            ${isFollowing ? "✓ Siguiendo" : "+ Seguir"}
-          </button>`;
+          html += `<button class="btn ${isFollowing ? "btn-secondary" : "btn-primary"}" id="btn-follow" onclick="handleToggleFollow('${userId}')">${isFollowing ? "✓ Siguiendo" : "+ Seguir"}</button>`;
         }
-
         if (
           rol === "bookstagramer" &&
           currentUser?.get("rol") === "escritor" &&
@@ -884,20 +805,14 @@
             user?.get("nombre") ||
             "Bookstagramer"
           ).replace(/'/g, "\\'");
-          html += `<button class="btn btn-primary"
-            onclick="openInviteCollabModal('${userId}', '${nombreBS}', ${tarifaBS})">
-            🤝 Invitar a colaborar
-          </button>`;
+          html += `<button class="btn btn-primary" onclick="openInviteCollabModal('${userId}','${nombreBS}',${tarifaBS})">🤝 Invitar a colaborar</button>`;
         }
-
         if (rol === "bookstagramer" && currentUser?.get("rol") === "escritor") {
           const email = perfil?.email || user?.get("email") || "";
           if (email)
             html += `<a href="mailto:${email}?bcc=elevatestarmkt@gmail.com" class="btn btn-ghost">✉️ Contactar</a>`;
         }
-
-        html += `</div>`;
-        return html;
+        return html + `</div>`;
       }
 
       async function renderWriterSection(escritorId, nombre) {
@@ -910,47 +825,31 @@
           qBook.limit(6);
           const libros = await qBook.find();
           if (!libros.length) return "";
-          let html = `<div class="profile-section">
-            <div class="profile-section__title">Libros publicados (${libros.length})
-              <a href="catalogo.html?escritorId=${escritorId}" class="btn btn-secondary btn-sm" style="margin-left:12px;float:right">Ver todos →</a>
-            </div>`;
+          let html = `<div class="profile-section"><div class="profile-section__title">Libros publicados (${libros.length})<a href="catalogo.html?escritorId=${escritorId}" class="btn btn-secondary btn-sm" style="margin-left:12px;float:right">Ver todos →</a></div>`;
           libros.forEach((libro) => {
-            const titulo = libro.get("titulo") || "Sin título";
-            const genero = (libro.get("genero") || [])[0] || "";
-            const imagen = libro.get("imagen") || "";
-            const libroId = libro.get("libroId");
-            html += `<a href="libro.html?id=${libroId}" class="mini-book">
-              <div class="mini-book__cover"><img src="${imagen}" onerror="this.src='assets/img/cover-placeholder.svg'" alt="${titulo}"></div>
-              <div class="mini-book__info"><div class="mini-book__title">${titulo}</div><div class="mini-book__genero">${genero}</div></div>
-            </a>`;
+            html += `<a href="libro.html?id=${libro.get("libroId")}" class="mini-book"><div class="mini-book__cover"><img src="${libro.get("imagen") || ""}" onerror="this.src='assets/img/cover-placeholder.svg'" alt="${libro.get("titulo")}"></div><div class="mini-book__info"><div class="mini-book__title">${libro.get("titulo") || "Sin título"}</div><div class="mini-book__genero">${(libro.get("genero") || [])[0] || ""}</div></div></a>`;
           });
-          html += `</div>`;
-          return html;
+          return html + `</div>`;
         } catch {
           return "";
         }
       }
-
       async function renderBookstagramerSection(userId) {
         setTimeout(async () => {
           try {
-            const rc = await contarResenasUsuario(userId);
-            const cc = await contarColaboracionesUsuario(userId);
-            const elR = document.getElementById("count-reseñas");
-            const elC = document.getElementById("count-colabs");
-            if (elR) elR.textContent = rc;
-            if (elC) elC.textContent = cc;
+            document.getElementById("count-reseñas").textContent =
+              await contarResenasUsuario(userId);
+            document.getElementById("count-colabs").textContent =
+              await contarColaboracionesUsuario(userId);
           } catch {}
         }, 100);
         return "";
       }
-
       async function renderLectorSection(userId) {
         setTimeout(async () => {
           try {
-            const rc = await contarResenasUsuario(userId);
-            const el = document.getElementById("count-reseñas");
-            if (el) el.textContent = rc;
+            document.getElementById("count-reseñas").textContent =
+              await contarResenasUsuario(userId);
           } catch {}
         }, 100);
         return "";
@@ -968,7 +867,6 @@
           else blocks = await buildLectorBlocks(userId);
           container.innerHTML = blocks.length ? blocks.join("") : "";
         } catch (err) {
-          console.error("Error secciones extra:", err.message);
           container.innerHTML = "";
         }
       }
@@ -976,7 +874,6 @@
       /* ── ESCRITOR ── */
       async function buildWriterBlocks(userId, nombre) {
         const blocks = [];
-
         try {
           const Book = Parse.Object.extend("Books");
           const q = new Parse.Query(Book);
@@ -984,122 +881,91 @@
           q.descending("createdAt");
           q.limit(3);
           const libros = await q.find();
-          let inner = "";
-          if (!libros.length)
-            inner = `<div class="profile-block__empty">No hay libros publicados aún.</div>`;
-          else {
-            libros.forEach((libro) => {
-              const titulo = libro.get("titulo") || "Sin título";
-              const autor = libro.get("autor") || "";
-              const imagen = libro.get("imagen") || "";
-              const genero = (libro.get("genero") || [])[0] || "";
-              const activo = libro.get("activo") !== false;
-              const libroId = libro.get("libroId");
-              inner += `<a href="libro.html?id=${libroId}" class="mini-book">
-                <div class="mini-book__cover"><img src="${imagen}" onerror="this.src='assets/img/cover-placeholder.svg'" alt="${titulo}"></div>
-                <div class="mini-book__info">
-                  <div class="mini-book__title">${titulo}</div>
-                  <div class="mini-book__genero">${autor}${genero ? " · " + genero : ""}${!activo ? " · <span style='color:#f87171'>Inactivo</span>" : ""}</div>
-                </div>
-              </a>`;
-            });
-          }
-          blocks.push(`<div class="profile-block">
-            <div class="profile-block__header">
-              <h3 class="profile-block__title">📚 Últimos libros publicados</h3>
-              <a href="catalogo.html?escritorId=${userId}" class="btn btn-ghost btn-sm">Ver todos →</a>
-            </div>${inner}</div>`);
-        } catch (e) {
-          console.error("Error libros escritor:", e);
-        }
-
+          let inner = libros.length
+            ? libros
+                .map(
+                  (l) =>
+                    `<a href="libro.html?id=${l.get("libroId")}" class="mini-book"><div class="mini-book__cover"><img src="${l.get("imagen") || ""}" onerror="this.src='assets/img/cover-placeholder.svg'"></div><div class="mini-book__info"><div class="mini-book__title">${l.get("titulo")}</div><div class="mini-book__genero">${l.get("autor")}${(l.get("genero") || [])[0] ? " · " + (l.get("genero") || [])[0] : ""}</div></div></a>`,
+                )
+                .join("")
+            : `<div class="profile-block__empty">No hay libros publicados aún.</div>`;
+          blocks.push(
+            `<div class="profile-block"><div class="profile-block__header"><h3 class="profile-block__title">📚 Últimos libros publicados</h3><a href="catalogo.html?escritorId=${userId}" class="btn btn-ghost btn-sm">Ver todos →</a></div>${inner}</div>`,
+          );
+        } catch (e) {}
         try {
           const Collab = Parse.Object.extend("Colaboraciones");
           const q = new Parse.Query(Collab);
           q.equalTo("autorId", userId);
           q.descending("createdAt");
-          q.limit(5);
+          q.limit(50);
           const collabs = await q.find();
-
-          let inner = "";
-          if (!collabs.length)
-            inner = `<div class="profile-block__empty">No hay colaboraciones registradas.</div>`;
-          else {
-            for (const c of collabs) {
-              const bsNom = c.get("nombreBookstagramer") || "Bookstagramer";
-              const libroId = c.get("libroId");
-              let titulo =
-                c.get("nombreLibro") ||
-                c.get("tituloLibro") ||
-                c.get("libro") ||
-                "Sin título";
-              if (titulo === "Sin título" && libroId) {
-                try {
-                  const book = await new Parse.Query(
-                    Parse.Object.extend("Books"),
-                  )
-                    .get(libroId)
-                    .catch(() => null);
-                  if (book) titulo = book.get("titulo") || titulo;
-                } catch {}
-              }
-              let stars = "";
-              const puntuacion = c.get("puntuacion");
-              if (puntuacion != null) {
-                const e = Number(puntuacion) || 0;
-                stars =
-                  "★".repeat(Math.floor(e)) +
-                  (e % 1 >= 0.5 ? "½" : "") +
-                  "☆".repeat(5 - Math.ceil(e));
-              }
-              let reviewText = "";
-              try {
-                const bsId = c.get("bookstagramerId");
-                if (bsId && libroId) {
-                  const qRes = new Parse.Query(Parse.Object.extend("Resenas"));
-                  qRes.equalTo("usuarioId", bsId);
-                  qRes.equalTo("libroId", libroId);
-                  const resena = await qRes.first();
-                  if (resena) reviewText = resena.get("texto") || "";
-                }
-              } catch {}
-              const estado = c.get("estado") || "pendiente";
-              const content = `
-                <div class="mini-collab__avatar">${bsNom.charAt(0).toUpperCase()}</div>
-                <div class="mini-collab__info">
-                  <div class="mini-collab__name">${bsNom}</div>
-                  <div class="mini-collab__sub">📖 ${titulo}${stars ? `<br><span class="mini-collab__rating">${stars}</span>` : ""}</div>
-                  ${reviewText ? `<p class="mini-collab__review">${reviewText.substring(0, 100)}${reviewText.length > 100 ? "..." : ""}</p>` : ""}
-                </div>
-                <span class="mini-collab__badge">${estado}</span>`;
-              inner += libroId
-                ? `<a href="libro.html?id=${libroId}" class="mini-collab">${content}</a>`
-                : `<div class="mini-collab">${content}</div>`;
-            }
-          }
+          let inner = collabs.length
+            ? await Promise.all(
+                collabs.map(async (c) => {
+                  let titulo =
+                    c.get("nombreLibro") ||
+                    c.get("tituloLibro") ||
+                    c.get("libro") ||
+                    "Sin título";
+                  const libroId = c.get("libroId");
+                  if (titulo === "Sin título" && libroId) {
+                    try {
+                      const b = await new Parse.Query(
+                        Parse.Object.extend("Books"),
+                      )
+                        .get(libroId)
+                        .catch(() => null);
+                      if (b) titulo = b.get("titulo");
+                    } catch {}
+                  }
+                  let stars = "";
+                  const p = c.get("puntuacion");
+                  if (p != null) {
+                    const e = Number(p) || 0;
+                    stars =
+                      "★".repeat(Math.floor(e)) +
+                      (e % 1 >= 0.5 ? "½" : "") +
+                      "☆".repeat(5 - Math.ceil(e));
+                  }
+                  let reviewText = "";
+                  try {
+                    const qRes = new Parse.Query(
+                      Parse.Object.extend("Resenas"),
+                    );
+                    qRes.equalTo("usuarioId", c.get("bookstagramerId"));
+                    qRes.equalTo("libroId", libroId);
+                    const r = await qRes.first();
+                    if (r) reviewText = r.get("texto") || "";
+                  } catch {}
+                  const content = `<div class="mini-collab__avatar">${(c.get("nombreBookstagramer") || "B").charAt(0).toUpperCase()}</div><div class="mini-collab__info"><div class="mini-collab__name">${c.get("nombreBookstagramer") || "Bookstagramer"}</div><div class="mini-collab__sub">📖 ${titulo}${stars ? `<br><span class="mini-collab__rating">${stars}</span>` : ""}</div>${reviewText ? `<p class="mini-collab__review">${reviewText.substring(0, 100)}...</p>` : ""}</div><span class="mini-collab__badge">${c.get("estado") || "pendiente"}</span>`;
+                  return libroId
+                    ? `<a href="libro.html?id=${libroId}" class="mini-collab">${content}</a>`
+                    : `<div class="mini-collab">${content}</div>`;
+                }),
+              ).join("")
+            : `<div class="profile-block__empty">No hay colaboraciones registradas.</div>`;
           blocks.push(
-            `<div class="profile-block"><div class="profile-block__header"><h3 class="profile-block__title">🤝 Últimas colaboraciones</h3></div>${inner}</div>`,
+            `<div class="profile-block"><div class="profile-block__header"><h3 class="profile-block__title">🤝 Colaboraciones</h3></div>${inner}</div>`,
           );
-        } catch (e) {
-          console.error("Error colaboraciones escritor:", e);
-        }
-
+        } catch (e) {}
         return blocks;
       }
 
       /* ── BOOKSTAGRAMER ── */
       async function buildBookstagramerBlocks(userId) {
         const blocks = [];
+        // ✅ Orden: Reseñas -> Recomendaciones -> Leídos -> Colaboraciones (todas al final)
         blocks.push(await buildResenasBlock(userId));
+        blocks.push(await buildRecomendacionesBlock(userId));
 
         try {
           const Collab = Parse.Object.extend("Colaboraciones");
           let q = new Parse.Query(Collab);
           q.equalTo("bookstagramerId", userId);
           q.descending("createdAt");
-          q.limit(5);
+          q.limit(200);
           let collabs = await q.find();
-
           if (!collabs.length) {
             q = new Parse.Query(Collab);
             q.equalTo("bookstagramer", {
@@ -1108,92 +974,84 @@
               objectId: userId,
             });
             q.descending("createdAt");
-            q.limit(5);
+            q.limit(200);
             collabs = await q.find();
           }
-
-          let inner = "";
-          if (!collabs.length)
-            inner = `<div class="profile-block__empty">No hay colaboraciones aún.</div>`;
-          else {
-            for (const c of collabs) {
-              const autorNom = c.get("nombreAutor") || "Autor";
-              const libroId = c.get("libroId");
-              let libro =
-                c.get("nombreLibro") ||
-                c.get("tituloLibro") ||
-                c.get("libro") ||
-                "Sin título";
-              if (libro === "Sin título" && libroId) {
-                try {
-                  const book = await new Parse.Query(
-                    Parse.Object.extend("Books"),
-                  )
-                    .get(libroId)
-                    .catch(() => null);
-                  if (book) libro = book.get("titulo") || libro;
-                } catch {}
-              }
-              let stars = "";
-              const puntuacion = c.get("puntuacion");
-              if (puntuacion != null) {
-                const e = Number(puntuacion) || 0;
-                stars =
-                  "★".repeat(Math.floor(e)) +
-                  (e % 1 >= 0.5 ? "½" : "") +
-                  "☆".repeat(5 - Math.ceil(e));
-              }
-              let reviewText = "";
-              try {
-                if (libroId) {
-                  const qRes = new Parse.Query(Parse.Object.extend("Resenas"));
-                  qRes.equalTo("usuarioId", userId);
-                  qRes.equalTo("libroId", libroId);
-                  const resena = await qRes.first();
-                  if (resena) reviewText = resena.get("texto") || "";
-                }
-              } catch {}
-              const estado = c.get("estado") || "pendiente";
-              const content = `
-                <div class="mini-collab__avatar">${autorNom.charAt(0).toUpperCase()}</div>
-                <div class="mini-collab__info">
-                  <div class="mini-collab__name">${autorNom}</div>
-                  <div class="mini-collab__sub">📖 ${libro}${stars ? `<br><span class="mini-collab__rating">${stars}</span>` : ""}</div>
-                  ${reviewText ? `<p class="mini-collab__review">${reviewText.substring(0, 100)}${reviewText.length > 100 ? "..." : ""}</p>` : ""}
-                </div>
-                <span class="mini-collab__badge">${estado}</span>`;
-              inner += libroId
-                ? `<a href="libro.html?id=${libroId}" class="mini-collab">${content}</a>`
-                : `<div class="mini-collab">${content}</div>`;
-            }
-          }
+          let inner = collabs.length
+            ? await Promise.all(
+                collabs.map(async (c) => {
+                  let libro =
+                    c.get("nombreLibro") ||
+                    c.get("tituloLibro") ||
+                    c.get("libro") ||
+                    "Sin título";
+                  const libroId = c.get("libroId");
+                  if (libro === "Sin título" && libroId) {
+                    try {
+                      const b = await new Parse.Query(
+                        Parse.Object.extend("Books"),
+                      )
+                        .get(libroId)
+                        .catch(() => null);
+                      if (b) libro = b.get("titulo");
+                    } catch {}
+                  }
+                  let stars = "";
+                  const p = c.get("puntuacion");
+                  if (p != null) {
+                    const e = Number(p) || 0;
+                    stars =
+                      "★".repeat(Math.floor(e)) +
+                      (e % 1 >= 0.5 ? "½" : "") +
+                      "☆".repeat(5 - Math.ceil(e));
+                  }
+                  let reviewText = "";
+                  try {
+                    if (libroId) {
+                      const qRes = new Parse.Query(
+                        Parse.Object.extend("Resenas"),
+                      );
+                      qRes.equalTo("usuarioId", userId);
+                      qRes.equalTo("libroId", libroId);
+                      const r = await qRes.first();
+                      if (r) reviewText = r.get("texto") || "";
+                    }
+                  } catch {}
+                  const content = `<div class="mini-collab__avatar">${(c.get("nombreAutor") || "A").charAt(0).toUpperCase()}</div><div class="mini-collab__info"><div class="mini-collab__name">${c.get("nombreAutor") || "Autor"}</div><div class="mini-collab__sub">📖 ${libro}${stars ? `<br><span class="mini-collab__rating">${stars}</span>` : ""}</div>${reviewText ? `<p class="mini-collab__review">${reviewText.substring(0, 100)}...</p>` : ""}</div><span class="mini-collab__badge">${c.get("estado") || "pendiente"}</span>`;
+                  return libroId
+                    ? `<a href="libro.html?id=${libroId}" class="mini-collab">${content}</a>`
+                    : `<div class="mini-collab">${content}</div>`;
+                }),
+              ).join("")
+            : `<div class="profile-block__empty">No hay colaboraciones aún.</div>`;
           blocks.push(
-            `<div class="profile-block"><div class="profile-block__header"><h3 class="profile-block__title">🤝 Últimas colaboraciones</h3></div>${inner}</div>`,
+            `<div class="profile-block"><div class="profile-block__header"><h3 class="profile-block__title">🤝 Colaboraciones</h3></div>${inner}</div>`,
           );
-        } catch (e) {
-          console.error("Error colaboraciones bookstagramer:", e);
-        }
-
+        } catch (e) {}
         blocks.push(await buildLeidosBlock(userId));
         return blocks;
       }
 
       /* ── LECTOR ── */
       async function buildLectorBlocks(userId) {
+        // ✅ Orden: Reseñas -> Recomendaciones -> Leídos
         return [
           await buildResenasBlock(userId),
+          await buildRecomendacionesBlock(userId),
           await buildLeidosBlock(userId),
         ];
       }
 
+      /* ── BLOQUES REUTILIZABLES ── */
       async function buildResenasBlock(userId) {
         try {
           const Resena = Parse.Object.extend("Resenas");
           const q = new Parse.Query(Resena);
           q.equalTo("usuarioId", userId);
           q.descending("createdAt");
-          q.limit(5);
+          q.limit(5); // ✅ Solo 5 para el perfil
           const resenas = await q.find();
+
           const libroIds = [
             ...new Set(resenas.map((r) => r.get("libroId")).filter(Boolean)),
           ];
@@ -1209,35 +1067,77 @@
               };
             });
           }
-          let inner = "";
-          if (!resenas.length)
-            inner = `<div class="profile-block__empty">No hay reseñas publicadas aún.</div>`;
-          else {
-            resenas.forEach((r) => {
-              const estrellas = r.get("estrellas") || 0;
-              const texto = r.get("texto") || "";
-              const mood = r.get("mood") || "";
-              const etiqueta = r.get("etiqueta") || "";
-              const libroId = r.get("libroId");
-              const libroInfo = libroMap[libroId];
-              const stars =
-                "★".repeat(Math.floor(estrellas)) +
-                (estrellas % 1 >= 0.5 ? "½" : "") +
-                "☆".repeat(5 - Math.ceil(estrellas));
-              inner += `<div class="mini-review" onclick="location.href='libro.html?id=${libroId}'">
-                <div class="mini-review__top">
-                  ${libroInfo ? `<span style="font-size:0.78rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%">📖 ${libroInfo.titulo}</span>` : ""}
-                  <span class="mini-review__stars">${stars}</span>
-                  ${mood ? `<span class="mini-review__mood">${mood}</span>` : ""}
-                </div>
-                <p class="mini-review__text">${texto}</p>
-                ${etiqueta ? `<span class="mini-review__tag">${etiqueta}</span>` : ""}
-              </div>`;
-            });
-          }
-          return `<div class="profile-block"><div class="profile-block__header"><h3 class="profile-block__title">✍️ Últimas reseñas publicadas</h3></div>${inner}</div>`;
+
+          let inner = resenas.length
+            ? resenas
+                .map((r) => {
+                  const estrellas = r.get("estrellas") || 0;
+                  const texto = r.get("texto") || "";
+                  const mood = r.get("mood") || "";
+                  const etiqueta = r.get("etiqueta") || "";
+                  const libroId = r.get("libroId");
+                  const info = libroMap[libroId];
+                  const stars =
+                    "★".repeat(Math.floor(estrellas)) +
+                    (estrellas % 1 >= 0.5 ? "½" : "") +
+                    "☆".repeat(5 - Math.ceil(estrellas));
+                  return `<div class="mini-review" onclick="location.href='libro.html?id=${libroId}'">
+        <div class="mini-review__top">
+          ${info ? `<span style="font-size:0.78rem;font-weight:600;color:var(--text);max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">📖 ${info.titulo}</span>` : ""}
+          <span class="mini-review__stars">${stars}</span>
+          ${mood ? `<span class="mini-review__mood">${mood}</span>` : ""}
+        </div>
+        <p class="mini-review__text">${texto}</p>
+        ${etiqueta ? `<span class="mini-review__tag">${etiqueta}</span>` : ""}
+      </div>`;
+                })
+                .join("")
+            : `<div class="profile-block__empty">No hay reseñas publicadas aún.</div>`;
+
+          // ✅ Enlace "Ver más" si hay 5 o más reseñas
+          const verMas =
+            resenas.length >= 5
+              ? `<a href="resenas.html?id=${userId}" style="font-size:0.8rem;color:var(--red);text-decoration:underline;align-self:center;margin-top:8px">Ver todas las reseñas →</a>`
+              : "";
+
+          return `<div class="profile-block">
+      <div class="profile-block__header">
+        <h3 class="profile-block__title">✍️ Últimas reseñas publicadas</h3>
+        ${verMas}
+      </div>
+      ${inner}
+    </div>`;
         } catch {
           return `<div class="profile-block"><div class="profile-block__empty">Error cargando reseñas.</div></div>`;
+        }
+      }
+
+      async function buildRecomendacionesBlock(userId) {
+        try {
+          const Sug = Parse.Object.extend("SugerenciasLibros");
+          const q = new Parse.Query(Sug);
+          q.equalTo("usuario", {
+            __type: "Pointer",
+            className: "_User",
+            objectId: userId,
+          });
+          q.descending("createdAt");
+          q.limit(5); // ✅ LIMIT 5
+          const sugerencias = await q.find();
+          let inner = sugerencias.length
+            ? sugerencias
+                .map((s) => {
+                  const titulo = s.get("titulo") || "Libro sugerido";
+                  const autor = s.get("autor") || "";
+                  const estado = s.get("estado") || "pendiente";
+                  const ok = estado === "aceptada";
+                  return `<div class="mini-book" style="cursor:default;border-left:3px solid ${ok ? "#4ade80" : "#facc15"}"><div class="mini-book__cover" style="display:flex;align-items:center;justify-content:center;background:var(--surface);font-size:1.5rem">📖</div><div class="mini-book__info"><div class="mini-book__title">${titulo} ${ok ? "✅" : "⏳"}</div><div class="mini-book__genero">${autor}</div></div></div>`;
+                })
+                .join("")
+            : `<div class="profile-block__empty">No hay recomendaciones aún.</div>`;
+          return `<div class="profile-block"><div class="profile-block__header"><h3 class="profile-block__title">🌟 Recomendaciones</h3></div>${inner}</div>`;
+        } catch {
+          return `<div class="profile-block"><div class="profile-block__empty">Error cargando recomendaciones.</div></div>`;
         }
       }
 
@@ -1254,7 +1154,7 @@
               objectId: userId,
             });
             q.descending("createdAt");
-            q.limit(6);
+            q.limit(5); // ✅ LIMIT 5
             leidos = await q.find();
           }
           const libroIds = [
@@ -1269,97 +1169,64 @@
               libroMap[b.get("libroId")] = b;
             });
           }
-          let inner = "";
-          if (!leidos.length)
-            inner = `<div class="profile-block__empty">No hay libros marcados como leídos.</div>`;
-          else {
-            leidos.forEach((l) => {
+          let inner = leidos
+            .map((l) => {
               const libroId = l.get("libroId");
               const book = libroMap[libroId];
-              if (!book) return;
-              inner += `<a href="libro.html?id=${libroId}" class="mini-leido">
-                <div class="mini-leido__cover"><img src="${book.get("imagen") || ""}" onerror="this.src='assets/img/cover-placeholder.svg'" alt="${book.get("titulo") || ""}"></div>
-                <div>
-                  <div class="mini-leido__title">${book.get("titulo") || "Sin título"}</div>
-                  <div class="mini-leido__author">${book.get("autor") || ""}</div>
-                </div>
-              </a>`;
-            });
-          }
-          return `<div class="profile-block"><div class="profile-block__header"><h3 class="profile-block__title">📗 Últimos libros leídos</h3></div>${inner}</div>`;
+              if (!book) return "";
+              return `<a href="libro.html?id=${libroId}" class="mini-leido"><div class="mini-leido__cover"><img src="${book.get("imagen") || ""}" onerror="this.src='assets/img/cover-placeholder.svg'"></div><div><div class="mini-leido__title">${book.get("titulo") || "Sin título"}</div><div class="mini-leido__author">${book.get("autor") || ""}</div></div></a>`;
+            })
+            .join("");
+          const verMas =
+            leidos.length >= 5
+              ? `<a href="leidos.html?id=${userId}" style="font-size:0.8rem;color:var(--red);text-decoration:underline;align-self:center;margin-top:8px">Ver todos los leídos →</a>`
+              : "";
+          return `<div class="profile-block"><div class="profile-block__header"><h3 class="profile-block__title">📗 Últimos libros leídos</h3>${verMas}</div>${inner || `<div class="profile-block__empty">No hay libros marcados como leídos.</div>`}</div>`;
         } catch (e) {
-          console.error("Error leídos:", e);
           return `<div class="profile-block"><div class="profile-block__empty">Error cargando leídos.</div></div>`;
         }
       }
 
       function renderError(mensaje) {
         document.getElementById("profile-content").innerHTML =
-          `<div style="text-align:center;padding:40px;">
-            <div style="font-size:2rem;margin-bottom:16px">❌</div>
-            <p>${mensaje}</p>
-            <a href="catalogo.html" class="btn btn-primary" style="margin-top:16px;">Volver</a>
-          </div>`;
+          `<div style="text-align:center;padding:40px;"><div style="font-size:2rem;margin-bottom:16px">❌</div><p>${mensaje}</p><a href="catalogo.html" class="btn btn-primary" style="margin-top:16px;">Volver</a></div>`;
       }
-
       async function handleToggleFollow(targetUserId) {
-  try {
-    const result = await Parse.Cloud.run("toggleFollow", {
-      targetUserId,
-    });
-    
-    if (result.ok) {
-      showToast(
-        result.siguiendo
-          ? "✅ Ahora sigues a este usuario"
-          : "❌ Dejaste de seguir",
-      );
-      
-      // ✅ NUEVO: Refrescar el usuario actual para actualizar el array "following"
-      const currentUser = Parse.User.current();
-      if (currentUser) {
-        await currentUser.fetch();  // ← Esto actualiza los datos locales
+        try {
+          const result = await Parse.Cloud.run("toggleFollow", {
+            targetUserId,
+          });
+          if (result.ok) {
+            showToast(
+              result.siguiendo
+                ? "✅ Ahora sigues a este usuario"
+                : "❌ Dejaste de seguir",
+            );
+            await Parse.User.current()?.fetch();
+            await loadProfile();
+          }
+        } catch (err) {
+          showToast("❌ " + err.message);
+        }
       }
-      
-      // ✅ Ahora sí recargar el perfil con los datos actualizados
-      await loadProfile();
-    }
-  } catch (err) {
-    showToast("❌ " + err.message);
-  }
-}
 
-      /* ─────────────────────────────────────────────
-         DOMContentLoaded — aquí se registran TODOS
-         los event listeners sobre elementos del DOM
-      ───────────────────────────────────────────── */
       document.addEventListener("DOMContentLoaded", () => {
-        // Iniciar carga del perfil
         loadProfile();
-
-        // Botón cerrar modal (×)
         document
           .getElementById("btn-close-invite-modal")
           .addEventListener("click", closeInviteCollabModal);
-
-        // Botón "Cancelar" dentro del modal
         document
           .getElementById("btn-cancel-invite")
           .addEventListener("click", closeInviteCollabModal);
-
-        // Cerrar al hacer clic en el fondo oscuro
         document
           .getElementById("invite-collab-modal")
           .addEventListener("click", (e) => {
             if (e.target.id === "invite-collab-modal") closeInviteCollabModal();
           });
-
-        // Submit del formulario
         document
           .getElementById("invite-collab-form")
           .addEventListener("submit", async (e) => {
             e.preventDefault();
-
             const bsId = document.getElementById("invite-bs-id").value;
             const libroId = parseInt(
               document.getElementById("invite-libro-select").value,
@@ -1367,40 +1234,29 @@
             const mensaje = document
               .getElementById("invite-mensaje")
               .value.trim();
-
             if (isNaN(libroId) || libroId <= 0) {
               showToast("⚠️ Selecciona un libro");
               return;
             }
-
-            // La tarifa viene del campo oculto (fijada por el bookstagramer)
             const tarifa =
               parseFloat(document.getElementById("invite-bs-tarifa").value) ||
               0;
-
             const btn = document.getElementById("btn-submit-invite");
             btn.disabled = true;
             btn.textContent = "Enviando…";
-
             const result = await solicitarColaboracion({
               tipo: "escritor_a_bookstagramer",
               libroId,
               destinatarioId: bsId,
               tarifa,
-              mensaje:
-                mensaje ||
-                "Hola, me gustaría que reseñaras mi libro en tu perfil.",
+              mensaje: mensaje || "Hola, me gustaría que reseñaras mi libro.",
             });
-
             if (result.ok) {
-              showToast(
-                "✅ Invitación enviada. Te avisaremos cuando responda.",
-              );
+              showToast("✅ Invitación enviada.");
               closeInviteCollabModal();
             } else {
               showToast("❌ Error: " + (result.error || "No se pudo enviar"));
             }
-
             btn.disabled = false;
             btn.textContent = "Enviar invitación";
           });

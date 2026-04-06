@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="/AdEA/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/AdEA/favicon.ico" />
     <title>Bookstagramers - AdEA</title>
     <meta
       name="description"
@@ -53,13 +53,11 @@
         gap: 16px;
         flex-wrap: wrap;
       }
-
       .benefits-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 24px;
       }
-
       .how-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -88,7 +86,6 @@
         font-size: 1.1rem;
         color: var(--text);
       }
-
       .form-section {
         padding: 80px 0;
         background: var(--bg2);
@@ -102,7 +99,6 @@
         grid-template-columns: 1fr 1fr;
         gap: 20px;
       }
-
       .testi-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -145,7 +141,6 @@
         font-size: 0.78rem;
         color: var(--text-dim);
       }
-
       .success-msg {
         display: none;
         text-align: center;
@@ -161,7 +156,6 @@
         font-size: 3rem;
         margin-bottom: 16px;
       }
-
       /* ---- Instagram preview ---- */
       .instagram-preview {
         font-size: 0.78rem;
@@ -176,7 +170,6 @@
       .instagram-preview.invalid {
         color: #f87171;
       }
-
       /* ---- Password strength ---- */
       .password-strength {
         margin-top: 6px;
@@ -198,11 +191,98 @@
         margin-top: 4px;
         color: var(--text-dim);
       }
+      /* ---- TOP BOOKSTAGRAMERS ---- */
+      .top-bs-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+      .top-bs-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px 20px;
+        text-align: center;
+        transition: all var(--transition);
+        position: relative;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .top-bs-card:hover {
+        border-color: var(--red);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      }
+      .top-bs-rank {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        width: 28px;
+        height: 28px;
+        background: var(--red);
+        color: var(--white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .top-bs-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--red);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 12px auto 16px;
+      }
+      .top-bs-name {
+        font-family: var(--font-serif);
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: var(--text);
+      }
+      .top-bs-ig {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+      }
+      .top-bs-ig a {
+        color: var(--red);
+        text-decoration: none;
+      }
+      .top-bs-ig a:hover {
+        text-decoration: underline;
+      }
+      .top-bs-followers {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--red);
+        font-family: var(--font-serif);
+        line-height: 1;
+      }
+      .top-bs-followers-label {
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 4px;
+      }
 
       @media (max-width: 768px) {
         .benefits-grid,
         .how-grid,
-        .testi-grid {
+        .testi-grid,
+        .top-bs-grid {
           grid-template-columns: 1fr;
         }
         .form-grid {
@@ -213,7 +293,6 @@
   </head>
   <body class="noise-bg">
     <div id="nav-placeholder"></div>
-
     <!-- HERO -->
     <section class="bk-hero">
       <div class="container">
@@ -232,16 +311,13 @@
           <a href="#como-funciona" class="btn btn-secondary btn-lg"
             >Cómo funciona</a
           >
-          <a href="comunidad.html" class="btn btn-secondary btn-lg"
+          <a href="comunidad.html?rol=bookstagramer" class="btn btn-secondary btn-lg"
             >Conoce a Bookstagramers</a
           >
-          <!-- ✅ Nuevo -->
         </div>
       </div>
     </section>
-
     <div class="divider"></div>
-
     <!-- BENEFITS -->
     <section class="section">
       <div class="container">
@@ -266,14 +342,16 @@
             <div class="benefit-card__icon">🤝</div>
             <div class="benefit-card__title">Conexión con autores</div>
             <p>
-              Contacta directamente con escritores que buscan bookstagramers para colaborar.
+              Contacta directamente con escritores que buscan bookstagramers
+              para colaborar.
             </p>
           </div>
           <div class="benefit-card fade-in">
             <div class="benefit-card__icon">🎯</div>
             <div class="benefit-card__title">Personalización de perfil</div>
             <p>
-              Añade tu bio, géneros favoritos, tarifa de colaboración y condiciones en un solo lugar.
+              Añade tu bio, géneros favoritos, tarifa de colaboración y
+              condiciones en un solo lugar.
             </p>
           </div>
           <div class="benefit-card fade-in">
@@ -286,10 +364,10 @@
           </div>
           <div class="benefit-card fade-in">
             <div class="benefit-card__icon">📨</div>
-            <div class="benefit-card__title">	
-Solicitudes gestionadas</div>
+            <div class="benefit-card__title">Solicitudes gestionadas</div>
             <p>
-              Recibe y responde a propuestas de colaboración desde tu panel, todo organizado.
+              Recibe y responde a propuestas de colaboración desde tu panel,
+              todo organizado.
             </p>
           </div>
           <div class="benefit-card fade-in">
@@ -311,9 +389,7 @@ Solicitudes gestionadas</div>
         </div>
       </div>
     </section>
-
     <div class="divider"></div>
-
     <!-- HOW IT WORKS -->
     <section class="section" id="como-funciona" style="background: var(--bg2)">
       <div class="container">
@@ -363,64 +439,46 @@ Solicitudes gestionadas</div>
         </div>
       </div>
     </section>
-
     <div class="divider"></div>
-
-    <!-- TESTIMONIALS -->
-    <section class="section">
+    <!-- TOP BOOKSTAGRAMERS ADDED -->
+    <section class="section" id="top-bookstagramers-section">
       <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-header__label">Lo que dicen</span>
-          <h2 class="section-header__title">
-            Bookstagramers que ya están dentro
-          </h2>
+        <div
+          class="section-header fade-in"
+          style="
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          "
+        >
+          <span class="section-header__label">Comunidad</span>
+          <h2 class="section-header__title">Top Bookstagramers en AdEA</h2>
+          <p class="section-header__subtitle">
+            Las creadoras más seguidas de nuestra comunidad.
+          </p>
         </div>
-        <div class="testi-grid">
-          <div class="testi-card fade-in">
-            <p class="testi-card__quote">
-              "Desde que colaboro con AdEA, mis publicaciones tienen mucho más
-              alcance. El contenido que me mandan está muy bien pensado."
-            </p>
-            <div class="testi-card__author">
-              <div class="testi-card__avatar">📚</div>
-              <div>
-                <div class="testi-card__name">Marta R.</div>
-                <div class="testi-card__handle">@martaybooksread · 14.2K</div>
-              </div>
-            </div>
+        <div class="top-bs-grid" id="top-bs-grid">
+          <div
+            class="loading-state"
+            style="
+              grid-column: 1/-1;
+              text-align: center;
+              padding: 40px;
+              color: var(--text-muted);
+            "
+          >
+            Cargando ranking...
           </div>
-          <div class="testi-card fade-in">
-            <p class="testi-card__quote">
-              "Me gusta que no me obligan a nada. Publico cuando quiero y con mi
-              estilo. Es la colaboración más respetuosa que he tenido."
-            </p>
-            <div class="testi-card__author">
-              <div class="testi-card__avatar">🌹</div>
-              <div>
-                <div class="testi-card__name">Sara L.</div>
-                <div class="testi-card__handle">@saralovesbooks · 8.7K</div>
-              </div>
-            </div>
-          </div>
-          <div class="testi-card fade-in">
-            <p class="testi-card__quote">
-              "Gracias a AdEA descubrí libros que nunca habría encontrado sola.
-              Y encima mi comunidad los ha amado tanto como yo."
-            </p>
-            <div class="testi-card__author">
-              <div class="testi-card__avatar">🖤</div>
-              <div>
-                <div class="testi-card__name">Claudia V.</div>
-                <div class="testi-card__handle">@claudia.reads · 22.1K</div>
-              </div>
-            </div>
-          </div>
+        </div>
+        <div style="text-align: center; margin-top: 32px">
+          <a href="comunidad.html" class="btn btn-secondary"
+            >Ver toda la comunidad →</a
+          >
         </div>
       </div>
     </section>
-
     <div class="divider"></div>
-
     <!-- FORM -->
     <section class="form-section" id="formulario">
       <div class="container">
@@ -440,7 +498,6 @@ Solicitudes gestionadas</div>
               Rellena el formulario y te contactamos en menos de 48 horas.
             </p>
           </div>
-
           <form id="bk-form" novalidate>
             <div class="form-grid">
               <div class="form-group">
@@ -455,7 +512,6 @@ Solicitudes gestionadas</div>
                   required
                 />
               </div>
-
               <div class="form-group">
                 <label for="email"
                   >Email <span style="color: var(--red)">*</span></label
@@ -468,7 +524,6 @@ Solicitudes gestionadas</div>
                   required
                 />
               </div>
-
               <div class="form-group">
                 <label for="password">
                   Contraseña <span style="color: var(--red)">*</span>
@@ -494,7 +549,6 @@ Solicitudes gestionadas</div>
                 </div>
                 <div class="password-strength__text" id="pw-text"></div>
               </div>
-
               <div class="form-group">
                 <label for="instagram"
                   >Instagram <span style="color: var(--red)">*</span></label
@@ -508,7 +562,6 @@ Solicitudes gestionadas</div>
                 />
                 <div class="instagram-preview" id="ig-preview"></div>
               </div>
-
               <div class="form-group">
                 <label for="seguidores">Seguidores aprox.</label>
                 <select id="seguidores" name="seguidores">
@@ -520,30 +573,31 @@ Solicitudes gestionadas</div>
                   <option value="mas-50k">Más de 50.000</option>
                 </select>
               </div>
-
               <div class="form-group" style="grid-column: 1/-1">
                 <label for="genero">Géneros favoritos</label>
                 <select id="genero" name="genero">
                   <option value="">Selecciona</option>
-                <option value="romance">Romance</option>
-                <option value="thriller">Thriller</option>
-                <option value="fantasia">Fantasía</option>
-                <option value="ficción">Ficción</option>
-                <option value="histórica">Histórica</option>
-                <option value="drama">Drama</option>
-                <option value="literaria">Literaria</option>
-                <option value="poesia">Poesía</option>
-                <option value="ciencia ficción">Ciencia ficción</option>
-                <option value="terror">Terror</option>
-                <option value="young-adult">Young Adult</option>
-                <option value="misterio">Misterio</option>
-                <option value="erotica">Erótica</option>
-                <option value="policiaca">Policíaca</option>
-                <option value="distopia">Distopía</option> 
-                  <option value="varios">Varios géneros</option>
+                  <option value="romance">Romance</option>
+                  <option value="romantasy">Romantasy</option>
+                  <option value="dark-romance">Dark Romance</option>
+                  <option value="thriller">Thriller</option>
+                  <option value="fantasia">Fantasía</option>
+                  <option value="ficción">Ficción</option>
+                  <option value="new-adult">New Adult</option>
+                  <option value="young-adult">Young Adult</option>
+                  <option value="histórica">Histórica</option>
+                  <option value="literaria">Literaria</option>
+                  <option value="drama">Drama</option>
+                  <option value="cozy-mystery">Cozy Mystery</option>
+                  <option value="misterio">Misterio</option>
+                  <option value="ciencia ficción">Ciencia ficción</option>
+                  <option value="terror">Terror</option>
+                  <option value="distopia">Distopía</option>
+                  <option value="poesia">Poesía</option>
+                  <option value="erotica">Erótica</option>
+                  <option value="policiaca">Policíaca</option>
                 </select>
               </div>
-
               <div class="form-group" style="grid-column: 1/-1">
                 <label for="mensaje"
                   >Cuéntanos algo sobre ti
@@ -563,7 +617,6 @@ Solicitudes gestionadas</div>
                 ></textarea>
               </div>
             </div>
-
             <div style="margin-top: 24px; text-align: center">
               <button
                 type="submit"
@@ -584,7 +637,6 @@ Solicitudes gestionadas</div>
               </p>
             </div>
           </form>
-
           <!-- SUCCESS -->
           <div class="success-msg" id="success-msg">
             <div class="icon">🎉</div>
@@ -605,16 +657,13 @@ Solicitudes gestionadas</div>
         </div>
       </div>
     </section>
-
     <div id="footer-placeholder"></div>
-
     <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
     <script src="js/backend.js"></script>
     <script src="js/components.js"></script>
     <script src="js/utils.js"></script>
     <script>
       injectShell("");
-
       /* ---- Instagram preview en tiempo real ---- */
       document
         .getElementById("instagram")
@@ -626,10 +675,8 @@ Solicitudes gestionadas</div>
             prev.className = "instagram-preview";
             return;
           }
-
           const clean = val.startsWith("@") ? val : "@" + val;
           const valid = /^@[a-zA-Z0-9_.]{1,30}$/.test(clean);
-
           if (valid) {
             prev.textContent = "✓ Se usará como: " + clean;
             prev.className = "instagram-preview valid";
@@ -639,7 +686,6 @@ Solicitudes gestionadas</div>
             prev.className = "instagram-preview invalid";
           }
         });
-
       /* ---- Password strength ---- */
       document
         .getElementById("password")
@@ -653,7 +699,6 @@ Solicitudes gestionadas</div>
           if (/[A-Z]/.test(v)) score++;
           if (/[0-9]/.test(v)) score++;
           if (/[^a-zA-Z0-9]/.test(v)) score++;
-
           const labels = [
             "",
             "Muy débil",
@@ -671,28 +716,19 @@ Solicitudes gestionadas</div>
             "#22d3ee",
           ];
           const widths = ["0%", "20%", "40%", "60%", "80%", "100%"];
-
           bar.style.width = widths[score] || "0%";
           bar.style.background = colors[score] || "transparent";
           txt.textContent = v.length > 0 ? labels[score] : "";
           txt.style.color = colors[score] || "var(--text-dim)";
         });
-
       /* ---- Submit ---- */
       document.addEventListener("DOMContentLoaded", () => {
         // Si ya está logueado como bookstagramer, redirigir
         const user = usuarioActual();
-        //if (user && user.get("rol") === "bookstagramer") {
-        //showToast("✅ Ya tienes cuenta de bookstagramer");
-        //setTimeout(() => (location.href = "dashboard.html"), 1500);
-        //return;
-        //}
-
         document
           .getElementById("bk-form")
           .addEventListener("submit", async (e) => {
             e.preventDefault();
-
             const nombre = document.getElementById("nombre").value.trim();
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
@@ -700,7 +736,6 @@ Solicitudes gestionadas</div>
             const seguidores = document.getElementById("seguidores").value;
             const genero = document.getElementById("genero").value;
             const mensaje = document.getElementById("mensaje").value.trim();
-
             // Validaciones
             if (!nombre) {
               showToast("⚠️ El nombre es obligatorio");
@@ -722,11 +757,9 @@ Solicitudes gestionadas</div>
               showToast("⚠️ El Instagram es obligatorio");
               return;
             }
-
             const btn = document.getElementById("btn-submit");
             btn.textContent = "Enviando…";
             btn.disabled = true;
-
             const result = await enviarSolicitudBookstagramer({
               nombre,
               email,
@@ -736,7 +769,6 @@ Solicitudes gestionadas</div>
               genero,
               mensaje,
             });
-
             if (result.ok) {
               document.getElementById("bk-form").style.display = "none";
               if (result.warning) {
@@ -757,6 +789,46 @@ Solicitudes gestionadas</div>
               btn.disabled = false;
             }
           });
+      });
+      /* ---- Cargar Top Bookstagramers ---- */
+      async function loadTopBookstagramers() {
+        const grid = document.getElementById("top-bs-grid");
+        if (!grid) return;
+        try {
+          // Obtener perfiles de bookstagramers
+          const profiles = await getTodosLosPerfiles("bookstagramer");
+          // Ordenar por seguidores (desc) y tomar Top 3
+          const sorted = profiles
+            .sort((a, b) => (b.seguidoresAdEA || 0) - (a.seguidoresAdEA || 0))
+            .slice(0, 3);
+
+          if (sorted.length === 0) {
+            grid.innerHTML =
+              '<p style="text-align:center; grid-column:1/-1; color:var(--text-muted); padding: 40px 0;">Aún no hay bookstagramers en AdEA.</p>';
+            return;
+          }
+          grid.innerHTML = sorted
+            .map(
+              (p, index) => `
+<a href="perfil.html?id=${p.userId}" class="top-bs-card fade-in">
+<div class="top-bs-avatar">${(p.nombre || p.displayName || "?").charAt(0).toUpperCase()}</div>
+<div class="top-bs-name">${p.nombre || p.displayName || "Bookstagramer"}</div>
+<div class="top-bs-followers">${p.seguidoresAdEA || 0}</div>
+<div class="top-bs-followers-label">Seguidores</div>
+</a>
+`,
+            )
+            .join("");
+          if (typeof initFadeIn === "function") initFadeIn();
+        } catch (e) {
+          console.error("Error cargando top bookstagramers:", e);
+          grid.innerHTML =
+            '<p style="text-align:center; grid-column:1/-1; color:var(--text-muted); padding: 40px 0;">Error al cargar el ranking.</p>';
+        }
+      }
+      // Llamar a la función cuando cargue el DOM
+      document.addEventListener("DOMContentLoaded", () => {
+        loadTopBookstagramers();
       });
     </script>
   </body>

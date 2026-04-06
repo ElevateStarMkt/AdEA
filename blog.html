@@ -1,259 +1,271 @@
 <!doctype html>
 <html lang="es">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" type="image/x-icon" href="favicon.ico" />
-<title>Blog - AdEA</title>
-<meta
-name="description"
-content="Artículos, guías y consejos sobre lectura, bookstagram y descubrimiento de libros."
-/>
-<link rel="stylesheet" href="css/main.css" />
-<link rel="stylesheet" href="css/mobile.css" />
-<style>
-.blog-hero {
-padding: 140px 0 60px;
-}
-.blog-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-gap: 32px;
-margin: 48px 0;
-}
-.blog-card {
-background: var(--bg2);
-border: 1px solid var(--border);
-border-radius: var(--radius-lg);
-padding: 24px;
-transition: all var(--transition);
-cursor: pointer;
-display: flex;
-flex-direction: column;
-gap: 12px;
-}
-.blog-card:hover {
-border-color: var(--red);
-transform: translateY(-4px);
-box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-}
-.blog-card__category {
-font-size: 0.7rem;
-font-weight: 700;
-letter-spacing: 0.1em;
-text-transform: uppercase;
-color: var(--red);
-}
-.blog-card__title {
-font-family: var(--font-serif);
-font-size: 1.2rem;
-color: var(--text);
-line-height: 1.3;
-}
-.blog-card__excerpt {
-font-size: 0.9rem;
-color: var(--text-muted);
-line-height: 1.6;
-flex: 1;
-}
-.blog-card__meta {
-display: flex;
-align-items: center;
-gap: 16px;
-font-size: 0.75rem;
-color: var(--text-dim);
-padding-top: 16px;
-border-top: 1px solid var(--border);
-margin-top: auto;
-}
-.blog-card__read-more {
-color: var(--red);
-font-weight: 600;
-font-size: 0.85rem;
-display: inline-flex;
-align-items: center;
-gap: 6px;
-margin-top: 12px;
-}
-.blog-card__read-more:hover {
-gap: 10px;
-}
-.blog-categories {
-display: flex;
-gap: 12px;
-flex-wrap: wrap;
-margin: 32px 0;
-}
-.category-pill {
-padding: 8px 20px;
-border-radius: 30px;
-border: 1px solid var(--border);
-background: var(--surface);
-font-size: 0.85rem;
-color: var(--text-muted);
-cursor: pointer;
-transition: all var(--transition);
-}
-.category-pill:hover,
-.category-pill.active {
-border-color: var(--red);
-background: var(--red-glow);
-color: var(--text);
-}
-.blog-newsletter {
-background: var(--bg2);
-border: 1px solid var(--border);
-border-radius: var(--radius-lg);
-padding: 48px;
-margin: 64px 0;
-text-align: center;
-}
-.blog-newsletter__title {
-font-family: var(--font-serif);
-font-size: 1.8rem;
-color: var(--text);
-margin-bottom: 12px;
-}
-.blog-newsletter__desc {
-color: var(--text-muted);
-margin-bottom: 24px;
-max-width: 500px;
-margin-left: auto;
-margin-right: auto;
-}
-.blog-newsletter__form {
-display: flex;
-gap: 12px;
-max-width: 480px;
-margin: 0 auto;
-}
-.blog-newsletter__form input {
-flex: 1;
-background: var(--surface);
-border: 1px solid var(--border);
-color: var(--text);
-padding: 14px 18px;
-border-radius: var(--radius);
-font-family: var(--font-sans);
-font-size: 0.9rem;
-}
-.blog-newsletter__form input:focus {
-outline: none;
-border-color: var(--red);
-}
-@media (max-width: 768px) {
-.blog-newsletter__form {
-flex-direction: column;
-}
-.blog-grid {
-grid-template-columns: 1fr;
-}
-}
-</style>
-</head>
-<body class="noise-bg">
-<div id="nav-placeholder"></div>
-<section class="blog-hero">
-<div class="container">
-<span class="section-header__label">Contenido</span>
-<h1 style="margin-bottom: 12px">Blog AdEA</h1>
-<p style="max-width: 600px">
-Artículos, guías y consejos sobre lectura, bookstagram y descubrimiento de libros.
-</p>
-</div>
-</section>
-<div class="divider"></div>
-<section class="section-sm">
-<div class="container">
-<!-- CATEGORÍAS -->
-<div class="blog-categories" id="blog-categories">
-<button class="category-pill active" data-category="all">Todos</button>
-<button class="category-pill" data-category="guias">Guías</button>
-<button class="category-pill" data-category="consejos">Consejos</button>
-<button class="category-pill" data-category="bookstagram">Bookstagram</button>
-<button class="category-pill" data-category="lectura">Lectura</button>
-</div>
-<!-- GRID DE POSTS -->
-<div class="blog-grid" id="blog-grid">
-<!-- Posts injectados por JS -->
-</div>
-<!-- NEWSLETTER -->
-<div class="blog-newsletter">
-<h2 class="blog-newsletter__title">Suscríbete al blog</h2>
-<p class="blog-newsletter__desc">
-Recibe los últimos artículos y recomendaciones directamente en tu email.
-</p>
-<form class="blog-newsletter__form" id="newsletter-form">
-<input type="email" placeholder="tu@email.com" required />
-<button type="submit" class="btn btn-primary">Suscribirme</button>
-</form>
-</div>
-</div>
-</section>
-<div id="footer-placeholder"></div>
-<script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
-<script src="js/backend.js"></script>
-<script src="js/components.js"></script>
-<script src="js/utils.js"></script>
-<script>
-injectShell("");
-// Lista de posts del blog
-const BLOG_POSTS = [
-{
-id: "como-funciona",
-title: "Cómo funciona AdEA",
-excerpt: "Te explicamos paso a paso cómo sacar el máximo partido a nuestra plataforma de descubrimiento emocional de libros.",
-category: "guias",
-date: "2026-03-10",
-readTime: "5 min",
-url: "blogs_otros/como-funciona.html"
-},
-{
-id: "consejos-lectura",
-title: "10 consejos para leer más libros al año",
-excerpt: "Descubre estrategias prácticas para aumentar tu ritmo de lectura sin perder el disfrute.",
-category: "consejos",
-date: "2026-03-30",
-readTime: "7 min",
-url: "blogs_otros/consejos-lectura.html"
-},
-{
-id: "bookstagram-crecer",
-title: "Cómo crecer en Bookstagram desde cero",
-excerpt: "Guía completa para bookstagramers que quieren aumentar su alcance y conectar con más lectores.",
-category: "bookstagram",
-date: "2026-03-30",
-readTime: "10 min",
-url: "blogs_otros/bookstagram-crecer.html"
-},
-{
-id: "generos-2026",
-title: "Los géneros literarios más populares de 2026",
-excerpt: "Análisis de las tendencias de lectura que están dominando este año.",
-category: "lectura",
-date: "2026-03-29",
-readTime: "6 min",
-url: "blogs_otros/generos-2026.html"
-},
-{
-id: "resena-perfecta",
-title: "Cómo escribir la reseña perfecta",
-excerpt: "Tips para crear reseñas que enganchen y ayuden a otros lectores a decidir.",
-category: "consejos",
-date: "2026-03-29",
-readTime: "8 min",
-url: "blogs_otros/resena-perfecta.html"
-},
-{
-id: "libros-adictivos",
-title: "15 libros adictivos que no podrás soltar",
-excerpt: "Nuestra selección de page-turners garantizados para los que buscan una lectura intensa.",
-category: "lectura",
-date: "2026-03-29",
-readTime: "9 min",
-url: "blogs_otros/libros-adictivos.html"
-}
-];;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <title>Blog - AdEA</title>
+    <meta
+      name="description"
+      content="Artículos, guías y consejos sobre lectura, bookstagram y descubrimiento de libros."
+    />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/mobile.css" />
+    <style>
+      .blog-hero {
+        padding: 140px 0 60px;
+      }
+      .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 32px;
+        margin: 48px 0;
+      }
+      .blog-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        transition: all var(--transition);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .blog-card:hover {
+        border-color: var(--red);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      }
+      .blog-card__category {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--red);
+      }
+      .blog-card__title {
+        font-family: var(--font-serif);
+        font-size: 1.2rem;
+        color: var(--text);
+        line-height: 1.3;
+      }
+      .blog-card__excerpt {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+        flex: 1;
+      }
+      .blog-card__meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        margin-top: auto;
+      }
+      .blog-card__read-more {
+        color: var(--red);
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 12px;
+      }
+      .blog-card__read-more:hover {
+        gap: 10px;
+      }
+      .blog-categories {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 32px 0;
+      }
+      .category-pill {
+        padding: 8px 20px;
+        border-radius: 30px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all var(--transition);
+      }
+      .category-pill:hover,
+      .category-pill.active {
+        border-color: var(--red);
+        background: var(--red-glow);
+        color: var(--text);
+      }
+      .blog-newsletter {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 48px;
+        margin: 64px 0;
+        text-align: center;
+      }
+      .blog-newsletter__title {
+        font-family: var(--font-serif);
+        font-size: 1.8rem;
+        color: var(--text);
+        margin-bottom: 12px;
+      }
+      .blog-newsletter__desc {
+        color: var(--text-muted);
+        margin-bottom: 24px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .blog-newsletter__form {
+        display: flex;
+        gap: 12px;
+        max-width: 480px;
+        margin: 0 auto;
+      }
+      .blog-newsletter__form input {
+        flex: 1;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 14px 18px;
+        border-radius: var(--radius);
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+      }
+      .blog-newsletter__form input:focus {
+        outline: none;
+        border-color: var(--red);
+      }
+      @media (max-width: 768px) {
+        .blog-newsletter__form {
+          flex-direction: column;
+        }
+        .blog-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="noise-bg">
+    <div id="nav-placeholder"></div>
+    <section class="blog-hero">
+      <div class="container">
+        <span class="section-header__label">Contenido</span>
+        <h1 style="margin-bottom: 12px">Blog AdEA</h1>
+        <p style="max-width: 600px">
+          Artículos, guías y consejos sobre lectura, bookstagram y
+          descubrimiento de libros.
+        </p>
+      </div>
+    </section>
+    <div class="divider"></div>
+    <section class="section-sm">
+      <div class="container">
+        <!-- CATEGORÍAS -->
+        <div class="blog-categories" id="blog-categories">
+          <button class="category-pill active" data-category="all">
+            Todos
+          </button>
+          <button class="category-pill" data-category="guias">Guías</button>
+          <button class="category-pill" data-category="consejos">
+            Consejos
+          </button>
+          <button class="category-pill" data-category="bookstagram">
+            Bookstagram
+          </button>
+          <button class="category-pill" data-category="lectura">Lectura</button>
+        </div>
+        <!-- GRID DE POSTS -->
+        <div class="blog-grid" id="blog-grid">
+          <!-- Posts injectados por JS -->
+        </div>
+        <!-- NEWSLETTER -->
+        <div class="blog-newsletter">
+          <h2 class="blog-newsletter__title">Suscríbete al blog</h2>
+          <p class="blog-newsletter__desc">
+            Recibe los últimos artículos y recomendaciones directamente en tu
+            email.
+          </p>
+          <form class="blog-newsletter__form" id="newsletter-form">
+            <input type="email" placeholder="tu@email.com" required />
+            <button type="submit" class="btn btn-primary">Suscribirme</button>
+          </form>
+        </div>
+      </div>
+    </section>
+    <div id="footer-placeholder"></div>
+    <script src="js/components.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+      injectShell("");
+      // Lista de posts del blog
+      const BLOG_POSTS = [
+        {
+          id: "como-funciona",
+          title: "Cómo funciona AdEA",
+          excerpt:
+            "Te explicamos paso a paso cómo sacar el máximo partido a nuestra plataforma de descubrimiento emocional de libros.",
+          category: "guias",
+          date: "2026-03-15",
+          readTime: "5 min",
+          url: "blogs_otros/como-funciona.html",
+        },
+        {
+          id: "consejos-lectura",
+          title: "10 consejos para leer más libros al año",
+          excerpt:
+            "Descubre estrategias prácticas para aumentar tu ritmo de lectura sin perder el disfrute.",
+          category: "consejos",
+          date: "2026-03-10",
+          readTime: "7 min",
+          url: "blogs_otros/consejos-lectura.html",
+        },
+        {
+          id: "bookstagram-crecer",
+          title: "Cómo crecer en Bookstagram desde cero",
+          excerpt:
+            "Guía completa para bookstagramers que quieren aumentar su alcance y conectar con más lectores.",
+          category: "bookstagram",
+          date: "2026-03-05",
+          readTime: "10 min",
+          url: "blogs_otros/bookstagram-crecer.html",
+        },
+        {
+          id: "generos-2026",
+          title: "Los géneros literarios más populares de 2026",
+          excerpt:
+            "Análisis de las tendencias de lectura que están dominando este año.",
+          category: "lectura",
+          date: "2026-03-01",
+          readTime: "6 min",
+          url: "blogs_otros/generos-2026.html",
+        },
+        {
+          id: "resena-perfecta",
+          title: "Cómo escribir la reseña perfecta",
+          excerpt:
+            "Tips para crear reseñas que enganchen y ayuden a otros lectores a decidir.",
+          category: "consejos",
+          date: "2026-02-25",
+          readTime: "8 min",
+          url: "blogs_otros/resena-perfecta.html",
+        },
+        {
+          id: "libros-adictivos",
+          title: "15 libros adictivos que no podrás soltar",
+          excerpt:
+            "Nuestra selección de page-turners garantizados para los que buscan una lectura intensa.",
+          category: "lectura",
+          date: "2026-02-20",
+          readTime: "9 min",
+          url: "blogs_otros/libros-adictivos.html",
+        },
+      ];
       let activeCategory = "all";
 
       function renderBlogPosts(category = "all") {
@@ -343,5 +355,5 @@ url: "blogs_otros/libros-adictivos.html"
           });
       });
     </script>
-</body>
+  </body>
 </html>

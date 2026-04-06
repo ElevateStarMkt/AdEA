@@ -193,27 +193,27 @@
       }
       /* BOTÓN SEGUIR */
       .profile-mini__follow {
-    position: absolute;
-    bottom: 3%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 40px);
-    max-width: 160px;
-    padding: 8px 12px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    z-index: 2;
-}
+        position: absolute;
+        bottom: 3%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px);
+        max-width: 160px;
+        padding: 8px 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text);
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        z-index: 2;
+      }
       .profile-mini__follow:hover {
         border-color: var(--red);
         background: var(--red-glow);
@@ -424,6 +424,29 @@
       let followingSet = new Set();
 
       // ==================== CARGA INICIAL ====================
+      function applyFilterFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const rolFromURL = params.get("rol");
+
+        if (rolFromURL) {
+          activeRol = rolFromURL;
+
+          // Quitar active de todos
+          document.querySelectorAll(".filter-chip").forEach((chip) => {
+            chip.classList.remove("active");
+          });
+
+          // Activar el correspondiente
+          const targetChip = document.querySelector(
+            `.filter-chip[data-rol="${rolFromURL}"]`,
+          );
+
+          if (targetChip) {
+            targetChip.classList.add("active");
+          }
+        }
+      }
+
       async function loadComunidad() {
         try {
           // Cargar usuario actual para saber a quién sigues
@@ -725,7 +748,10 @@
         .addEventListener("click", () => changePage(1));
 
       // Inicialización
-      document.addEventListener("DOMContentLoaded", loadComunidad);
+      document.addEventListener("DOMContentLoaded", () => {
+        applyFilterFromURL(); // 👈 primero aplica filtro
+        loadComunidad(); // 👈 luego carga datos
+      });
     </script>
   </body>
 </html>
