@@ -8,13 +8,13 @@ function getNav(prefix = "") {
     <div class="nav__inner">
       <a href="${prefix}index.html" class="nav__logo">Ad<span>EA</span></a>
       <ul class="nav__links">
+        <li><a href="${prefix}descubrir.html" class="nav__cta">Déjate sorprender</a></li>
         <li><a href="${prefix}index.html">Inicio</a></li>
         <li><a href="${prefix}auth.html">Cuenta</a></li>
         <li><a href="${prefix}catalogo.html">Catálogo</a></li>
         <li><a href="${prefix}comunidad.html">Comunidad</a></li>
         <li><a href="${prefix}bookstagramers.html">Bookstagramers</a></li>
         <li><a href="${prefix}contacto.html">Contacto</a></li>
-        <li><a href="${prefix}descubrir.html" class="nav__cta">Déjate sorprender</a></li>
       </ul>
       <div class="nav__hamburger" aria-label="Menú" role="button" tabindex="0">
         <span></span><span></span><span></span>

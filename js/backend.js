@@ -42,7 +42,7 @@ async function registrarUsuario(
     user.set("guardado", 0);
     user.set("descartado", 0);
     user.set("resenas", 0);
-    user.set("seguidoresAdEA", 0); // ✅ Inicializado en 0
+    user.set("seguidoresAdEA", 0);
     user.set("following", []);
 
     await user.signUp();
@@ -83,6 +83,50 @@ function usuarioActual() {
 }
 function haySession() {
   return !!Parse.User.current();
+}
+
+/* =====================================================
+ADMIN — Verificar si el usuario actual es admin
+===================================================== */
+async function esAdmin() {
+  try {
+    const user = usuarioActual();
+    if (!user) return false;
+    const rol = user.get("rol");
+    return rol === "admin" || user.get("isAdmin") === true;
+  } catch (e) {
+    console.error("❌ Error en esAdmin():", e);
+    return false; // Fallback seguro
+  }
+}
+
+/* =====================================================
+CAMBIAR ROL DE CUENTA
+===================================================== */
+async function cambiarRolCuenta(nuevoRol) {
+  const user = usuarioActual();
+  if (!user) return { ok: false, error: "No hay sesión" };
+  const rolesValidos = ["lector", "escritor", "bookstagramer"];
+  if (!rolesValidos.includes(nuevoRol))
+    return { ok: false, error: "Rol no válido" };
+  try {
+    user.set("rol", nuevoRol);
+    await user.save();
+    // Actualizar perfil público
+    await updatePerfilPublico({ rol: nuevoRol });
+    // Actualizar el objeto PublicProfiles también
+    const Profile = Parse.Object.extend("PublicProfiles");
+    const q = new Parse.Query(Profile);
+    q.equalTo("userId", user.id);
+    const p = await q.first();
+    if (p) {
+      p.set("rol", nuevoRol);
+      await p.save();
+    }
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
 }
 
 /* =====================================================
@@ -163,11 +207,9 @@ async function crearPerfilPublico(user, extras = {}) {
     }
     if (rol === "lector") profile.set("generoFavorito", extras.genero || "");
 
-    // ✅ ACL: Lectura pública + Escritura para el dueño + Escritura para usuarios logueados (solo seguidoresAdEA)
     const acl = new Parse.ACL();
-    acl.setPublicReadAccess(true); // ✅ Todos pueden leer
-    acl.setWriteAccess(user, true); // ✅ El dueño puede escribir todo
-    // Nota: Parse no permite ACL por campo, pero al ser un contador público es aceptable
+    acl.setPublicReadAccess(true);
+    acl.setWriteAccess(user, true);
     profile.setACL(acl);
 
     await profile.save();
@@ -183,7 +225,7 @@ async function getPerfilPublico(userId) {
     const Profile = Parse.Object.extend("PublicProfiles");
     const q = new Parse.Query(Profile);
     q.equalTo("userId", userId);
-    const p = await q.first({ useMasterKey: false }); // ✅ Sin cache
+    const p = await q.first({ useMasterKey: false });
     if (!p) return null;
     return {
       id: p.id,
@@ -197,7 +239,7 @@ async function getPerfilPublico(userId) {
       seguidoresAdEA:
         typeof p.get("seguidoresAdEA") === "number"
           ? p.get("seguidoresAdEA")
-          : 0, // ✅ Garantizar número
+          : 0,
       instagram: p.get("instagram") || "",
       generoFavorito: p.get("generoFavorito") || "",
       tarifa: p.get("tarifa") || 0,
@@ -235,7 +277,6 @@ async function updatePerfilPublico(updates) {
     Object.keys(updates).forEach((k) => p.set(k, updates[k]));
     await p.save();
 
-    // Sincronizar a _User
     const syncKeys = [
       "bio",
       "web",
@@ -299,7 +340,6 @@ async function toggleFollow(targetUserId) {
   if (!user) return { ok: false, error: "Debes iniciar sesión" };
   try {
     const result = await Parse.Cloud.run("toggleFollow", { targetUserId });
-    // Refrescar el usuario local para que following esté actualizado
     await user.fetch();
     return result;
   } catch (err) {
@@ -666,38 +706,85 @@ async function updateBookRating(libroId) {
 COLABORACIONES
 ===================================================== */
 async function addColaboracion(data) {
-  const user = usuarioActual(); // Quien crea la collab (ej. Autor)
+  const user = usuarioActual();
   if (!user) return { ok: false, error: "No hay sesión" };
   try {
     const Colaboracion = Parse.Object.extend("Colaboraciones");
     const collab = new Colaboracion();
-    // CORRECCIÓN: Usar los IDs pasados en data, no el user actual
+
+    // ✅ Datos básicos
     collab.set("autorId", data.autorId || user.id);
     collab.set("bookstagramerId", data.bookstagramerId);
-    // Guardar referencia Pointer también para compatibilidad
+    collab.set("libroId", data.libroId);
+    collab.set("tarifa", data.tarifa || 0);
+    collab.set("estado", "pendiente");
+    collab.set("modalidad", data.modalidad || "");
+    collab.set("origen", data.origen || "directa");
+    collab.set("solicitudId", data.solicitudId || "");
+    collab.set("puntuacion", 0);
+    collab.set("resena", "");
+    collab.set("fecha", new Date());
+
+    // ✅ Pointer bookstagramer (seguro, solo objectId)
     if (data.bookstagramerId) {
-      const BsUser = new Parse.User();
-      BsUser.id = data.bookstagramerId;
+      const BsUser = Parse.User.createWithoutData(data.bookstagramerId);
       collab.set("bookstagramer", BsUser);
     }
 
-    collab.set("libroId", data.libroId);
-    collab.set("tarifa", data.tarifa);
-    collab.set("estado", "pendiente");
+    // ✅ Cargar datos desde PublicProfiles del bookstagramer
+    let nombreBookstagramer = "";
+    let imagenBook = "";
+    let nombreAutor = "";
+    let nombreLibro = "";
 
-    // CORRECCIÓN ACL: El bookstagramer debe poder leer esto
+    try {
+      const Profile = Parse.Object.extend("PublicProfiles");
+      const profileQ = new Parse.Query(Profile);
+      profileQ.equalTo("userId", data.bookstagramerId);
+      const perfil = await profileQ.first({ useMasterKey: false });
+      if (perfil) {
+        nombreBookstagramer =
+          perfil.get("nombre") || perfil.get("displayName") || "";
+      }
+    } catch (e) {
+      console.warn("⚠️ No se pudo cargar perfil del bookstagramer:", e.message);
+    }
+
+    // ✅ Cargar datos desde Books
+    try {
+      const Book = Parse.Object.extend("Books");
+      const bookQ = new Parse.Query(Book);
+      bookQ.equalTo("libroId", data.libroId);
+      const book = await bookQ.first({ useMasterKey: false });
+      if (book) {
+        imagenBook = book.get("imagen") || "";
+        nombreAutor = book.get("autor") || "";
+        nombreLibro = book.get("titulo") || "";
+      }
+    } catch (e) {
+      console.warn("⚠️ No se pudo cargar datos del libro:", e.message);
+    }
+
+    // ✅ Guardar campos denormalizados para renderizado rápido
+    collab.set("nombreBookstagramer", nombreBookstagramer);
+    collab.set("imagen", imagenBook);
+    collab.set("nombreAutor", nombreAutor);
+    collab.set("nombreLibro", nombreLibro);
+
+    // ✅ ACL: Public Read + Write para autor y bookstagramer
     const acl = new Parse.ACL();
-    acl.setPublicReadAccess(false);
-    acl.setWriteAccess(user, true); // Autor escribe
+    acl.setPublicReadAccess(true); // ✅ PÚBLICO LECTURA
+    acl.setWriteAccess(user, true);
     if (data.bookstagramerId) {
-      acl.setReadAccess(data.bookstagramerId, true); // BS lee
-      acl.setWriteAccess(data.bookstagramerId, true); // BS escribe (para aceptar)
+      acl.setReadAccess(data.bookstagramerId, true);
+      acl.setWriteAccess(data.bookstagramerId, true);
     }
     collab.setACL(acl);
 
     await collab.save();
-    return { ok: true, id: collab.id };
+    return { ok: true, id: collab.id, solicitudId: data.solicitudId };
   } catch (err) {
+    console.error("❌ Error creando colaboración:", err.message);
     return { ok: false, error: err.message };
   }
 }
@@ -708,33 +795,43 @@ async function getColaboraciones(bookstagramerId) {
     let q = new Parse.Query(Colaboracion);
     q.equalTo("bookstagramerId", bookstagramerId);
     q.descending("createdAt");
-    q.limit(200);
+    q.limit(500);
+
     let results = await q.find();
 
-    // CORRECCIÓN: Fallback si no encuentra por ID, buscar por Pointer
+    // Fallback por Pointer si no hay resultados por ID
     if (!results.length) {
       q = new Parse.Query(Colaboracion);
-      const userPointer = {
-        __type: "Pointer",
-        className: "_User",
-        objectId: bookstagramerId,
-      };
+      const userPointer = Parse.User.createWithoutData(bookstagramerId);
       q.equalTo("bookstagramer", userPointer);
       q.descending("createdAt");
-      q.limit(200);
+      q.limit(500);
       results = await q.find();
     }
 
     return results.map((c) => ({
       id: c.id,
-      autor: c.get("autor") || c.get("nombreAutor"),
-      libro: c.get("libro") || c.get("nombreLibro"),
-      tarifa: c.get("tarifa"),
-      estado: c.get("estado"),
-      fecha: c.get("createdAt"),
+      solicitudId: c.get("solicitudId") || "",
+      libroId: c.get("libroId") || 0,
+      autorId: c.get("autorId") || "",
+      bookstagramerId: c.get("bookstagramerId") || "",
+      nombreBookstagramer: c.get("nombreBookstagramer") || "",
+      nombreAutor: c.get("nombreAutor") || c.get("autor") || "",
+      nombreLibro: c.get("nombreLibro") || c.get("libro") || "",
+      imagen: c.get("imagen") || "",
+      tarifa: c.get("tarifa") || 0,
+      estado: c.get("estado") || "pendiente",
+      modalidad: c.get("modalidad") || "",
+      origen: c.get("origen") || "",
+      puntuacion: c.get("puntuacion") || 0,
+      resena: c.get("resena") || "",
+      fecha: c.get("createdAt") || c.get("fecha"),
+      fechaEnvio: c.get("fechaEnvio"),
+      // Pointer (para compatibilidad)
+      bookstagramer: c.get("bookstagramer"),
     }));
   } catch (err) {
-    console.error("Error cargando colaboraciones:", err.message);
+    console.error("❌ Error cargando colaboraciones:", err.message);
     return [];
   }
 }
@@ -823,6 +920,67 @@ async function getBookstagramersParaMatch(genero = "") {
   }
 }
 
+async function updateColaboracionResena(
+  collabId,
+  puntuacion,
+  textoResena,
+  mood = "",
+  etiqueta = "",
+) {
+  const user = usuarioActual();
+  if (!user) return { ok: false, error: "No autorizado" };
+  try {
+    const Colaboracion = Parse.Object.extend("Colaboraciones");
+    const q = new Parse.Query(Colaboracion);
+    q.equalTo("objectId", collabId);
+    const collab = await q.first();
+
+    if (!collab) return { ok: false, error: "Colaboración no encontrada" };
+    if (collab.get("bookstagramerId") !== user.id) {
+      return { ok: false, error: "No puedes editar esta colaboración" };
+    }
+
+    collab.set("puntuacion", puntuacion);
+    collab.set("resena", textoResena);
+    collab.set("estado", "terminada");
+    await collab.save();
+
+    // ✅ Crear reseña en clase Resenas para que aparezca en ficha del libro
+    try {
+      const Resena = Parse.Object.extend("Resenas");
+      const resena = new Resena();
+      resena.set("usuario", user);
+      resena.set("usuarioId", user.id);
+      resena.set("libroId", collab.get("libroId"));
+      resena.set("estrellas", puntuacion);
+      resena.set("texto", textoResena);
+      resena.set("mood", mood);
+      resena.set("etiqueta", etiqueta || "Colaboración AdEA");
+      resena.set(
+        "displayName",
+        user.get("displayName") || user.get("username"),
+      );
+      resena.set("fecha", new Date());
+      resena.set("utiles", 0);
+      resena.set("noUtiles", 0);
+      resena.set("votos", {});
+      const acl = new Parse.ACL(user);
+      acl.setPublicReadAccess(true);
+      acl.setWriteAccess(user, true);
+      resena.setACL(acl);
+      await resena.save();
+      await updateBookRating(collab.get("libroId"));
+    } catch (e) {
+      console.warn("⚠️ No se pudo crear reseña en Resenas:", e.message);
+    }
+
+    return { ok: true };
+  } catch (err) {
+    console.error("❌ Error actualizando reseña de colaboración:", err.message);
+    return { ok: false, error: err.message };
+  }
+}
+
 /* =====================================================
 FAVORITOS / LEIDOS / DESCARTADOS — SIN LOCALSTORAGE
 ===================================================== */
@@ -856,7 +1014,6 @@ async function addFavorito(libroId, libroData) {
 
     await fav.save();
 
-    // ✅ CORRECCIÓN: Actualizar contadores
     try {
       const Book = Parse.Object.extend("Books");
       const bookQ = new Parse.Query(Book);
@@ -954,7 +1111,6 @@ async function addLeido(libroId) {
 
     await leido.save();
 
-    // ✅ CORRECCIÓN: Actualizar contador de usuario con manejo de errores
     try {
       user.increment("leidos", 1);
       await user.save(null, { useMasterKey: false });
@@ -1004,12 +1160,9 @@ async function descartarLibro(libroId) {
       obj = new Descartado();
       obj.set("usuario", user);
       obj.set("libroId", libroId);
-
-      // ✅ CORRECCIÓN: Añadir campo expiraEn (36 horas desde ahora)
       const ahora = new Date();
       const expira = new Date(ahora.getTime() + 36 * 60 * 60 * 1000);
       obj.set("expiraEn", expira);
-
       const acl = new Parse.ACL(user);
       acl.setPublicReadAccess(false);
       obj.setACL(acl);
@@ -1017,7 +1170,6 @@ async function descartarLibro(libroId) {
 
     await obj.save();
 
-    // ✅ CORRECCIÓN: Actualizar contadores con mejor manejo de errores
     try {
       const Book = Parse.Object.extend("Books");
       const bookQ = new Parse.Query(Book);
@@ -1083,43 +1235,12 @@ async function sugerirLibro(data) {
     const acl = new Parse.ACL(user);
     acl.setPublicReadAccess(false);
     acl.setWriteAccess(user, true);
-    // Opcional: permitir que admin escriba
-    // acl.setWriteAccess("ADMIN_USER_ID", true);
-
     sug.setACL(acl);
     await sug.save();
 
     return { ok: true, id: sug.id };
   } catch (err) {
     console.error("Error sugiriendo libro:", err.message);
-    return { ok: false, error: err.message };
-  }
-}
-
-// Opcional: Función para admin para aprobar sugerencias
-async function aprobarSugerenciaLibro(sugerenciaId, libroData) {
-  const user = usuarioActual();
-  if (!user) return { ok: false, error: "No autorizado" };
-
-  try {
-    // 1. Marcar sugerencia como aceptada
-    const Sugerencia = Parse.Object.extend("SugerenciasLibros");
-    const q = new Parse.Query(Sugerencia);
-    const sug = await q.get(sugerenciaId);
-    sug.set("estado", "aceptada");
-    await sug.save();
-
-    // 2. Crear el libro real si se pasan los datos
-    if (libroData) {
-      await addLibro({
-        ...libroData,
-        escritorId: user.id, // O el ID del autor real
-        sugeridoPor: sugerenciaId, // Para tracking
-      });
-    }
-
-    return { ok: true };
-  } catch (err) {
     return { ok: false, error: err.message };
   }
 }
@@ -1131,71 +1252,146 @@ async function solicitarColaboracion(data) {
   const user = usuarioActual();
   if (!user) return { ok: false, error: "Debes iniciar sesión" };
 
+  // ✅ VALIDACIÓN: destinatarioId obligatorio y válido
+  const destinatarioId = String(data.destinatarioId || "").trim();
+  if (!destinatarioId || destinatarioId === "0" || destinatarioId.length < 10) {
+    console.error("❌ destinatarioId inválido:", data.destinatarioId);
+    return { ok: false, error: "ID de destinatario no válido" };
+  }
+
   try {
     const Solicitud = Parse.Object.extend("SolicitudesColaboracion");
     const sol = new Solicitud();
 
+    // ═════ DATOS DEL SOLICITANTE (siempre disponibles) ═════
     sol.set("solicitante", user);
     sol.set("solicitanteId", user.id);
     sol.set("solicitanteRol", user.get("rol"));
-    sol.set("destinatarioId", data.destinatarioId);
+    sol.set(
+      "solicitanteNombre",
+      user.get("nombre") ||
+        user.get("displayName") ||
+        user.get("username") ||
+        "Usuario",
+    );
+    sol.set("solicitanteInstagram", user.get("instagram") || "");
+    sol.set("solicitanteEmail", user.get("email") || "");
 
-    const DestUser = new Parse.User();
-    DestUser.id = data.destinatarioId;
-    sol.set("destinatario", DestUser);
+    // ═════ DATOS DEL DESTINATARIO (sin Master Key) ═════
+    // Estrategia: 1) PublicProfiles → 2) Valores por defecto
+    let destNombre = "Usuario";
+    let destInstagram = "";
+    let destEmail = "";
 
-    sol.set("tipo", data.tipo); // "escritor_a_bookstagramer" | "bookstagramer_a_escritor"
-    if (data.libroId) sol.set("libroId", data.libroId);
+    try {
+      // ✅ Intentar desde PublicProfiles (lectura pública permitida)
+      const Profile = Parse.Object.extend("PublicProfiles");
+      const profileQ = new Parse.Query(Profile);
+      profileQ.equalTo("userId", destinatarioId);
+      const perfil = await profileQ.first({ useMasterKey: false });
+
+      if (perfil) {
+        destNombre =
+          perfil.get("nombre") || perfil.get("displayName") || "Usuario";
+        destInstagram = perfil.get("instagram") || "";
+        destEmail = perfil.get("email") || "";
+      }
+    } catch (e) {
+      console.warn("⚠️ No se pudo cargar perfil público:", e.message);
+      // Continuar con valores por defecto
+    }
+
+    // Guardar datos denormalizados del destinatario
+    sol.set("destinatarioId", destinatarioId); // ← CAMPO CLAVE para consultas
+    sol.set("destinatarioNombre", destNombre);
+    sol.set("destinatarioInstagram", destInstagram);
+    sol.set("destinatarioEmail", destEmail);
+
+    // Pointer seguro (solo con objectId, sin username)
+    const DestPointer = Parse.User.createWithoutData(destinatarioId);
+    sol.set("destinatario", DestPointer);
+
+    // ═════ RESTO DE CAMPOS ═════
+    sol.set("tipo", data.tipo);
+    if (data.libroId) sol.set("libroId", Number(data.libroId));
     if (data.modalidad) sol.set("modalidad", data.modalidad);
-    if (data.tarifa !== undefined) sol.set("tarifa", data.tarifa); // Puede ser 0
-    if (data.mensaje) sol.set("mensaje", data.mensaje);
+    if (data.tarifa !== undefined) sol.set("tarifa", Number(data.tarifa) || 0);
+    if (data.mensaje) sol.set("mensaje", String(data.mensaje).trim());
 
     sol.set("estado", "pendiente");
     sol.set("fechaSolicitud", new Date());
 
+    // ═════ ACLs (CRÍTICO) ═════
     const acl = new Parse.ACL();
     acl.setPublicReadAccess(false);
-    acl.setReadAccess(user, true);
-    acl.setReadAccess(data.destinatarioId, true);
-    acl.setWriteAccess(user, true);
-    acl.setWriteAccess(data.destinatarioId, true);
+    acl.setPublicWriteAccess(false);
+    // Solicitante: lectura y escritura
+    acl.setReadAccess(user.id, true);
+    acl.setWriteAccess(user.id, true);
+    // Destinatario: lectura y escritura
+    acl.setReadAccess(destinatarioId, true);
+    acl.setWriteAccess(destinatarioId, true);
+    // Admin (opcional): si necesitas acceso global
+    // acl.setReadAccess("adminUserId", true);
+
     sol.setACL(acl);
 
+    // ═════ GUARDAR ═════
     await sol.save();
     return { ok: true, id: sol.id };
   } catch (err) {
-    console.error("Error creando solicitud:", err.message);
-    return { ok: false, error: err.message };
+    console.error("❌ Error en solicitarColaboracion:", {
+      message: err.message,
+      code: err.code,
+      destinatarioId,
+      tipo: data.tipo,
+    });
+
+    // Errores comunes y mensajes amigables
+    if (err.code === 101) {
+      return { ok: false, error: "Usuario destinatario no encontrado" };
+    }
+    if (err.code === 119) {
+      return {
+        ok: false,
+        error: "No tienes permisos para crear esta solicitud",
+      };
+    }
+    return { ok: false, error: err.message || "Error al crear la solicitud" };
   }
 }
 
-// Obtener solicitudes recibidas por un usuario
-// Ejemplo de consulta Parse correcta
+// En getSolicitudesRecibidas:
 async function getSolicitudesRecibidas(userId) {
   const Solicitud = Parse.Object.extend("SolicitudesColaboracion");
   const q = new Parse.Query(Solicitud);
-
-  // Filtrar por destinatario
   q.equalTo("destinatarioId", userId);
   q.descending("createdAt");
-
-  // ✅ IMPORTANTE: Incluir el campo 'estado' en los resultados
-  q.select([
-    "estado",
-    "tipo",
-    "libroId",
-    "solicitanteId",
-    "tarifa",
-    "modalidad",
-    "mensaje",
-    "fecha",
-  ]);
-
+  // ✅ REMOVER q.select() para cargar todos los campos
   try {
     const results = await q.find();
+    // Cargar datos de solicitantes en paralelo
+    const solicitanteIds = [
+      ...new Set(results.map((r) => r.get("solicitanteId")).filter(Boolean)),
+    ];
+    const userInfoMap = {};
+    if (solicitanteIds.length > 0) {
+      const User = Parse.Object.extend("_User");
+      const userQ = new Parse.Query(User);
+      userQ.containedIn("objectId", solicitanteIds);
+      const users = await userQ.find({ useMasterKey: false });
+      users.forEach((u) => {
+        userInfoMap[u.id] = {
+          nombre: u.get("nombre") || u.get("displayName") || "Usuario",
+          instagram: u.get("instagram") || "",
+          email: u.get("email") || "",
+          rol: u.get("rol"),
+        };
+      });
+    }
     return results.map((r) => ({
       id: r.id,
-      estado: r.get("estado"), // ← Este campo DEBE existir
+      estado: r.get("estado"),
       tipo: r.get("tipo"),
       libroId: r.get("libroId"),
       solicitanteId: r.get("solicitanteId"),
@@ -1204,6 +1400,34 @@ async function getSolicitudesRecibidas(userId) {
       modalidad: r.get("modalidad"),
       mensaje: r.get("mensaje"),
       fecha: r.get("createdAt"),
+      direccionEnvio: r.get("direccionEnvio"),
+
+      // ✅ PRIORIDAD: campos denormalizados > fallback a userInfoMap
+      solicitanteNombre:
+        r.get("solicitanteNombre") ||
+        userInfoMap[r.get("solicitanteId")]?.nombre ||
+        "Usuario",
+      solicitanteInstagram:
+        r.get("solicitanteInstagram") ||
+        userInfoMap[r.get("solicitanteId")]?.instagram ||
+        "",
+      solicitanteEmail:
+        r.get("solicitanteEmail") ||
+        userInfoMap[r.get("solicitanteId")]?.email ||
+        "",
+
+      destinatarioNombre:
+        r.get("destinatarioNombre") ||
+        userInfoMap[r.get("destinatarioId")]?.nombre ||
+        "Usuario",
+      destinatarioInstagram:
+        r.get("destinatarioInstagram") ||
+        userInfoMap[r.get("destinatarioId")]?.instagram ||
+        "",
+      destinatarioEmail:
+        r.get("destinatarioEmail") ||
+        userInfoMap[r.get("destinatarioId")]?.email ||
+        "",
     }));
   } catch (error) {
     console.error("Error en getSolicitudesRecibidas:", error);
@@ -1211,7 +1435,7 @@ async function getSolicitudesRecibidas(userId) {
   }
 }
 
-// Obtener solicitudes enviadas por un usuario
+// En getSolicitudesEnviadas:
 async function getSolicitudesEnviadas(userId) {
   try {
     const Solicitud = Parse.Object.extend("SolicitudesColaboracion");
@@ -1219,8 +1443,29 @@ async function getSolicitudesEnviadas(userId) {
     q.equalTo("solicitanteId", userId);
     q.descending("fechaSolicitud");
     q.limit(50);
-
+    // ✅ REMOVER q.select()
     const results = await q.find();
+
+    // Cargar datos de destinatarios
+    const destinatarioIds = [
+      ...new Set(results.map((r) => r.get("destinatarioId")).filter(Boolean)),
+    ];
+    const userInfoMap = {};
+    if (destinatarioIds.length > 0) {
+      const User = Parse.Object.extend("_User");
+      const userQ = new Parse.Query(User);
+      userQ.containedIn("objectId", destinatarioIds);
+      const users = await userQ.find({ useMasterKey: false });
+      users.forEach((u) => {
+        userInfoMap[u.id] = {
+          nombre: u.get("nombre") || u.get("displayName") || "Usuario",
+          instagram: u.get("instagram") || "",
+          email: u.get("email") || "",
+          rol: u.get("rol"),
+        };
+      });
+    }
+
     return results.map((s) => ({
       id: s.id,
       tipo: s.get("tipo"),
@@ -1228,7 +1473,22 @@ async function getSolicitudesEnviadas(userId) {
       libroId: s.get("libroId"),
       estado: s.get("estado"),
       tarifa: s.get("tarifa"),
+      modalidad: s.get("modalidad"),
       fecha: s.get("fechaSolicitud"),
+
+      // ✅ PRIORIDAD: campos denormalizados guardados al crear la solicitud
+      destinatarioNombre:
+        s.get("destinatarioNombre") ||
+        userInfoMap[s.get("destinatarioId")]?.nombre ||
+        "Usuario",
+      destinatarioInstagram:
+        s.get("destinatarioInstagram") ||
+        userInfoMap[s.get("destinatarioId")]?.instagram ||
+        "",
+      destinatarioEmail:
+        s.get("destinatarioEmail") ||
+        userInfoMap[s.get("destinatarioId")]?.email ||
+        "",
     }));
   } catch (err) {
     console.error("Error cargando solicitudes enviadas:", err.message);
@@ -1236,7 +1496,6 @@ async function getSolicitudesEnviadas(userId) {
   }
 }
 
-// Responder a una solicitud (aceptar/rechazar)
 async function responderSolicitud(solicitudId, respuesta, datosExtra = {}) {
   const user = usuarioActual();
   if (!user) return { ok: false, error: "No autorizado" };
@@ -1246,7 +1505,6 @@ async function responderSolicitud(solicitudId, respuesta, datosExtra = {}) {
     const q = new Parse.Query(Solicitud);
     const sol = await q.get(solicitudId);
 
-    // Verificar que el usuario es el destinatario
     if (sol.get("destinatarioId") !== user.id) {
       return { ok: false, error: "No puedes responder esta solicitud" };
     }
@@ -1254,17 +1512,14 @@ async function responderSolicitud(solicitudId, respuesta, datosExtra = {}) {
     sol.set("estado", respuesta);
     sol.set("fechaRespuesta", new Date());
 
-    // Si se acepta una solicitud de escritor→bookstagramer, crear la colaboración con pago
     if (
       respuesta === "aceptada" &&
       sol.get("tipo") === "escritor_a_bookstagramer"
     ) {
       const tarifa = sol.get("tarifa") || 0;
       const libroId = sol.get("libroId");
-      const bookstagramerId = user.id; // El destinatario es el BS
+      const bookstagramerId = user.id;
       const autorId = sol.get("solicitanteId");
-
-      // Crear la colaboración real
       await addColaboracion({
         autorId,
         bookstagramerId,
@@ -1275,20 +1530,18 @@ async function responderSolicitud(solicitudId, respuesta, datosExtra = {}) {
       });
     }
 
-    // Si se acepta bookstagramer→escritor, crear colaboración sin pago
     if (
       respuesta === "aceptada" &&
       sol.get("tipo") === "bookstagramer_a_escritor"
     ) {
       const libroId = sol.get("libroId");
-      const bookstagramerId = user.id; // El destinatario es el autor, el solicitante es BS
-      const autorId = sol.get("solicitanteId");
-
+      const bookstagramerId = sol.get("solicitanteId");
+      const autorId = user.id;
       await addColaboracion({
         autorId,
         bookstagramerId,
         libroId,
-        tarifa: 0, // Sin coste
+        tarifa: 0,
         modalidad: sol.get("modalidad"),
         origen: "solicitud_aceptada",
         solicitudId: solicitudId,
@@ -1303,23 +1556,44 @@ async function responderSolicitud(solicitudId, respuesta, datosExtra = {}) {
   }
 }
 
-// Obtener info básica de usuario para mostrar en solicitudes
 async function getUserInfo(userId) {
   try {
     const User = Parse.Object.extend("_User");
-    const user = await new Parse.Query(User).get(userId, {
-      useMasterKey: false,
-    });
+    const q = new Parse.Query(User);
+    q.equalTo("objectId", userId);
+
+    // ✅ Intentar PRIMERO con useMasterKey: true para leer usuarios privados
+    const user = await q.first({ useMasterKey: true });
+
+    if (!user) return null;
+
     return {
       id: user.id,
       nombre: user.get("nombre") || user.get("displayName") || "Usuario",
       rol: user.get("rol"),
-      instagram: user.get("instagram"),
+      instagram: user.get("instagram") || "",
+      email: user.get("email") || "",
     };
-  } catch {
-    return null;
+  } catch (err) {
+    // Fallback: intentar sin masterKey (para usuarios públicos)
+    try {
+      const User = Parse.Object.extend("_User");
+      const user = await new Parse.Query(User).get(userId, {
+        useMasterKey: false,
+      });
+      return {
+        id: user.id,
+        nombre: user.get("nombre") || user.get("displayName") || "Usuario",
+        rol: user.get("rol"),
+        instagram: user.get("instagram") || "",
+        email: user.get("email") || "",
+      };
+    } catch {
+      return null; // Silenciar error y devolver null
+    }
   }
 }
+
 /* =====================================================
 BLOG — Newsletter Subscriptions
 ===================================================== */
@@ -1328,20 +1602,15 @@ async function suscribirseBlogNewsletter(email) {
     const Blog = Parse.Object.extend("Blog");
     const q = new Parse.Query(Blog);
     q.equalTo("email", email.toLowerCase().trim());
-    
-    // Verificar si ya está suscrito
     const existente = await q.first();
     if (existente) {
       return { ok: true, duplicado: true };
     }
-    
     const suscripcion = new Blog();
     suscripcion.set("email", email.toLowerCase().trim());
     suscripcion.set("fecha", new Date());
     suscripcion.set("activo", true);
     suscripcion.set("origen", "blog");
-    
-    // Si hay usuario logueado, vincular la suscripción
     const user = usuarioActual();
     if (user) {
       suscripcion.set("usuario", user);
@@ -1350,8 +1619,6 @@ async function suscribirseBlogNewsletter(email) {
     } else {
       suscripcion.set("esRegistrado", false);
     }
-    
-    // ACL: solo lectura para el dueño (si está logueado) + escritura para admin
     const acl = new Parse.ACL();
     acl.setPublicReadAccess(false);
     acl.setPublicWriteAccess(false);
@@ -1359,13 +1626,57 @@ async function suscribirseBlogNewsletter(email) {
       acl.setReadAccess(user, true);
       acl.setWriteAccess(user, true);
     }
-    // Nota: Para que el admin pueda gestionar, configura los CLP en Back4App
     suscripcion.setACL(acl);
-    
     await suscripcion.save();
     return { ok: true };
   } catch (err) {
     console.error("Error suscribiendo al blog:", err.message);
     return { ok: false, error: err.message };
+  }
+}
+
+/**
+ * Obtiene datos públicos de un usuario, priorizando PublicProfiles sobre _User
+ * @param {string} userId - ID del usuario
+ * @returns {Promise<{nombre: string, instagram: string, email: string}>}
+ */
+async function getDatosPublicosUsuario(userId) {
+  try {
+    // Intentar desde PublicProfiles primero
+    const Profile = Parse.Object.extend("PublicProfiles");
+    const profileQ = new Parse.Query(Profile);
+    profileQ.equalTo("userId", userId);
+    const perfil = await profileQ.first({ useMasterKey: false });
+
+    if (perfil) {
+      return {
+        nombre: perfil.get("nombre") || perfil.get("displayName") || "Usuario",
+        instagram: perfil.get("instagram") || "",
+        email: perfil.get("email") || "",
+        origen: "PublicProfiles",
+      };
+    }
+  } catch (e) {
+    console.warn("⚠️ Error consultando PublicProfiles:", e.message);
+  }
+
+  // Fallback a _User con masterKey
+  try {
+    const User = Parse.Object.extend("_User");
+    const user = await new Parse.Query(User).get(userId, {
+      useMasterKey: true,
+    });
+    return {
+      nombre:
+        user.get("nombre") ||
+        user.get("displayName") ||
+        user.get("username") ||
+        "Usuario",
+      instagram: user.get("instagram") || "",
+      email: user.get("email") || "",
+      origen: "_User",
+    };
+  } catch {
+    return { nombre: "Usuario", instagram: "", email: "", origen: "fallback" };
   }
 }

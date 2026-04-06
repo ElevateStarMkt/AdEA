@@ -2,6 +2,88 @@
 AdEA — JS compartido (utils.js)
 =================================================== */
 
+// ── CONSTANTES GLOBALES DE MOODS Y GÉNEROS ──
+const ADEA_MOODS = [
+  { value: "adictivo", emoji: "⚡", label: "Adictivo" },
+  { value: "devastador", emoji: "💔", label: "Devastador" },
+  { value: "spicy", emoji: "🌶️", label: "Spicy" },
+  { value: "reflexivo", emoji: "💭", label: "Reflexivo" },
+  { value: "épico", emoji: "🐉", label: "Épico" },
+  { value: "oscuro", emoji: "🖤", label: "Oscuro" },
+  { value: "ligero", emoji: "☀️", label: "Ligero" },
+  { value: "emotivo", emoji: "😭", label: "Emotivo" },
+  { value: "esperanzador", emoji: "🌟", label: "Esperanzador" },
+  { value: "melancólico", emoji: "🌧️", label: "Melancólico" },
+  { value: "nostalgico", emoji: "🕰️", label: "Nostálgico" },
+  { value: "divertido", emoji: "😄", label: "Divertido" },
+  { value: "intrigante", emoji: "🔍", label: "Intrigante" },
+  { value: "reconfortante", emoji: "🫂", label: "Reconfortante" },
+  { value: "slow-burn", emoji: "🕯️", label: "Slow Burn" },
+  { value: "enemies-to-lovers", emoji: "⚔️", label: "Enemies to Lovers" },
+];
+
+const ADEA_GENEROS = [
+  { value: "romance", label: "Romance" },
+  { value: "thriller", label: "Thriller" },
+  { value: "fantasia", label: "Fantasía" },
+  { value: "romantasy", label: "Romantasy" },
+  { value: "dark-romance", label: "Dark Romance" },
+  { value: "ficción", label: "Ficción" },
+  { value: "histórica", label: "Histórica" },
+  { value: "drama", label: "Drama" },
+  { value: "new-adult", label: "New Adult" },
+  { value: "young-adult", label: "Young Adult" },
+  { value: "literaria", label: "Literaria" },
+  { value: "cozy-mystery", label: "Cozy Mystery" },
+  { value: "misterio", label: "Misterio" },
+  { value: "ciencia ficción", label: "Ciencia ficción" },
+  { value: "terror", label: "Terror" },
+  { value: "distopia", label: "Distopía" },
+  { value: "poesia", label: "Poesía" },
+  { value: "erotica", label: "Erótica" },
+  { value: "policiaca", label: "Policíaca" },
+];
+
+// Moods sugeridos por género (para filtros dinámicos)
+const MOODS_POR_GENERO = {
+  romance: [
+    "spicy",
+    "emotivo",
+    "slow-burn",
+    "enemies-to-lovers",
+    "reconfortante",
+    "devastador",
+  ],
+  romantasy: [
+    "épico",
+    "spicy",
+    "slow-burn",
+    "enemies-to-lovers",
+    "adictivo",
+    "emotivo",
+  ],
+  "dark-romance": [
+    "oscuro",
+    "spicy",
+    "enemies-to-lovers",
+    "adictivo",
+    "devastador",
+  ],
+  thriller: ["adictivo", "oscuro", "intrigante", "melancólico"],
+  fantasia: ["épico", "adictivo", "slow-burn", "emotivo", "oscuro"],
+  ficción: ["reflexivo", "emotivo", "melancólico", "reconfortante"],
+  histórica: ["reflexivo", "emotivo", "épico", "nostalgico", "slow-burn"],
+  drama: ["emotivo", "devastador", "melancólico", "reflexivo"],
+  "new-adult": ["emotivo", "spicy", "slow-burn", "reconfortante", "divertido"],
+  "young-adult": ["adictivo", "épico", "emotivo", "esperanzador"],
+  terror: ["oscuro", "adictivo", "intrigante"],
+  misterio: ["intrigante", "adictivo", "oscuro"],
+  "cozy-mystery": ["ligero", "reconfortante", "divertido", "intrigante"],
+  distopia: ["épico", "oscuro", "reflexivo", "adictivo"],
+  literaria: ["reflexivo", "melancólico", "emotivo"],
+  "ciencia ficción": ["épico", "reflexivo", "adictivo", "oscuro"],
+};
+
 function initNav() {
   const hamburger = document.querySelector(".nav__hamburger");
   const links = document.querySelector(".nav__links");
@@ -75,7 +157,6 @@ function trackClick(libroId) {
         .then((book) => {
           if (book) {
             book.increment("clicks", 1);
-            // ✅ Usar save con opciones para evitar errores de ACL
             book
               .save(null, { useMasterKey: false })
               .catch((e) =>
@@ -119,8 +200,8 @@ async function loadBooks() {
           clicks: b.get("clicks") || 0,
           activo: b.get("activo") !== false,
           escritorId: b.get("escritorId") || "",
-          colabF: b.get("colabF") === true, // ← ASEGURAR QUE SEA BOOLEANO
-          colabE: b.get("colabE") === true, // ← ASEGURAR QUE SEA BOOLEANO
+          colabF: b.get("colabF") === true,
+          colabE: b.get("colabE") === true,
         }));
       }
     } catch (e) {
@@ -137,7 +218,6 @@ async function loadBooks() {
       const res = await fetch(p);
       if (res.ok) {
         const books = await res.json();
-        // En JSON local el campo activo puede no existir, asumir true
         return books.map((b) => ({ ...b, activo: b.activo !== false }));
       }
     } catch {
@@ -202,8 +282,128 @@ function buildBookCard(book, linkPrefix = "") {
 </article>`;
 }
 
+/**
+ * Genera opciones <option> de moods para un <select>,
+ * opcionalmente filtradas por género para mostrar los más relevantes primero.
+ */
+function buildMoodOptions(generoActivo = "", incluirVacio = true) {
+  let moods = [...ADEA_MOODS];
+
+  // Si hay género activo, reordenar: relevantes primero
+  if (generoActivo && MOODS_POR_GENERO[generoActivo]) {
+    const relevantes = MOODS_POR_GENERO[generoActivo];
+    moods.sort((a, b) => {
+      const ia = relevantes.indexOf(a.value);
+      const ib = relevantes.indexOf(b.value);
+      if (ia === -1 && ib === -1) return 0;
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+  }
+
+  let html = incluirVacio
+    ? '<option value="">Todos los moods</option>'
+    : '<option value="">Selecciona...</option>';
+  moods.forEach((m) => {
+    html += `<option value="${m.value}">${m.emoji} ${m.label}</option>`;
+  });
+  return html;
+}
+
+/**
+ * Genera opciones <option> de géneros para un <select>
+ */
+function buildGeneroOptions(incluirTodos = true) {
+  let html = incluirTodos
+    ? '<option value="">Todos los géneros</option>'
+    : '<option value="">Selecciona...</option>';
+  ADEA_GENEROS.forEach((g) => {
+    html += `<option value="${g.value}">${g.label}</option>`;
+  });
+  return html;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initNav();
   setActiveNav();
   initFadeIn();
 });
+
+function mostrarModalConfirmacion(
+  titulo,
+  mensaje,
+  onConfirm,
+  tipo = "primary",
+) {
+  // Eliminar modal previo si existe
+  const existente = document.getElementById("custom-confirm-modal");
+  if (existente) existente.remove();
+
+  const modalHTML = `
+  <div id="custom-confirm-modal" class="modal-overlay" style="display:flex; z-index: 2000;">
+    <div class="modal" style="max-width: 480px;">
+      <button class="modal__close" onclick="this.closest('.modal-overlay').remove()">×</button>
+      <h3 class="modal__title" style="padding-right:0">${titulo}</h3>
+      <p style="color:var(--text-muted); margin-bottom:24px; line-height:1.5; font-size:0.9rem;">${mensaje}</p>
+      <div style="display:flex; gap:12px; justify-content:flex-end; flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
+        <button class="btn ${tipo === "danger" ? "btn-danger" : "btn-primary"}" id="modal-confirm-btn">Confirmar</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+  document.getElementById("modal-confirm-btn").onclick = () => {
+    document.getElementById("custom-confirm-modal").remove();
+    if (onConfirm) onConfirm();
+  };
+}
+
+function mostrarModalInput(
+  titulo,
+  mensaje,
+  placeholder = "",
+  onConfirm,
+  onCancel = null,
+) {
+  // Eliminar modal previo si existe
+  const existente = document.getElementById("custom-input-modal");
+  if (existente) existente.remove();
+
+  const modalHTML = `
+  <div id="custom-input-modal" class="modal-overlay" style="display:flex; z-index: 2000;">
+    <div class="modal" style="max-width: 480px;">
+      <button class="modal__close" onclick="document.getElementById('custom-input-modal').remove()">×</button>
+      <h3 class="modal__title" style="padding-right:0">${titulo}</h3>
+      <p style="color:var(--text-muted); margin-bottom:16px; line-height:1.5; font-size:0.9rem;">${mensaje}</p>
+      <input type="text" id="custom-input-field" placeholder="${placeholder}" 
+             style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:0.9rem;margin-bottom:20px;" 
+             autofocus />
+      <div style="display:flex; gap:12px; justify-content:flex-end; flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="document.getElementById('custom-input-modal').remove()">Cancelar</button>
+        <button class="btn btn-primary" id="modal-input-confirm">Confirmar</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+  const input = document.getElementById("custom-input-field");
+  const confirmBtn = document.getElementById("modal-input-confirm");
+
+  const handleConfirm = () => {
+    const value = input.value.trim();
+    document.getElementById("custom-input-modal").remove();
+    if (onConfirm) onConfirm(value);
+  };
+
+  confirmBtn.onclick = handleConfirm;
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleConfirm();
+    if (e.key === "Escape")
+      document.getElementById("custom-input-modal").remove();
+  });
+
+  // Focus en el input
+  setTimeout(() => input.focus(), 100);
+}
